@@ -1,0 +1,1775 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}</style>
+<title>Fuga da Mina Cúbica</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<style>
+/* Layout: caverna escura; cena isométrica de blocos à esquerda, painel de pedra com o desafio à direita; hotbar de gemas embaixo. Tema único (escuro) por escolha. */
+:root {
+  --bg: #141118;
+  --bg-tile: #1a161f;
+  --panel: #2a2530;
+  --panel-deep: #0e0c12;
+  --stone: #6c6672;
+  --stone-hi: #8a8390;
+  --edge: #07060a;
+  --fg: #f1ece4;
+  --muted: #b9b0c2;
+  --gold: #f5c542;
+  --grass: #3f9a3a;
+  --grass-hi: #52b84b;
+  --danger: #ff6464;
+  --water: #5c9cf0;
+  --power: #ff3b3b;
+  --easy: #52b84b;
+  --mid: #f5c542;
+  --hard: #ff5a4a;
+  --pixel: "Press Start 2P", "Courier New", monospace;
+  --term: "VT323", "Courier New", monospace;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+html { background: var(--bg); }
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(45deg, var(--bg-tile) 25%, transparent 25%, transparent 75%, var(--bg-tile) 75%),
+    linear-gradient(45deg, var(--bg-tile) 25%, transparent 25%, transparent 75%, var(--bg-tile) 75%);
+  background-size: 48px 48px;
+  background-position: 0 0, 24px 24px;
+  color: var(--fg);
+  font-family: var(--term);
+  font-size: 20px;
+  line-height: 1.22;
+}
+/* Uma tela só: a barra no topo e a tela ativa ocupando o resto da altura */
+.wrap {
+  max-width: 1280px;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
+  padding-block: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+.screen { flex: 1 1 auto; min-height: 0; }
+h1, h2, h3 { font-family: var(--pixel); font-weight: 400; text-wrap: balance; }
+h1 { font-size: clamp(18px, 3.6vw, 30px); line-height: 1.45; margin: 0; color: var(--gold); text-shadow: 4px 4px 0 #6b4a00; }
+h2 { font-size: clamp(13px, 2.2vw, 17px); line-height: 1.6; margin: 0; color: var(--fg); }
+p { margin: 0; }
+
+.block {
+  background: var(--panel);
+  border: 4px solid var(--edge);
+  box-shadow: inset 4px 4px 0 rgba(255,255,255,.10), inset -4px -4px 0 rgba(0,0,0,.40);
+}
+
+/* Barra superior */
+.bar { flex: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; padding: 8px 14px; }
+.bar .brand { font-family: var(--pixel); font-size: 12px; color: var(--gold); letter-spacing: .04em; display: flex; gap: 10px; align-items: center; }
+.lvl-chip { font-size: 9px; padding: 5px 7px; border: 2px solid currentColor; }
+.stats { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+.bar-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.hearts { display: flex; gap: 4px; }
+.hearts svg { width: 24px; height: 21px; display: block; }
+.stat { font-family: var(--pixel); font-size: 11px; color: var(--muted); display: flex; gap: 8px; align-items: center; font-variant-numeric: tabular-nums; }
+.stat b { color: var(--fg); font-weight: 400; }
+.xp b { color: #9df06b; }
+.mini-btn { font-family: var(--pixel); font-size: 9px; color: var(--muted); background: var(--panel-deep); border: 2px solid var(--stone); padding: 7px 9px; cursor: pointer; }
+.mini-btn:hover { color: var(--fg); }
+
+/* Botões */
+.btn {
+  font-family: var(--pixel); font-size: 12px; line-height: 1.4;
+  color: var(--fg); background: var(--stone);
+  border: 3px solid var(--edge);
+  box-shadow: inset 3px 3px 0 rgba(255,255,255,.28), inset -3px -3px 0 rgba(0,0,0,.38);
+  padding: 12px 16px; cursor: pointer; text-shadow: 2px 2px 0 rgba(0,0,0,.5);
+}
+.btn:hover { background: var(--stone-hi); }
+.btn:active { box-shadow: inset -3px -3px 0 rgba(255,255,255,.2), inset 3px 3px 0 rgba(0,0,0,.4); }
+.btn-go { background: var(--grass); }
+.btn-go:hover { background: var(--grass-hi); }
+.btn-power { background: #a82424; }
+.btn-power:hover { background: #c83030; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, .ctl:focus-visible, .mini-btn:focus-visible, .lvl:focus-visible, .val:focus-visible, .tab:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+/* Início */
+.start { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); gap: 12px; align-items: stretch; }
+.start .intro { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow-y: auto; }
+.start .tag { font-family: var(--pixel); font-size: 10px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.label { font-family: var(--pixel); font-size: 10px; color: var(--muted); letter-spacing: .06em; }
+.levels { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+.lvl { --c: var(--easy); text-align: left; display: flex; flex-direction: column; gap: 6px; padding: 10px; background: var(--panel-deep); border: 3px solid var(--edge); color: var(--fg); cursor: pointer; font-family: var(--term); font-size: 18px; line-height: 1.15; min-width: 0; }
+.lvl[data-lv="medio"] { --c: var(--mid); }
+.lvl[data-lv="dificil"] { --c: var(--hard); }
+.lvl .lvl-name { font-family: var(--pixel); font-size: 11px; color: var(--c); }
+.lvl .lvl-n { font-family: var(--pixel); font-size: 9px; color: var(--muted); }
+.lvl .lvl-d { color: var(--muted); }
+.lvl[aria-checked="true"] { border-color: var(--c); box-shadow: inset 0 0 0 2px var(--c); }
+.lvl[aria-checked="true"] .lvl-d { color: var(--fg); }
+.name-row { display: flex; flex-direction: column; gap: 6px; }
+.name-row .field { flex: none; }
+.scene { position: relative; min-width: 0; overflow: hidden; background: #0b0a0e; }
+.scene canvas { display: block; width: 100%; }
+.scene.fill { min-height: 0; }
+.scene.fill canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.badge { position: absolute; top: 10px; left: 10px; font-family: var(--pixel); font-size: 10px; background: rgba(7,6,10,.8); border: 2px solid var(--stone); padding: 8px 10px; color: var(--muted); }
+.badge.new { color: var(--gold); border-color: var(--gold); }
+
+/* Jogo */
+.game { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); gap: 12px; align-items: stretch; }
+.left { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; }
+.left .scene { flex: 1 1 auto; min-height: 150px; }
+.left .hotbar { flex: none; }
+.panel { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; overflow-y: auto; }
+.room-no { font-family: var(--pixel); font-size: 10px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.data { list-style: none; margin: 0; padding: 10px 14px; background: var(--panel-deep); border: 3px solid var(--edge); display: flex; flex-direction: column; gap: 2px; }
+.data li { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.data li span:last-child { color: var(--gold); text-align: right; }
+.question { font-size: 22px; color: #ffe9a6; }
+.answer-row { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+.field { display: flex; align-items: center; flex: 1 1 200px; min-width: 0; background: var(--panel-deep); border: 3px solid var(--edge); box-shadow: inset 3px 3px 0 rgba(0,0,0,.5); }
+.field input { flex: 1; min-width: 0; font-family: var(--term); font-size: 30px; color: var(--fg); background: transparent; border: 0; padding: 4px 12px; font-variant-numeric: tabular-nums; }
+.field .unit { font-family: var(--pixel); font-size: 12px; color: var(--gold); padding-right: 12px; white-space: nowrap; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tools { display: flex; gap: 10px; flex-wrap: wrap; }
+.hint { padding: 10px 14px; background: #1d2a3d; border: 3px solid #0a1220; color: #cfe2ff; }
+.hint b { font-family: var(--pixel); font-size: 10px; color: var(--water); display: block; margin-bottom: 6px; letter-spacing: .06em; }
+.feedback { padding: 10px 14px; border: 3px solid var(--edge); }
+.feedback.bad { background: #3b1717; color: #ffd2d2; }
+.feedback.good { background: #173b1c; color: #d6ffd2; }
+.feedback b { font-family: var(--pixel); font-size: 11px; display: block; margin-bottom: 6px; line-height: 1.5; }
+.feedback.bad b { color: var(--danger); }
+.feedback.good b { color: #9df06b; }
+.calc { font-variant-numeric: tabular-nums; }
+
+/* Oficina (construir) */
+.builder { display: flex; flex-direction: column; gap: 8px; }
+.step { display: grid; grid-template-columns: minmax(0,1fr) auto auto auto; align-items: center; gap: 8px; padding: 6px 10px; background: var(--panel-deep); border: 3px solid var(--edge); }
+.step > span { color: var(--muted); }
+.sbtn { width: 42px; height: 42px; padding: 0; font-size: 16px; }
+.step output { font-family: var(--pixel); font-size: 16px; min-width: 3ch; text-align: center; color: var(--fg); font-variant-numeric: tabular-nums; }
+.live { font-size: 26px; color: var(--gold); font-variant-numeric: tabular-nums; padding: 6px 12px; background: var(--panel-deep); border: 3px dashed #5a4a1a; }
+.live small { display: block; font-size: 19px; color: var(--muted); }
+
+/* Cartas de blocos (circuito, fios, vagões) */
+.cards { flex: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.card { --wc: var(--power); background: var(--panel-deep); border: 3px solid var(--edge); padding: 6px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.card .mini { background: #0b0a0e; min-width: 0; }
+.card .mini canvas { display: block; width: 100%; }
+.card .dims { font-size: 18px; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.letter { font-family: var(--pixel); font-size: 10px; color: var(--wc); }
+.ctl { display: flex; align-items: center; justify-content: center; gap: 8px; background: #1c1920; border: 2px solid var(--stone); color: var(--muted); font-family: var(--pixel); font-size: 8px; cursor: pointer; padding: 6px 4px; min-height: 34px; }
+.ctl:disabled { cursor: default; }
+.lv { position: relative; width: 30px; height: 26px; flex: 0 0 30px; }
+.lv::after { content: ""; position: absolute; bottom: 0; left: 3px; width: 24px; height: 9px; background: #6c6672; border: 2px solid var(--edge); box-sizing: border-box; }
+.lv i { position: absolute; bottom: 7px; left: 13px; width: 5px; height: 18px; background: #8b5a2b; transform-origin: 50% 100%; transform: rotate(-38deg); transition: transform .15s steps(2); }
+.lv i::before { content: ""; position: absolute; top: -5px; left: -2px; width: 9px; height: 8px; background: #6e1f1f; }
+.card.on { border-color: var(--wc); }
+.card.on .lv i { transform: rotate(38deg); }
+.card.on .lv i::before { background: var(--power); box-shadow: 0 0 8px var(--power); }
+.card.on .ctl { color: var(--fg); border-color: var(--wc); }
+.wire { height: 6px; background: #2a1a1a; }
+.card.on .wire { background: var(--wc); box-shadow: 0 0 8px var(--wc); }
+.card.sel { border-color: var(--fg); }
+.card.sel .ctl { color: var(--fg); border-color: var(--fg); background: #3a3540; }
+.card.check-ok { border-color: #3fd47a; }
+.card.check-bad { opacity: .6; }
+.card .pos-num { font-family: var(--pixel); font-size: 12px; color: var(--gold); }
+
+.interact { display: flex; flex-direction: column; gap: 10px; }
+.vals { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.val { --wc: var(--stone); display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: var(--panel-deep); border: 3px solid var(--wc); color: var(--fg); font-family: var(--term); font-size: 22px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.val .plug { font-family: var(--pixel); font-size: 10px; min-width: 22px; height: 22px; display: grid; place-items: center; background: #1c1920; color: var(--muted); }
+.val.linked .plug { background: var(--wc); color: #0e0c12; }
+.val.locked { cursor: default; }
+.track { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px 10px; background: var(--panel-deep); border: 3px solid var(--edge); min-height: 50px; }
+.track .car { font-size: 19px; padding: 4px 8px; background: #3a2a18; border: 2px solid #8b5a2b; font-variant-numeric: tabular-nums; }
+.track .car b { font-family: var(--pixel); font-size: 9px; color: var(--gold); margin-right: 6px; font-weight: 400; }
+.track .empty-t { color: var(--muted); }
+
+/* Hotbar */
+.hotbar { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 6px; background: rgba(7,6,10,.85); border: 3px solid var(--edge); align-self: center; max-width: 100%; box-sizing: border-box; }
+.slot { width: 46px; height: 46px; background: #3a3540; border: 3px solid #1c1920; box-shadow: inset -3px -3px 0 #555060, inset 3px 3px 0 #18151c; display: grid; place-items: center; position: relative; box-sizing: border-box; }
+.slot.now { border-color: var(--fg); }
+.slot svg { width: 26px; height: 26px; display: block; }
+.slot .n { position: absolute; right: 3px; bottom: 1px; font-family: var(--pixel); font-size: 7px; color: var(--muted); }
+.hotbar.many .slot { width: 36px; height: 36px; }
+.hotbar.many .slot svg { width: 20px; height: 20px; }
+
+/* Vitória */
+.win { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; overflow-y: auto; }
+.cert { width: 100%; box-sizing: border-box; padding: 16px; background: #2b2412; border: 4px double var(--gold); display: flex; flex-direction: column; gap: 8px; }
+.cert span { font-family: var(--pixel); font-size: 9px; color: #d9b85a; letter-spacing: .08em; text-transform: uppercase; }
+.cert strong { font-family: var(--pixel); font-weight: 400; font-size: clamp(14px, 2.6vw, 20px); color: var(--gold); line-height: 1.5; overflow-wrap: anywhere; }
+.win-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; width: 100%; }
+.win-grid div { background: var(--panel-deep); border: 3px solid var(--edge); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.win-grid span { font-family: var(--pixel); font-size: 9px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.win-grid strong { font-family: var(--pixel); font-weight: 400; font-size: 17px; color: var(--gold); font-variant-numeric: tabular-nums; }
+.rank { font-family: var(--pixel); font-size: 12px; color: #9df06b; line-height: 1.7; }
+.save-note { color: var(--muted); }
+.save-note.ok { color: #9df06b; }
+.win-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.copy-text { width: 100%; box-sizing: border-box; font-family: var(--term); font-size: 20px; padding: 10px 12px; background: var(--panel-deep); border: 3px dashed var(--stone); color: var(--fg); user-select: all; }
+
+/* Mural */
+.mural { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.box-wide { width: min(880px, 100%); max-height: 100%; box-sizing: border-box; overflow-y: auto; }
+.ov-info { background: rgba(7,6,10,.82); }
+.ov-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { font-family: var(--pixel); font-size: 10px; padding: 9px 12px; background: var(--panel-deep); color: var(--muted); border: 3px solid var(--edge); cursor: pointer; }
+.tab[aria-selected="true"] { color: var(--fg); border-color: var(--gold); }
+.mural-note { color: var(--muted); max-width: 70ch; }
+.table-wrap { overflow-x: auto; background: var(--panel-deep); border: 3px solid var(--edge); }
+.mural table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.mural th { font-family: var(--pixel); font-weight: 400; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 10px 12px; border-bottom: 3px solid var(--edge); white-space: nowrap; }
+.mural td { padding: 8px 12px; border-bottom: 2px solid #1e1a24; white-space: nowrap; }
+.mural td.nm { white-space: normal; min-width: 10ch; overflow-wrap: anywhere; }
+.mural tr.me td { background: #2b2412; }
+.mural tr.me td.nm { color: var(--gold); }
+.mural .pos { font-family: var(--pixel); font-size: 11px; color: var(--muted); }
+.mural tbody tr:nth-child(1) .pos { color: var(--gold); }
+.mural tbody tr:nth-child(2) .pos { color: #d9d9e3; }
+.mural tbody tr:nth-child(3) .pos { color: #d08a4a; }
+.mural .empty { padding: 18px 12px; color: var(--muted); white-space: normal; }
+.del { font-family: var(--pixel); font-size: 8px; background: transparent; color: var(--muted); border: 2px solid var(--stone); padding: 5px 7px; cursor: pointer; }
+.del.armed { color: var(--fg); background: #7a1e1e; border-color: var(--danger); }
+
+/* Professor */
+.teacher { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.teacher-body { display: flex; flex-direction: column; gap: 10px; max-width: 72ch; color: var(--muted); }
+.teacher-body strong { color: var(--fg); font-weight: 400; }
+
+/* Overlay */
+.overlay { position: fixed; inset: 0; background: rgba(60,0,0,.72); display: grid; place-items: center; z-index: 20; padding: 16px; }
+.overlay .box { max-width: 460px; padding: 24px; display: flex; flex-direction: column; gap: 16px; text-align: center; align-items: center; }
+.overlay .box h2 { color: var(--danger); }
+
+@keyframes pop { 0% { transform: scale(.6); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+.slot.fresh svg { animation: pop .45s steps(4) both; }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.shake { animation: shake .25s steps(2) 2; }
+@media (prefers-reduced-motion: reduce) { .slot.fresh svg, .shake { animation: none; } .lv i { transition: none; } }
+
+/* Celular ou janela muito baixa: volta a rolar a página normalmente */
+@media (max-width: 820px), (max-height: 540px) {
+  html, body { height: auto; }
+  .wrap { height: auto; overflow: visible; }
+  .screen { flex: none; }
+  .scene.fill { height: clamp(220px, 58vw, 360px); flex: none; }
+  .panel, .start .intro, .win { overflow: visible; }
+}
+@media (max-width: 820px) {
+  .game, .start { grid-template-columns: minmax(0,1fr); }
+  .cards { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+  .slot { width: 36px; height: 36px; }
+  .slot svg { width: 20px; height: 20px; }
+  .bar .brand { width: 100%; }
+}
+@media (max-width: 480px) {
+  .levels { grid-template-columns: minmax(0,1fr); }
+}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="bar block">
+    <span class="brand">FUGA DA MINA CÚBICA <span class="lvl-chip" id="lvlChip" hidden></span></span>
+    <div class="stats">
+      <div class="hearts" id="hearts" aria-label="Corações"></div>
+      <span class="stat xp">XP <b id="xp">0</b></span>
+      <span class="stat">TEMPO <b id="time">00:00</b></span>
+      <div class="bar-btns">
+        <button class="mini-btn" id="btnSound" type="button" aria-pressed="true">SOM: LIGADO</button>
+        <button class="mini-btn" id="btnMural" type="button">MURAL</button>
+        <button class="mini-btn" id="btnTeacher" type="button">PROFESSOR</button>
+        <button class="mini-btn" id="btnFull" type="button">TELA CHEIA</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tela inicial -->
+  <section class="start screen" id="screenStart">
+    <div class="intro block">
+      <span class="tag">Escape room de volumes · 7º ano</span>
+      <h1>Fuga da Mina Cúbica</h1>
+      <p>Você caiu numa mina onde tudo é feito de blocos. Calcule volumes, construa, ligue fios e alavancas para chegar ao portal de saída. Cada sala vencida vale uma gema. Você tem 5 corações: cada erro custa 1.</p>
+      <span class="label" id="lvlLabel">ESCOLHA O NÍVEL</span>
+      <div class="levels" role="radiogroup" aria-labelledby="lvlLabel">
+        <button class="lvl" type="button" role="radio" data-lv="facil" aria-checked="true"><span class="lvl-name">FÁCIL</span><span class="lvl-n">5 SALAS</span><span class="lvl-d">Contar blocos, cubo, oficina e circuito.</span></button>
+        <button class="lvl" type="button" role="radio" data-lv="medio" aria-checked="false"><span class="lvl-name">MÉDIO</span><span class="lvl-n">10 SALAS</span><span class="lvl-d">Fios, vagões, litros e sólidos compostos.</span></button>
+        <button class="lvl" type="button" role="radio" data-lv="dificil" aria-checked="false"><span class="lvl-name">DIFÍCIL</span><span class="lvl-n">15 SALAS</span><span class="lvl-d">Decimais, aresta do cubo, m³ em litros.</span></button>
+      </div>
+      <div class="name-row">
+        <label class="label" for="playerName">NOME DO MINERADOR</label>
+        <div class="field"><input id="playerName" type="text" maxlength="28" placeholder="Digite seu nome" style="font-size:26px"></div>
+      </div>
+      <div><button class="btn btn-go" id="btnStart">Entrar na mina</button></div>
+    </div>
+    <div class="scene fill block"><canvas id="cvStart" aria-label="Paisagem de blocos na entrada da mina"></canvas></div>
+  </section>
+
+  <!-- Jogo -->
+  <section class="game screen" id="screenGame" hidden>
+    <div class="left">
+      <div class="scene fill block">
+        <canvas id="cvGame" role="img" aria-label="Desenho da sala"></canvas>
+        <span class="badge" id="badge">SALA 1</span>
+      </div>
+      <div class="cards" id="cards" hidden></div>
+      <div class="hotbar" id="hotbar" aria-label="Gemas coletadas"></div>
+    </div>
+    <div class="panel block">
+      <span class="room-no" id="roomNo">Sala 1</span>
+      <h2 id="roomTitle">—</h2>
+      <p id="story"></p>
+      <ul class="data" id="data"></ul>
+      <p class="question" id="question"></p>
+
+      <form id="form" autocomplete="off">
+        <div class="answer-row">
+          <label class="sr" for="answer">Sua resposta</label>
+          <div class="field"><input id="answer" type="text" inputmode="decimal" placeholder="?"><span class="unit" id="unit">m³</span></div>
+          <button class="btn btn-go" id="btnSubmit" type="submit">Confirmar</button>
+        </div>
+      </form>
+
+      <div class="builder" id="builder" hidden>
+        <div class="step"><span>Comprimento</span><button class="btn sbtn" type="button" data-dim="0" data-d="-1" aria-label="Diminuir comprimento">−</button><output id="b0">1</output><button class="btn sbtn" type="button" data-dim="0" data-d="1" aria-label="Aumentar comprimento">+</button></div>
+        <div class="step"><span>Largura</span><button class="btn sbtn" type="button" data-dim="1" data-d="-1" aria-label="Diminuir largura">−</button><output id="b1">1</output><button class="btn sbtn" type="button" data-dim="1" data-d="1" aria-label="Aumentar largura">+</button></div>
+        <div class="step"><span>Altura</span><button class="btn sbtn" type="button" data-dim="2" data-d="-1" aria-label="Diminuir altura">−</button><output id="b2">1</output><button class="btn sbtn" type="button" data-dim="2" data-d="1" aria-label="Aumentar altura">+</button></div>
+        <div class="live" id="live" aria-live="polite"></div>
+        <div><button class="btn btn-go" id="btnBuild" type="button">Construir</button></div>
+      </div>
+
+      <div class="interact" id="interact" hidden>
+        <div id="extra"></div>
+        <div><button class="btn btn-power" id="btnAct" type="button">Ligar energia</button></div>
+      </div>
+
+      <div class="tools">
+        <button class="btn" id="btnHint" type="button">Pedir dica</button>
+        <button class="btn btn-go" id="btnNext" type="button" hidden>Próxima sala</button>
+      </div>
+      <div class="hint" id="hint" hidden></div>
+      <div class="feedback" id="feedback" hidden aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- Vitória -->
+  <section class="win block screen" id="screenWin" hidden>
+    <span class="room-no">Portal ativado</span>
+    <h1>Você escapou da mina!</h1>
+    <div class="cert">
+      <span>Certificado de fuga</span>
+      <strong id="wName">Minerador(a)</strong>
+      <p id="wDate"></p>
+    </div>
+    <div class="hotbar" id="hotbarWin"></div>
+    <div class="win-grid">
+      <div><span>Experiência</span><strong id="wXp">0</strong></div>
+      <div><span>Tempo</span><strong id="wTime">00:00</strong></div>
+      <div><span>Erros</span><strong id="wErr">0</strong></div>
+      <div><span>Dicas</span><strong id="wHint">0</strong></div>
+    </div>
+    <p class="rank" id="wRank"></p>
+    <p class="save-note" id="saveNote" aria-live="polite"></p>
+    <div class="win-actions">
+      <button class="btn btn-go" id="btnAgain">Jogar de novo</button>
+      <button class="btn" id="btnCopy" type="button">Copiar meu resultado</button>
+      <button class="btn" id="btnSeeMural" type="button">Ver o mural</button>
+    </div>
+    <p class="copy-text" id="copyText" hidden></p>
+  </section>
+
+  <!-- Mural (janela) -->
+  <div class="overlay ov-info" id="muralOverlay" hidden>
+  <section class="mural block box-wide" id="mural" role="dialog" aria-modal="true" aria-labelledby="muralTitle">
+    <div class="ov-head">
+      <h2 id="muralTitle">Mural dos Mineradores</h2>
+      <button class="mini-btn" type="button" data-close="muralOverlay">FECHAR</button>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Nível">
+      <button class="tab" type="button" role="tab" data-tab="facil" aria-selected="true">FÁCIL</button>
+      <button class="tab" type="button" role="tab" data-tab="medio" aria-selected="false">MÉDIO</button>
+      <button class="tab" type="button" role="tab" data-tab="dificil" aria-selected="false">DIFÍCIL</button>
+    </div>
+    <span class="room-no" id="muralMode">Carregando…</span>
+    <p class="mural-note" id="muralNote">Todos que escaparam da mina ficam registrados aqui, com o melhor resultado de cada um.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr id="muralHead"><th>#</th><th>Minerador</th><th>Melhor XP</th><th>Tempo</th><th>Erros</th><th>Partidas</th><th>Última vez</th></tr></thead>
+        <tbody id="muralBody"><tr><td class="empty" colspan="7">Ninguém escapou ainda. Seja o primeiro!</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  </div>
+
+  <div class="overlay ov-info" id="teacherOverlay" hidden>
+  <section class="teacher block box-wide" role="dialog" aria-modal="true" aria-labelledby="teacherTitle">
+    <div class="ov-head">
+      <h2 id="teacherTitle">Para o professor</h2>
+      <button class="mini-btn" type="button" data-close="teacherOverlay">FECHAR</button>
+    </div>
+    <div class="teacher-body">
+      <p><strong>Habilidade da BNCC:</strong> EF07MA30, resolver e elaborar problemas de cálculo do volume de blocos retangulares, com as unidades usuais (m³, dm³ e cm³).</p>
+      <p><strong>Fácil (5 salas):</strong> contar cubos unitários, volume do cubo, Oficina (construir um bloco com o volume pedido), paralelepípedo com medidas pequenas e Circuito do Portal.</p>
+      <p><strong>Médio (10 salas):</strong> acrescenta a Central de Fios (ligar cada bloco ao seu volume), o lago (descobrir a altura a partir do volume), os Vagões da Mina (ordenar blocos pelo volume), litros (1 dm³ = 1 L) e sólido composto.</p>
+      <p><strong>Difícil (15 salas):</strong> medidas decimais, descobrir a aresta do cubo a partir do volume (V = a³), conversão de m³ para litros (1 m³ = 1.000 L), Oficina com base quadrada e desafios interativos maiores, com mais blocos e volumes mais próximos.</p>
+      <p><strong>Desafios de mexer:</strong> Oficina, Central de Fios, Vagões e Circuito mostram que blocos com formas diferentes podem ter o mesmo volume. É uma boa pergunta para a conversa depois do jogo.</p>
+      <p><strong>Erros comuns:</strong> quando o aluno soma as medidas, calcula só a área da base ou faz a × 3 no cubo, o jogo explica o engano antes da nova tentativa.</p>
+      <p><strong>Mural:</strong> separado por nível, com o melhor XP, o tempo, os erros e quantas vezes cada aluno jogou. Só a dona do jogo vê o botão de apagar registros.</p>
+    </div>
+  </section>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="box block">
+    <h2>Seus corações acabaram!</h2>
+    <p>Você renasce na entrada desta sala. Os números do desafio mudaram. Respire fundo e calcule com calma.</p>
+    <button class="btn btn-go" id="btnRespawn">Renascer</button>
+  </div>
+</div>
+
+<script>
+(function () {
+"use strict";
+
+/* ---------- utilidades ---------- */
+const $ = (id) => document.getElementById(id);
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmt = (n) => Number(Math.round(n * 1000) / 1000).toLocaleString("pt-BR");
+const near = (a, b) => Math.abs(a - b) < 1e-6;
+const vol = (d) => d[0] * d[1] * d[2];
+const dimTxt = (d, u) => d.map((x) => fmt(x) + " " + (u || "m")).join(" × ");
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function hash(a, b, c) {
+  let x = Math.imul(a | 0, 374761393) ^ Math.imul(b | 0, 668265263) ^ Math.imul(c | 0, 1274126177);
+  x = Math.imul(x ^ (x >>> 13), 1274126177);
+  x ^= x >>> 16;
+  return (x >>> 0) / 4294967295;
+}
+
+/* ---------- sons ---------- */
+let soundOn = true, actx = null;
+function tone(freqs, step, type, v) {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = actx.currentTime;
+    freqs.forEach((f, i) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || "square"; o.frequency.value = f;
+      g.gain.setValueAtTime(v || 0.05, t0 + i * step);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + i * step + step * 0.95);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t0 + i * step); o.stop(t0 + i * step + step);
+    });
+  } catch (e) {}
+}
+const sfx = {
+  place: () => tone([440, 660], 0.04, "square", 0.04),
+  remove: () => tone([330, 220], 0.04, "square", 0.04),
+  good: () => tone([523, 659, 784, 1046], 0.09, "square", 0.05),
+  bad: () => tone([180, 120], 0.13, "sawtooth", 0.05),
+  lever: () => tone([260, 390], 0.035, "square", 0.04),
+  plug: () => tone([620, 820], 0.035, "triangle", 0.05),
+  train: () => tone([200, 260, 200, 260], 0.06, "square", 0.035),
+  power: () => tone([220, 330, 440, 660, 880, 1320], 0.08, "triangle", 0.07)
+};
+
+/* ---------- texturas em pixel ---------- */
+function tex(type, i, j, face, pv, seed) {
+  const v = hash(i + seed * 31, j + seed * 17, face * 7 + seed);
+  switch (type) {
+    case "cobble": {
+      let g = 112 + v * 36;
+      const cx = (i + (Math.floor(j / 4) % 2) * 2) % 4, cy = j % 4;
+      if ((cx === 0 || cy === 0) && hash(i, j, seed + 3) > 0.25) g -= 42;
+      return [g, g, g + 4];
+    }
+    case "gold":
+      if (v < 0.18) return [214, 160, 32];
+      if (v > 0.86) return [255, 246, 170];
+      return [245 + v * 10, 200 + v * 20, 54];
+    case "emerald": {
+      const g = 108 + v * 34;
+      if (hash(i >> 1, j >> 1, seed + face * 3 + 9) > 0.8) return v > 0.5 ? [52, 214, 112] : [24, 150, 70];
+      return [g, g, g + 4];
+    }
+    case "diamond":
+      if (v > 0.85) return [220, 255, 255];
+      if (v < 0.2) return [40, 170, 180];
+      return [90 + v * 40, 220 + v * 20, 225];
+    case "copper":
+      if (hash(i >> 1, j >> 1, seed + 5) > 0.86) return [90, 180, 150];
+      return [190 + v * 30, 110 + v * 25, 64 + v * 10];
+    case "water":
+      if ((j + (i >> 2) + face) % 5 === 0) return [96, 152, 240];
+      return [44 + v * 20, 92 + v * 22, 206 + v * 20];
+    case "obsidian":
+      if (v > 0.86) return [86, 56, 128];
+      if (v < 0.3) return [14, 10, 24];
+      return [30, 20, 46];
+    case "wood": {
+      let r = 162 + v * 18, g = 124 + v * 14, b = 72;
+      if (j % 4 === 3) { r -= 50; g -= 42; b -= 28; }
+      return [r, g, b];
+    }
+    case "rail":
+      if (i % 4 === 0) return [150, 150, 160];
+      return [110 + v * 20, 78 + v * 12, 44];
+    case "grass":
+      if (face === 0) return v > 0.8 ? [118, 190, 74] : [86 + v * 20, 156 + v * 16, 58];
+      if (j >= pv - 2 || (j === pv - 3 && v > 0.55)) return [86 + v * 20, 152 + v * 16, 56];
+      return v > 0.82 ? [104, 72, 48] : [138 + v * 14, 98 + v * 10, 68];
+    case "portal":
+      if ((i + j + seed) % 6 === 0) return [220, 150, 255];
+      return [110 + v * 70, 30 + v * 30, 190 + v * 50];
+    case "lampOn": {
+      if (i === 0 || j === 0 || i === 7 || j === 7) return [150, 100, 40];
+      return v > 0.6 ? [255, 244, 180] : [255, 210, 110];
+    }
+    case "lampOff": {
+      if (i === 0 || j === 0 || i === 7 || j === 7) return [70, 50, 30];
+      return v > 0.6 ? [110, 80, 50] : [90, 62, 40];
+    }
+    default: {
+      const g = 120 + v * 30;
+      return [g, g, g];
+    }
+  }
+}
+const SHADE = [1, 0.84, 0.66];
+const CARD_TEX = ["cobble", "emerald", "gold", "wood", "obsidian", "copper", "diamond"];
+
+/* ---------- renderizador isométrico ---------- */
+const S = 0.866;
+function makeView(canvas, opts) {
+  opts = opts || {};
+  const ctx = canvas.getContext("2d");
+  let scene = null, cw = 0, ch = 0, dpr = 1, cache = null, anim = 0;
+  function size() {
+    const par = canvas.parentElement, w = par.clientWidth;
+    if (!w) return;
+    cw = w;
+    if (opts.mini) ch = Math.round(w * 0.58);
+    else { const h = par.clientHeight; ch = h > 60 ? h : Math.round(Math.min(Math.max(w * 0.72, 260), 460)); }
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr);
+    if (opts.mini) canvas.style.height = ch + "px";
+  }
+  function drawFace(O, U, V, pu, pv, type, face, seed) {
+    ctx.save();
+    ctx.setTransform(dpr * U.x / pu, dpr * U.y / pu, dpr * V.x / pv, dpr * V.y / pv, dpr * O.x, dpr * O.y);
+    const sh = SHADE[face];
+    for (let i = 0; i < pu; i++) for (let j = 0; j < pv; j++) {
+      const c = tex(type, i, j, face, pv, seed);
+      ctx.fillStyle = "rgb(" + (c[0] * sh | 0) + "," + (c[1] * sh | 0) + "," + (c[2] * sh | 0) + ")";
+      ctx.fillRect(i, j, 1.08, 1.08);
+    }
+    ctx.restore();
+  }
+  function poly(pts, lw) {
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for (let k = 1; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
+    ctx.closePath(); ctx.lineWidth = lw; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.stroke();
+  }
+  function box(P, o, d, type, ppu, seed, lw) {
+    const [x, y, z] = o, [L, W, H] = d;
+    const sub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y });
+    const n = (q) => Math.max(1, Math.round(q * ppu));
+    let O = P(x, y, z + H);
+    drawFace(O, sub(P(x + L, y, z + H), O), sub(P(x, y + W, z + H), O), n(L), n(W), type, 0, seed);
+    O = P(x, y + W, z);
+    drawFace(O, sub(P(x + L, y + W, z), O), sub(P(x, y + W, z + H), O), n(L), n(H), type, 1, seed);
+    O = P(x + L, y, z);
+    drawFace(O, sub(P(x + L, y + W, z), O), sub(P(x + L, y, z + H), O), n(W), n(H), type, 2, seed);
+    poly([P(x, y, z + H), P(x + L, y, z + H), P(x + L, y + W, z + H), P(x, y + W, z + H)], lw);
+    poly([P(x, y + W, z), P(x + L, y + W, z), P(x + L, y + W, z + H), P(x, y + W, z + H)], lw);
+    poly([P(x + L, y, z), P(x + L, y + W, z), P(x + L, y + W, z + H), P(x + L, y, z + H)], lw);
+  }
+  function tag(text, x, y, align, unknown) {
+    ctx.font = "10px 'Press Start 2P', monospace";
+    const w = ctx.measureText(text).width + 14, h = 22;
+    let rx = align === "right" ? x - w : align === "left" ? x : x - w / 2;
+    rx = Math.max(4, Math.min(cw - w - 4, rx));
+    const ry = Math.max(4, Math.min(ch - h - 4, y - h / 2));
+    ctx.fillStyle = "rgba(8,6,12,.88)"; ctx.fillRect(rx, ry, w, h);
+    ctx.strokeStyle = unknown ? "#f5c542" : "#d9d1e3"; ctx.lineWidth = 2; ctx.strokeRect(rx + 1, ry + 1, w - 2, h - 2);
+    ctx.fillStyle = unknown ? "#f5c542" : "#ffffff"; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    ctx.fillText(text, rx + 7, ry + h / 2 + 1);
+  }
+  function render() {
+    if (!scene || !cw) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const g = ctx.createRadialGradient(cw * 0.5, ch * 0.42, 10, cw * 0.5, ch * 0.5, Math.max(cw, ch) * 0.75);
+    g.addColorStop(0, scene.glow || "#3a2a1c"); g.addColorStop(1, "#0b0a0e");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, cw, ch);
+    if (!opts.mini) {
+      ctx.fillStyle = "rgba(255,255,255,.03)";
+      for (let px = 0; px < cw; px += 24) for (let py = (px / 24) % 2 ? 0 : 24; py < ch; py += 48) ctx.fillRect(px, py, 24, 24);
+    }
+    const boxes = scene.boxes || [], cells = scene.cells || [];
+    let mnx = 1e9, mxx = -1e9, mny = 1e9, mxy = -1e9;
+    const ext = (o, d) => {
+      for (const dx of [0, d[0]]) for (const dy of [0, d[1]]) for (const dz of [0, d[2]]) {
+        const X = o[0] + dx, Y = o[1] + dy, Z = o[2] + dz;
+        const sx = (X - Y) * S, sy = (X + Y) * 0.5 - Z;
+        mnx = Math.min(mnx, sx); mxx = Math.max(mxx, sx); mny = Math.min(mny, sy); mxy = Math.max(mxy, sy);
+      }
+    };
+    boxes.forEach((b) => ext(b.o, b.d));
+    cells.forEach((c) => ext(c.p, [1, 1, 1]));
+    if (scene.fit) ext(scene.fit.o, scene.fit.d);
+    const pad = opts.mini ? 10 : scene.labels === false ? 26 : Math.max(44, Math.min(cw, ch) * 0.12);
+    const k = Math.min((cw - 2 * pad) / Math.max(0.01, mxx - mnx), (ch - 2 * pad) / Math.max(0.01, mxy - mny), opts.mini ? 40 : 64);
+    const ox = cw / 2 - ((mnx + mxx) / 2) * k, oy = ch / 2 - ((mny + mxy) / 2) * k + (opts.mini ? 0 : 6);
+    const P = (x, y, z) => ({ x: ox + (x - y) * S * k, y: oy + ((x + y) * 0.5 - z) * k });
+
+    boxes.forEach((b, bi) => {
+      if (b.voxel) return;
+      const ppu = Math.max(2, Math.min(8, Math.round(k / 7)));
+      box(P, b.o, b.d, b.tex, ppu, 5 + bi * 11, opts.mini ? 1.5 : 2.4);
+    });
+    const cubes = cells.map((c) => ({ p: c.p, tex: c.tex }));
+    boxes.forEach((b) => {
+      if (!b.voxel) return;
+      for (let x = 0; x < b.d[0]; x++) for (let y = 0; y < b.d[1]; y++) for (let z = 0; z < b.d[2]; z++)
+        cubes.push({ p: [b.o[0] + x, b.o[1] + y, b.o[2] + z], tex: b.tex });
+    });
+    cubes.sort((a, c) => (a.p[0] + a.p[1] + a.p[2]) - (c.p[0] + c.p[1] + c.p[2]) || a.p[2] - c.p[2]);
+    const vppu = cubes.length > 110 ? 4 : 8;
+    cubes.forEach((c) => box(P, c.p, [1, 1, 1], c.tex, c.tex.startsWith("lamp") ? 8 : vppu, (c.p[0] * 13 + c.p[1] * 7 + c.p[2] * 29) % 97 + 1, 1.2));
+
+    boxes.forEach((b) => {
+      if (!b.labels) return;
+      const [x, y, z] = b.o, [L, W, H] = b.d;
+      const mid = (a, c) => ({ x: (a.x + c.x) / 2, y: (a.y + c.y) / 2 });
+      if (b.labels.x) { const m = mid(P(x, y + W, z), P(x + L, y + W, z)); tag(b.labels.x, m.x - 16, m.y + 20, "center", b.labels.x.startsWith("?")); }
+      if (b.labels.y) { const m = mid(P(x + L, y, z), P(x + L, y + W, z)); tag(b.labels.y, m.x + 16, m.y + 20, "center", b.labels.y.startsWith("?")); }
+      if (b.labels.z) { const m = mid(P(x, y + W, z), P(x, y + W, z + H)); tag(b.labels.z, m.x - 12, m.y, "right", b.labels.z.startsWith("?")); }
+    });
+    if (scene.tags) scene.tags.forEach((t) => { const q = P(t.p[0], t.p[1], t.p[2]); tag(t.text, q.x, q.y, "center", false); });
+    try {
+      cache = cache || document.createElement("canvas");
+      cache.width = canvas.width; cache.height = canvas.height;
+      cache.getContext("2d").drawImage(canvas, 0, 0);
+    } catch (e) { cache = null; }
+  }
+  function burst(colors) {
+    if (reduced || !cache) return;
+    cancelAnimationFrame(anim);
+    const parts = Array.from({ length: 60 }, () => {
+      const a = Math.random() * Math.PI * 2, sp = 2 + Math.random() * 6;
+      return { x: cw / 2, y: ch / 2, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 3, s: 5 + Math.random() * 7, c: pick(colors) };
+    });
+    let f = 0;
+    const step = () => {
+      f++;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.drawImage(cache, 0, 0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      parts.forEach((p) => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.35;
+        ctx.globalAlpha = Math.max(0, 1 - f / 55);
+        ctx.fillStyle = p.c; ctx.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s);
+      });
+      ctx.globalAlpha = 1;
+      if (f < 55) anim = requestAnimationFrame(step);
+      else { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(cache, 0, 0); }
+    };
+    anim = requestAnimationFrame(step);
+  }
+  const ro = new ResizeObserver(() => { size(); render(); });
+  ro.observe(canvas.parentElement);
+  return {
+    draw(s) { cancelAnimationFrame(anim); scene = s; size(); render(); },
+    redraw() { size(); render(); },
+    burst,
+    stop() { ro.disconnect(); }
+  };
+}
+
+/* ---------- ícones em pixel ---------- */
+function pixSVG(rows, color, hi, w, h) {
+  let r = "";
+  rows.forEach((row, y) => [...row].forEach((ch, x) => {
+    if (ch === "X") r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${color}"/>`;
+    if (ch === "o") r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${hi}"/>`;
+    if (ch === "d") r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="rgba(0,0,0,.35)"/>`;
+  }));
+  return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+const HEART = [".XX.XX.", "XoXXXXX", "XXXXXXX", ".XXXXX.", "..XXX..", "...X..."];
+const GEM = ["..XX..", ".XoXX.", "XoXXXX", "XXXXXd", ".XXXd.", "..Xd.."];
+const heart = (full) => pixSVG(HEART, full ? "#e83a3a" : "#3a343f", full ? "#ff9d9d" : "#4a4450", 7, 6);
+const gem = (c, h) => pixSVG(GEM, c, h, 6, 6);
+const GEMS = [
+  ["#9a96a0", "#e6e3ea"], ["#f5c542", "#fff4b8"], ["#c0763a", "#ffd2a8"], ["#2fd36c", "#b8ffd0"],
+  ["#3f86f0", "#bcd8ff"], ["#3ad6d6", "#c8ffff"], ["#9b5cf0", "#e2ccff"], ["#ff3b3b", "#ffc4c4"]
+];
+const WIRE = ["#ff4d4d", "#4d9bff", "#3fd47a", "#f5c542", "#c07bff"];
+const LETTERS = ["A", "B", "C", "D", "E"];
+
+/* ---------- geradores auxiliares ---------- */
+function triples(test, max, min) {
+  const out = [];
+  for (let a = min; a <= max; a++) for (let b = a; b <= max; b++) for (let c = b; c <= max; c++) if (test(a, b, c)) out.push([a, b, c]);
+  return out;
+}
+function distinctBlocks(n, min, max, spread) {
+  for (let tries = 0; tries < 400; tries++) {
+    const list = [], vs = new Set();
+    const base = spread ? rnd(18, 60) : 0;
+    let guard = 0;
+    while (list.length < n && guard++ < 400) {
+      const d = [rnd(min, max), rnd(min, max), rnd(min, max)], v = vol(d);
+      if (vs.has(v)) continue;
+      if (spread && Math.abs(v - base) > spread) continue;
+      vs.add(v); list.push(d);
+    }
+    if (list.length === n) return list;
+  }
+  return [[1, 2, 3], [2, 2, 2], [2, 3, 3], [3, 3, 3], [2, 4, 4]].slice(0, n);
+}
+function lampScene(n, lit, open) {
+  const w = Math.max(5, n + 2), cells = [];
+  for (let x = 0; x < w; x++) for (let z = 0; z < 5; z++) {
+    const frame = x === 0 || x === w - 1 || z === 0 || z === 4;
+    if (frame) cells.push({ p: [x, 1, z], tex: "obsidian" });
+    else if (open) cells.push({ p: [x, 1, z], tex: "portal" });
+  }
+  const start = Math.floor((w - n) / 2);
+  for (let i = 0; i < n; i++) cells.push({ p: [start + i, 1, 5], tex: i < lit ? "lampOn" : "lampOff" });
+  for (let x = -1; x < w + 1; x++) for (let y = 0; y < 3; y++) cells.push({ p: [x, y, -1], tex: "cobble" });
+  return { glow: open ? "#4a1a6a" : lit ? "#4a2a10" : "#1a1420", labels: false, cells };
+}
+
+/* ---------- tipos de sala ---------- */
+const TYPES = {
+  muralha: {
+    kind: "answer",
+    gen: (d) => d === 0 ? { L: rnd(3, 4), W: 2, H: rnd(2, 3) } : { L: rnd(3, 5), W: rnd(2, 3), H: rnd(2, 4) },
+    build(p) {
+      const V = p.L * p.W * p.H;
+      return {
+        title: "A Muralha de Pedra",
+        story: "Você acordou no fundo da mina. Uma muralha maciça de pedra fecha o túnel. Cada bloco é um cubo de 1 m de aresta, ou seja, cada bloco tem 1 m³.",
+        data: [["Comprimento", p.L + " blocos"], ["Largura", p.W + " blocos"], ["Altura", p.H + " blocos"]],
+        question: "Qual é o volume da muralha?",
+        unit: "m³", answer: V,
+        hint: `Conte os blocos de uma camada: ${p.L} × ${p.W}. Depois multiplique pelo número de camadas (${p.H}).`,
+        explain: `Uma camada tem ${p.L} × ${p.W} = ${p.L * p.W} blocos. São ${p.H} camadas: ${p.L * p.W} × ${p.H} = ${V} blocos, ou seja, ${V} m³.`,
+        scene: { glow: "#33302c", boxes: [{ o: [0, 0, 0], d: [p.L, p.W, p.H], voxel: true, tex: "cobble", labels: { x: p.L + " m", y: p.W + " m", z: p.H + " m" } }] },
+        nudge(a) {
+          if (near(a, p.L + p.W + p.H)) return "Você somou as medidas. Para o volume, multiplique: comprimento × largura × altura.";
+          if (near(a, p.L * p.W)) return "Esse é o número de blocos de uma camada só. Quantas camadas existem?";
+          if (near(a, 2 * (p.L * p.W + p.L * p.H + p.W * p.H))) return "Você contou os quadradinhos da parte de fora. O volume conta os blocos inteiros, inclusive os escondidos lá dentro.";
+          return null;
+        }
+      };
+    }
+  },
+  cubo: {
+    kind: "answer",
+    gen: (d) => ({ a: d === 0 ? rnd(2, 5) : d === 1 ? rnd(5, 12) : rnd(12, 20) }),
+    build(p) {
+      const V = p.a ** 3;
+      return {
+        title: "O Cofre de Ouro",
+        story: `Um bloco de ouro maciço em forma de cubo tranca o cofre. Todas as arestas medem ${p.a} cm. O cofre só abre quando alguém diz o volume exato do bloco.`,
+        data: [["Aresta do cubo", p.a + " cm"]],
+        question: "Qual é o volume do bloco de ouro?",
+        unit: "cm³", answer: V,
+        hint: `No cubo, comprimento, largura e altura são iguais. V = a × a × a = ${p.a} × ${p.a} × ${p.a}.`,
+        explain: `V = a³ = ${p.a} × ${p.a} × ${p.a} = ${p.a * p.a} × ${p.a} = ${fmt(V)} cm³.`,
+        scene: { glow: "#4a3a12", boxes: [{ o: [0, 0, 0], d: [p.a, p.a, p.a], tex: "gold", labels: { x: p.a + " cm", y: p.a + " cm", z: p.a + " cm" } }] },
+        nudge(a) {
+          if (near(a, 3 * p.a)) return "Você fez a × 3. O volume do cubo é a × a × a (a aresta multiplicada por ela mesma três vezes).";
+          if (near(a, p.a * p.a)) return "Esse é a área de uma face do cubo. Falta multiplicar mais uma vez pela aresta.";
+          if (near(a, 6 * p.a * p.a)) return "Essa é a área de todas as 6 faces. O volume é o espaço de dentro: a × a × a.";
+          if (near(a, 12 * p.a)) return "Você somou as 12 arestas. Para o volume, multiplique a × a × a.";
+          return null;
+        }
+      };
+    }
+  },
+  oficina: {
+    kind: "build",
+    titles: ["A Oficina do Construtor", "O Armazém de Pedra"],
+    gen(d) {
+      if (d === 0) return { mode: 0, T: pick([12, 18, 24, 30]) };
+      if (d === 1) { const g = pick([[24, 2], [24, 3], [36, 3], [48, 2], [48, 3], [72, 3], [32, 2], [64, 4], [60, 5]]); return { mode: 1, T: g[0], h: g[1] }; }
+      const a = rnd(2, 5), h = rnd(2, 6); return { mode: 2, T: a * a * h };
+    },
+    build(p, variant) {
+      const rules = p.mode === 0 ? [["Volume pedido", p.T + " m³"], ["Medida máxima", "8 m por lado"]]
+        : p.mode === 1 ? [["Volume pedido", p.T + " m³"], ["Altura obrigatória", p.h + " m"], ["Medida máxima", "8 m por lado"]]
+        : [["Volume pedido", p.T + " m³"], ["Base", "quadrada (comprimento = largura)"], ["Medida máxima", "8 m por lado"]];
+      const what = variant ? "uma pilha de pedra para o armazém" : "um baú de madeira para guardar as gemas";
+      const rule = p.mode === 0 ? `com exatamente ${p.T} m³` : p.mode === 1 ? `com exatamente ${p.T} m³ e altura de ${p.h} m` : `com exatamente ${p.T} m³ e base quadrada`;
+      const sols = p.mode === 0 ? triples((a, b, c) => a * b * c === p.T, 8, 1).map((t) => t.join(" × "))
+        : p.mode === 1 ? triples((a, b) => a * b * p.h === p.T, 8, 1).filter((t) => t[2] === t[1]).map((t) => `${t[0]} × ${t[1]} × ${p.h}`)
+        : (() => { const o = []; for (let a = 1; a <= 8; a++) for (let h = 1; h <= 8; h++) if (a * a * h === p.T) o.push(`${a} × ${a} × ${h}`); return o; })();
+      const B = p.mode === 1 ? p.T / p.h : 0;
+      return {
+        title: this.titles[variant % 2],
+        story: `Você precisa construir ${what} ${rule}. Use os botões para colocar e tirar blocos de 1 m³.`,
+        data: rules,
+        question: "Monte o bloco e clique em Construir.",
+        tex: variant ? "cobble" : "wood",
+        check(dm) {
+          const V = vol(dm);
+          if (V !== p.T) return { ok: false, vol: false };
+          if (p.mode === 1 && dm[2] !== p.h) return { ok: false, vol: true, why: `a altura precisa ser ${p.h} m` };
+          if (p.mode === 2 && dm[0] !== dm[1]) return { ok: false, vol: true, why: "a base precisa ser quadrada (comprimento igual à largura)" };
+          return { ok: true };
+        },
+        goal: p.mode === 0 ? `Meta: ${p.T} m³` : p.mode === 1 ? `Meta: ${p.T} m³ com altura ${p.h} m` : `Meta: ${p.T} m³ com base quadrada`,
+        hint: p.mode === 0 ? `Procure três números que, multiplicados, dão ${p.T}. Por exemplo, comece com altura 2: a base precisa ter ${p.T} ÷ 2 = ${p.T / 2} blocos.`
+          : p.mode === 1 ? `Com altura ${p.h}, a base (comprimento × largura) precisa ter ${p.T} ÷ ${p.h} = ${B} blocos. Quais dois números multiplicados dão ${B}?`
+          : `Base quadrada é lado × lado. Teste lados 2, 3, 4… e veja se ${p.T} ÷ (lado × lado) dá um número inteiro para a altura.`,
+        explainFor: (dm) => `Você construiu ${dm[0]} × ${dm[1]} × ${dm[2]} = ${p.T} m³. Construções que também funcionam: ${sols.join(", ")}. Formas diferentes, mesmo volume!`
+      };
+    }
+  },
+  paralelepipedo: {
+    kind: "answer",
+    gen: (d) => d === 0 ? { c: rnd(2, 5), l: rnd(2, 4), h: rnd(2, 3) } : d === 1 ? { c: rnd(5, 9), l: rnd(3, 6), h: rnd(2, 5) } : { c: rnd(8, 15), l: rnd(5, 10), h: rnd(3, 8) },
+    build(p) {
+      const V = p.c * p.l * p.h;
+      return {
+        title: "O Depósito de Esmeraldas",
+        story: "Você encontrou um depósito de minério de esmeralda com a forma de um paralelepípedo. Para minerar tudo, precisa saber quanto espaço ele ocupa.",
+        data: [["Comprimento", p.c + " m"], ["Largura", p.l + " m"], ["Altura", p.h + " m"]],
+        question: "Qual é o volume do depósito?",
+        unit: "m³", answer: V,
+        hint: `V = comprimento × largura × altura = ${p.c} × ${p.l} × ${p.h}.`,
+        explain: `Área da base: ${p.c} × ${p.l} = ${p.c * p.l} m². Volume: ${p.c * p.l} × ${p.h} = ${fmt(V)} m³.`,
+        scene: { glow: "#13331f", boxes: [{ o: [0, 0, 0], d: [p.c, p.l, p.h], tex: "emerald", labels: { x: p.c + " m", y: p.l + " m", z: p.h + " m" } }] },
+        nudge(a) {
+          if (near(a, p.c + p.l + p.h)) return "Você somou as medidas. O volume vem da multiplicação: c × l × a.";
+          if (near(a, p.c * p.l)) return "Esse é a área da base. Agora multiplique pela altura.";
+          if (near(a, p.c * p.h) || near(a, p.l * p.h)) return "Você multiplicou só duas medidas. O volume usa as três.";
+          if (near(a, 2 * (p.c * p.l + p.c * p.h + p.l * p.h))) return "Essa é a área da superfície (as 6 faces). O volume mede o espaço de dentro.";
+          return null;
+        }
+      };
+    }
+  },
+  decimal: {
+    kind: "answer",
+    gen: () => ({ c: pick([1.5, 2.5, 3.5, 4.5]), l: rnd(2, 6), h: pick([2, 4, 6]) }),
+    build(p) {
+      const V = p.c * p.l * p.h;
+      return {
+        title: "O Lingote de Cobre",
+        story: "Um lingote gigante de cobre bloqueia o túnel. Uma das medidas não é um número inteiro. Calcule o volume com cuidado: a vírgula também conta!",
+        data: [["Comprimento", fmt(p.c) + " m"], ["Largura", p.l + " m"], ["Altura", p.h + " m"]],
+        question: "Qual é o volume do lingote?",
+        unit: "m³", answer: V,
+        hint: `Multiplique primeiro os inteiros: ${p.l} × ${p.h} = ${p.l * p.h}. Depois faça ${p.l * p.h} × ${fmt(p.c)}. Dica extra: ${fmt(p.c)} é ${Math.floor(p.c)} inteiros e meio.`,
+        explain: `${fmt(p.c)} × ${p.l} × ${p.h} = ${fmt(p.c)} × ${p.l * p.h} = ${fmt(V)} m³.`,
+        scene: { glow: "#3a2010", boxes: [{ o: [0, 0, 0], d: [p.c, p.l, p.h], tex: "copper", labels: { x: fmt(p.c) + " m", y: p.l + " m", z: p.h + " m" } }] },
+        nudge(a) {
+          if (near(a, Math.floor(p.c) * p.l * p.h)) return "Você usou só a parte inteira do comprimento. Não esqueça do meio metro!";
+          if (near(a, Math.ceil(p.c) * p.l * p.h)) return "Você arredondou o comprimento para cima. Use o valor exato com a vírgula.";
+          if (near(a, p.c + p.l + p.h)) return "Você somou as medidas. O volume vem da multiplicação.";
+          if (near(a, p.c * p.l)) return "Esse é a área da base. Agora multiplique pela altura.";
+          return null;
+        }
+      };
+    }
+  },
+  lago: {
+    kind: "answer",
+    gen: (d) => d === 2 ? { c: rnd(8, 15), l: rnd(4, 8), h: rnd(2, 6) } : { c: rnd(5, 10), l: rnd(3, 6), h: rnd(2, 5) },
+    build(p) {
+      const V = p.c * p.l * p.h, base = p.c * p.l;
+      return {
+        title: "O Lago Subterrâneo",
+        story: `Um lago bloqueia a passagem. Ele tem a forma de um paralelepípedo e guarda ${fmt(V)} m³ de água. Antes de mergulhar, você precisa descobrir a profundidade.`,
+        data: [["Volume de água", fmt(V) + " m³"], ["Comprimento", p.c + " m"], ["Largura", p.l + " m"], ["Profundidade", "?"]],
+        question: "Qual é a profundidade do lago?",
+        unit: "m", answer: p.h,
+        hint: `V = c × l × h. Calcule a área do fundo (${p.c} × ${p.l}) e divida o volume por ela.`,
+        explain: `Área do fundo: ${p.c} × ${p.l} = ${base} m². Profundidade: ${fmt(V)} ÷ ${base} = ${p.h} m. Confira: ${p.c} × ${p.l} × ${p.h} = ${fmt(V)} m³.`,
+        scene: { glow: "#132640", boxes: [{ o: [0, 0, 0], d: [p.c, p.l, p.h], tex: "water", labels: { x: p.c + " m", y: p.l + " m", z: "? m" } }] },
+        nudge(a) {
+          if (near(a, base)) return "Esse é a área do fundo do lago. Agora divida o volume por esse número.";
+          if (near(a, V / p.c)) return "Você dividiu só pelo comprimento. Divida o volume pela área do fundo (comprimento × largura).";
+          if (near(a, V / p.l)) return "Você dividiu só pela largura. Divida o volume pela área do fundo (comprimento × largura).";
+          if (near(a, V * base)) return "Aqui é o caminho inverso: em vez de multiplicar, divida o volume pela área do fundo.";
+          return null;
+        }
+      };
+    }
+  },
+  litros: {
+    kind: "answer",
+    gen: (d) => d === 2 ? { c: pick([20, 25, 30, 40, 50]), l: pick([20, 30, 40]), a: pick([20, 25, 30, 40, 50]) } : { c: rnd(3, 8) * 10, l: rnd(2, 5) * 10, a: rnd(3, 6) * 10 },
+    build(p) {
+      const cm3 = p.c * p.l * p.a, L = cm3 / 1000;
+      return {
+        title: "O Rio de Lava",
+        story: "Um rio de lava corta o caminho. Você vai encher um reservatório de água e despejar sobre a lava para virar pedra. As medidas do reservatório estão em centímetros.",
+        data: [["Comprimento", p.c + " cm"], ["Largura", p.l + " cm"], ["Altura", p.a + " cm"], ["Lembre", "1 dm³ = 1 L = 1.000 cm³"]],
+        question: "Quantos litros de água cabem no reservatório?",
+        unit: "L", answer: L,
+        hint: `Passe as medidas para decímetros (10 cm = 1 dm): ${fmt(p.c / 10)} dm, ${fmt(p.l / 10)} dm e ${fmt(p.a / 10)} dm. Multiplique e use 1 dm³ = 1 L.`,
+        explain: `${p.c} × ${p.l} × ${p.a} = ${fmt(cm3)} cm³. Como 1 L = 1.000 cm³: ${fmt(cm3)} ÷ 1.000 = ${fmt(L)} L.`,
+        scene: { glow: "#4a1a08", boxes: [{ o: [0, 0, 0], d: [p.c / 10, p.l / 10, p.a / 10], tex: "water", labels: { x: p.c + " cm", y: p.l + " cm", z: p.a + " cm" } }] },
+        nudge(a) {
+          if (near(a, cm3)) return "Esse é o volume em cm³. Lembre: 1 litro = 1.000 cm³. Divida por 1.000.";
+          if (near(a, cm3 / 100) || near(a, cm3 / 10)) return "Quase. Para passar de cm³ para litros, divida por 1.000.";
+          if (near(a, p.c + p.l + p.a) || near(a, (p.c + p.l + p.a) / 10)) return "Você somou as medidas. O volume vem da multiplicação.";
+          return null;
+        }
+      };
+    }
+  },
+  aresta: {
+    kind: "answer",
+    gen: () => ({ a: rnd(3, 10) }),
+    build(p) {
+      const V = p.a ** 3;
+      return {
+        title: "O Cubo de Diamante",
+        story: `Um cubo de diamante guarda a passagem. A placa diz apenas o volume: ${fmt(V)} cm³. Para cortar uma chave do tamanho certo, você precisa saber a medida da aresta.`,
+        data: [["Volume do cubo", fmt(V) + " cm³"], ["Aresta", "?"]],
+        question: "Quanto mede a aresta do cubo?",
+        unit: "cm", answer: p.a,
+        hint: `Procure um número que, multiplicado por ele mesmo três vezes, dá ${fmt(V)}. Teste: 4 × 4 × 4 = 64, 5 × 5 × 5 = 125…`,
+        explain: `${p.a} × ${p.a} × ${p.a} = ${fmt(V)}. Então a aresta mede ${p.a} cm.`,
+        scene: { glow: "#103a3a", boxes: [{ o: [0, 0, 0], d: [p.a, p.a, p.a], tex: "diamond", labels: { x: "? cm", y: "? cm", z: "? cm" } }] },
+        nudge(a) {
+          if (near(a, V / 3)) return "Você dividiu o volume por 3. A aresta é o número que, multiplicado por ele mesmo 3 vezes, dá o volume.";
+          if (near(a * a, V)) return "Esse número vezes ele mesmo dá o volume, mas no cubo multiplicamos três vezes: a × a × a.";
+          if (a > 0 && a === Math.round(a) && a ** 3 !== V) return `Teste: ${a} × ${a} × ${a} = ${fmt(a ** 3)}. ${a ** 3 < V ? "Ficou pequeno, tente um número maior." : "Passou, tente um número menor."}`;
+          return null;
+        }
+      };
+    }
+  },
+  caixa: {
+    kind: "answer",
+    gen: () => ({ c: rnd(2, 4), l: rnd(1, 3), h: pick([1, 2]) }),
+    build(p) {
+      const m3 = p.c * p.l * p.h, L = m3 * 1000;
+      return {
+        title: "A Caixa d'Água da Vila",
+        story: "Na saída da mina existe uma vila sem água. Você construiu uma caixa d'água em forma de paralelepípedo. Os moradores querem saber quantos litros ela guarda.",
+        data: [["Comprimento", p.c + " m"], ["Largura", p.l + " m"], ["Altura", p.h + " m"], ["Lembre", "1 m³ = 1.000 L"]],
+        question: "Quantos litros cabem na caixa d'água?",
+        unit: "L", answer: L,
+        hint: `Primeiro calcule o volume em m³: ${p.c} × ${p.l} × ${p.h}. Depois multiplique por 1.000, porque cada m³ guarda 1.000 litros.`,
+        explain: `${p.c} × ${p.l} × ${p.h} = ${m3} m³. Como 1 m³ = 1.000 L: ${m3} × 1.000 = ${fmt(L)} L.`,
+        scene: { glow: "#132640", boxes: [{ o: [0, 0, 0], d: [p.c, p.l, p.h], tex: "water", labels: { x: p.c + " m", y: p.l + " m", z: p.h + " m" } }] },
+        nudge(a) {
+          if (near(a, m3)) return "Esse é o volume em m³. Falta transformar em litros: cada m³ tem 1.000 L.";
+          if (near(a, m3 * 100) || near(a, m3 * 10)) return "Quase! 1 m³ guarda 1.000 litros. Multiplique por 1.000.";
+          if (near(a, m3 / 1000)) return "Você dividiu. De m³ para litros o número fica maior: multiplique por 1.000.";
+          return null;
+        }
+      };
+    }
+  },
+  composto: {
+    kind: "answer",
+    gen: (d) => { const W = d === 2 ? rnd(4, 6) : rnd(3, 5); return { L: d === 2 ? rnd(6, 9) : rnd(5, 7), W, H: rnd(1, 2), s: rnd(2, Math.min(3, W)), h: rnd(3, 5) }; },
+    build(p) {
+      const vb = p.L * p.W * p.H, vt = p.s * p.s * p.h, V = vb + vt;
+      return {
+        title: "A Torre de Obsidiana",
+        story: `Uma torre de obsidiana guarda o caminho: uma base em forma de paralelepípedo com uma torre de base quadrada em cima (a torre mede ${p.s} m × ${p.s} m × ${p.h} m). Para subir, diga o volume total de obsidiana.`,
+        data: [["Base", `${p.L} m × ${p.W} m × ${p.H} m`], ["Torre", `${p.s} m × ${p.s} m × ${p.h} m`]],
+        question: "Qual é o volume total da construção?",
+        unit: "m³", answer: V,
+        hint: "Divida o sólido em dois blocos. Calcule o volume da base e o da torre separadamente e depois some.",
+        explain: `Base: ${p.L} × ${p.W} × ${p.H} = ${vb} m³. Torre: ${p.s} × ${p.s} × ${p.h} = ${vt} m³. Total: ${vb} + ${vt} = ${fmt(V)} m³.`,
+        scene: { glow: "#2a1440", boxes: [
+          { o: [0, 0, 0], d: [p.L, p.W, p.H], tex: "obsidian", labels: { x: p.L + " m", y: p.W + " m", z: p.H + " m" } },
+          { o: [0, 0, p.H], d: [p.s, p.s, p.h], tex: "obsidian", labels: { z: p.h + " m" } }
+        ] },
+        nudge(a) {
+          if (near(a, vb)) return "Esse é só o volume da base. Some o volume da torre.";
+          if (near(a, vt)) return "Esse é só o volume da torre. Some o volume da base.";
+          if (near(a, p.L * p.W * (p.H + p.h))) return "A torre não cobre a base inteira. Calcule base e torre separadamente e some.";
+          if (near(a, vb * vt)) return "Os dois blocos devem ser somados, não multiplicados.";
+          return null;
+        }
+      };
+    }
+  },
+  pares: {
+    kind: "pairs",
+    titles: ["A Central de Fios", "A Sala dos Fios Cruzados"],
+    gen(d) {
+      const n = d === 2 ? 5 : 4;
+      const blocks = distinctBlocks(n, d === 2 ? 2 : 1, d === 2 ? 7 : 5, d === 2 ? 24 : 0).map((dm) => ({ d: dm, v: vol(dm), tex: pick(CARD_TEX) }));
+      return { blocks, values: shuffle(blocks.map((b) => b.v)) };
+    },
+    build(p, variant) {
+      return {
+        title: this.titles[variant % 2],
+        story: variant
+          ? "Os fios desta sala foram todos arrancados por uma explosão. Cada bloco precisa ser ligado à lâmpada com o seu volume. Escolha um bloco e depois clique na lâmpada certa."
+          : "As luzes da mina se apagaram. Cada bloco de energia precisa ser ligado, por um fio, à lâmpada que mostra o seu volume. Escolha um bloco e depois clique na lâmpada certa.",
+        data: [["Blocos", String(p.blocks.length)], ["Fios", "um por bloco"]],
+        question: "Ligue cada bloco ao seu volume e teste os fios.",
+        act: "Testar os fios",
+        hint: "Calcule o volume de cada bloco (comprimento × largura × altura) e anote do lado. Depois é só procurar o número igual entre as lâmpadas.",
+        explainAll: p.blocks.map((b, i) => `${LETTERS[i]}: ${dimTxt(b.d)} = ${b.v} m³`).join(" · ")
+      };
+    }
+  },
+  vagoes: {
+    kind: "order",
+    titles: ["Os Vagões da Mina", "O Trem de Carga"],
+    gen(d) {
+      const n = d === 2 ? 5 : 4;
+      const blocks = distinctBlocks(n, d === 2 ? 2 : 1, d === 2 ? 6 : 5, d === 2 ? 20 : 0).map((dm) => ({ d: dm, v: vol(dm), tex: pick(CARD_TEX) }));
+      return { blocks };
+    },
+    build(p, variant) {
+      return {
+        title: this.titles[variant % 2],
+        story: variant
+          ? "Um trem de carga vai levar seus blocos até a superfície. Para não tombar, os vagões precisam ir do menor para o maior volume. Clique nos blocos na ordem certa."
+          : "Um carrinho de mina só anda se a carga estiver organizada: do bloco de menor volume para o de maior volume. Clique nos blocos na ordem certa.",
+        data: [["Vagões", String(p.blocks.length)], ["Ordem", "do menor para o maior volume"]],
+        question: "Coloque os blocos no trem, do menor para o maior volume.",
+        act: "Mandar o trem",
+        hint: "Calcule o volume de cada bloco. Cuidado: o bloco mais comprido nem sempre é o de maior volume!",
+        explainAll: p.blocks.slice().sort((a, b) => a.v - b.v).map((b) => `${dimTxt(b.d)} = ${b.v} m³`).join(" → ")
+      };
+    }
+  },
+  circuito: {
+    kind: "circuit",
+    gen(d) {
+      const cfg = [
+        { Ts: [12, 18, 24], max: 6, need: 2, total: 4, minBad: 1, range: 6 },
+        { Ts: [24, 36, 48], max: 8, need: 3, total: 6, minBad: 2, range: 10 },
+        { Ts: [24, 48], max: 8, need: 4, total: 8, minBad: 2, range: 10 }
+      ][d];
+      const T = pick(cfg.Ts);
+      const good = shuffle(triples((a, b, c) => a * b * c === T, cfg.max, 1)).slice(0, cfg.need);
+      const bad = shuffle(triples((a, b, c) => { const v = a * b * c; return v !== T && Math.abs(v - T) <= cfg.range; }, cfg.max, cfg.minBad)).slice(0, cfg.total - good.length);
+      const cards = shuffle([...good.map((dm) => ({ d: shuffle(dm), ok: true, tex: pick(CARD_TEX) })), ...bad.map((dm) => ({ d: shuffle(dm), ok: false, tex: pick(CARD_TEX) }))]);
+      return { T, cards, need: good.length };
+    },
+    build(p, variant, last) {
+      return {
+        title: last ? "O Circuito do Portal" : "A Porta Elétrica",
+        story: last
+          ? `O portal de saída está montado, mas sem energia. Ele tem ${p.need} lâmpadas, e cada uma só acende com um bloco de exatamente ${p.T} m³. Ligue as alavancas dos blocos certos e depois ligue a energia. Bloco errado dá curto-circuito!`
+          : `Uma porta de ferro só abre com energia. Ela tem ${p.need} lâmpadas, e cada uma acende com um bloco de exatamente ${p.T} m³. Ligue as alavancas certas e depois ligue a energia. Bloco errado dá curto-circuito!`,
+        data: [["Volume da energia", p.T + " m³"], ["Lâmpadas", String(p.need)]],
+        question: `Ligue somente os blocos com volume de ${p.T} m³.`,
+        act: "Ligar energia",
+        hint: "Calcule o volume de cada bloco (comprimento × largura × altura). Blocos com formas bem diferentes podem ter o mesmo volume!",
+        explainAll: p.cards.map((c) => `${dimTxt(c.d)} = ${vol(c.d)} m³`).join(" · ")
+      };
+    }
+  }
+};
+
+const LEVELS = {
+  facil: { name: "Fácil", d: 0, color: "var(--easy)", rooms: ["muralha", "cubo", "oficina", "paralelepipedo", "circuito"] },
+  medio: { name: "Médio", d: 1, color: "var(--mid)", rooms: ["muralha", "cubo", "oficina", "paralelepipedo", "pares", "lago", "vagoes", "litros", "composto", "circuito"] },
+  dificil: { name: "Difícil", d: 2, color: "var(--hard)", rooms: ["cubo", "oficina", "decimal", "pares", "lago", "vagoes", "aresta", "circuito", "litros", "oficina", "caixa", "pares", "composto", "vagoes", "circuito"] }
+};
+
+/* ---------- estado ---------- */
+let state = null;
+let selLevel = "facil";
+try { const s = localStorage.getItem("mina-nivel"); if (LEVELS[s]) selLevel = s; } catch (e) {}
+
+function buildSlots(level) {
+  const seen = {};
+  return LEVELS[level].rooms.map((type) => { const variant = seen[type] || 0; seen[type] = variant + 1; return { type, variant }; });
+}
+function freshState(level) {
+  level = level || selLevel;
+  const slots = buildSlots(level), d = LEVELS[level].d;
+  return {
+    v: 2, screen: "start", level, name: "", room: 0, hearts: 5, xp: 0, errors: 0, hints: 0, respawns: 0,
+    start: 0, end: 0, slots, params: slots.map((s) => TYPES[s.type].gen(d)),
+    solved: false, wrong: 0, hint: false, gems: 0, lastFeedback: null, lastAnswer: "",
+    build: [1, 1, 1], levers: [], lit: 0, sel: -1, links: [], locked: [], order: [], tested: false
+  };
+}
+function resetRoom() {
+  Object.assign(state, { solved: false, wrong: 0, hint: false, lastFeedback: null, lastAnswer: "", build: [1, 1, 1], levers: [], lit: 0, sel: -1, links: [], locked: [], order: [], tested: false });
+}
+const N = () => state.slots.length;
+const slot = () => state.slots[state.room];
+const kind = () => TYPES[slot().type].kind;
+const P = () => state.params[state.room];
+const room = () => TYPES[slot().type].build(P(), slot().variant, state.room === N() - 1);
+
+/* ---------- vistas ---------- */
+const viewStart = makeView($("cvStart"));
+const viewGame = makeView($("cvGame"));
+let cardViews = [], cardsKey = "";
+
+function drawStart() {
+  viewStart.draw({
+    glow: "#2a3a22", labels: false,
+    boxes: [
+      { o: [0, 0, 0], d: [5, 4, 1], voxel: true, tex: "grass" },
+      { o: [0, 0, 1], d: [2, 2, 2], voxel: true, tex: "cobble" }
+    ],
+    cells: [
+      { p: [3, 0, 1], tex: "wood" }, { p: [3, 2, 1], tex: "gold" }, { p: [4, 3, 1], tex: "emerald" },
+      { p: [4, 0, 1], tex: "lampOn" }, { p: [0, 3, 1], tex: "diamond" }, { p: [2, 3, 1], tex: "copper" }
+    ]
+  });
+}
+
+function fmtTime(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+}
+function renderBar() {
+  $("hearts").innerHTML = Array.from({ length: 5 }, (_, i) => heart(i < state.hearts)).join("");
+  $("hearts").setAttribute("aria-label", state.hearts + " de 5 corações");
+  $("xp").textContent = state.xp;
+  const t = state.screen === "start" ? 0 : (state.end || Date.now()) - state.start;
+  $("time").textContent = fmtTime(t);
+  $("btnSound").textContent = soundOn ? "SOM: LIGADO" : "SOM: DESLIGADO";
+  $("btnSound").setAttribute("aria-pressed", String(soundOn));
+  const chip = $("lvlChip");
+  chip.hidden = state.screen === "start";
+  chip.textContent = LEVELS[state.level].name.toUpperCase();
+  chip.style.color = LEVELS[state.level].color;
+}
+function hotbarHTML(fresh) {
+  return state.slots.map((s, i) => {
+    const g = GEMS[i % GEMS.length], has = i < state.gems;
+    const cls = "slot" + (state.screen === "game" && i === state.room && !state.solved ? " now" : "") + (fresh && i === state.gems - 1 ? " fresh" : "");
+    return `<div class="${cls}" title="Sala ${i + 1}">${has ? gem(g[0], g[1]) : ""}<span class="n">${i + 1}</span></div>`;
+  }).join("");
+}
+function paintHotbar(el, fresh) {
+  el.innerHTML = hotbarHTML(fresh);
+  el.classList.toggle("many", N() > 10);
+}
+function showScreen() {
+  $("screenStart").hidden = state.screen !== "start";
+  $("screenGame").hidden = state.screen !== "game";
+  $("screenWin").hidden = state.screen !== "win";
+}
+function renderLevels() {
+  document.querySelectorAll(".lvl").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.lv === selLevel)));
+}
+
+/* ----- cartas ----- */
+function ensureCards(items, ctl, cols) {
+  const wrap = $("cards");
+  const key = state.level + ":" + state.room + ":" + JSON.stringify(items.map((c) => c.d));
+  if (key !== cardsKey) {
+    cardViews.forEach((v) => v.stop());
+    cardViews = [];
+    wrap.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+    wrap.innerHTML = items.map((c, i) => `
+      <div class="card" data-i="${i}">
+        <div class="mini"><canvas aria-hidden="true"></canvas></div>
+        <div class="dims">${c.letter ? `<span class="letter">${c.letter}</span> ` : ""}${c.d.map(fmt).join(" × ")} m</div>
+        ${ctl(i)}
+        <div class="wire"></div>
+      </div>`).join("");
+    cardsKey = key;
+    wrap.querySelectorAll(".card").forEach((el, i) => {
+      const v = makeView(el.querySelector("canvas"), { mini: true });
+      v.draw({ glow: "#2a1820", labels: false, boxes: [{ o: [0, 0, 0], d: items[i].d, tex: items[i].tex }] });
+      cardViews.push(v);
+    });
+  }
+  return [...wrap.querySelectorAll(".card")];
+}
+function clearCards() {
+  cardViews.forEach((v) => v.stop());
+  cardViews = []; cardsKey = "";
+  $("cards").innerHTML = "";
+}
+
+/* ----- modos ----- */
+function renderBuilder(r) {
+  const d = state.build, V = vol(d);
+  [0, 1, 2].forEach((i) => { $("b" + i).textContent = d[i]; });
+  document.querySelectorAll(".sbtn").forEach((b) => {
+    const i = +b.dataset.dim, s = +b.dataset.d;
+    b.disabled = state.solved || (s < 0 && d[i] <= 1) || (s > 0 && d[i] >= 8);
+  });
+  $("live").innerHTML = `Volume: ${d[0]} × ${d[1]} × ${d[2]} = ${V} m³<small>${r.goal}</small>`;
+  $("btnBuild").disabled = state.solved;
+  viewGame.draw({
+    glow: "#3a2410",
+    fit: { o: [0, 0, 0], d: [Math.max(d[0], 3), Math.max(d[1], 3), Math.max(d[2], 3)] },
+    boxes: [{ o: [0, 0, 0], d: d.slice(), voxel: true, tex: r.tex, labels: { x: d[0] + " m", y: d[1] + " m", z: d[2] + " m" } }]
+  });
+}
+
+function renderCircuit() {
+  const p = P();
+  if (state.levers.length !== p.cards.length) state.levers = p.cards.map(() => false);
+  const els = ensureCards(p.cards, (i) => `<button class="ctl" type="button" data-i="${i}" aria-pressed="false"><span class="lv"><i></i></span><span class="lt">DESLIGADA</span></button>`, p.cards.length === 6 ? 3 : 4);
+  els.forEach((el, i) => {
+    const on = state.levers[i];
+    el.style.setProperty("--wc", "var(--power)");
+    el.classList.toggle("on", on);
+    el.classList.toggle("check-ok", state.solved && p.cards[i].ok);
+    el.classList.toggle("check-bad", state.solved && !p.cards[i].ok);
+    const b = el.querySelector(".ctl");
+    b.setAttribute("aria-pressed", String(on));
+    b.querySelector(".lt").textContent = on ? "LIGADA" : "DESLIGADA";
+    b.disabled = state.solved;
+    b.setAttribute("aria-label", `Alavanca do bloco ${dimTxt(p.cards[i].d)}: ${on ? "ligada" : "desligada"}`);
+  });
+  $("extra").innerHTML = "";
+  viewGame.draw(lampScene(p.need, state.solved ? p.need : state.lit, state.solved && state.room === N() - 1));
+}
+
+function renderPairs() {
+  const p = P(), n = p.blocks.length;
+  if (state.links.length !== n) { state.links = Array(n).fill(-1); state.locked = Array(n).fill(false); }
+  const items = p.blocks.map((b, i) => Object.assign({ letter: LETTERS[i] }, b));
+  const els = ensureCards(items, (i) => `<button class="ctl" type="button" data-i="${i}">ESCOLHER</button>`, n === 5 ? 5 : 4);
+  els.forEach((el, i) => {
+    el.style.setProperty("--wc", WIRE[i]);
+    const linked = state.links[i] >= 0;
+    el.classList.toggle("on", linked);
+    el.classList.toggle("sel", state.sel === i);
+    el.classList.toggle("check-ok", state.locked[i]);
+    const b = el.querySelector(".ctl");
+    b.textContent = state.locked[i] ? "CERTO" : state.sel === i ? "AGORA A LÂMPADA" : linked ? "TROCAR FIO" : "ESCOLHER";
+    b.disabled = state.solved || state.locked[i];
+    b.setAttribute("aria-label", `Bloco ${LETTERS[i]}, ${dimTxt(p.blocks[i].d)}${linked ? ", ligado a " + p.values[state.links[i]] + " metros cúbicos" : ""}`);
+  });
+  const owner = (j) => state.links.indexOf(j);
+  $("extra").innerHTML = `<div class="vals">${p.values.map((v, j) => {
+    const o = owner(j), lk = o >= 0 && state.locked[o];
+    return `<button class="val${o >= 0 ? " linked" : ""}${lk ? " locked" : ""}" type="button" data-v="${j}" style="--wc:${o >= 0 ? WIRE[o] : "var(--stone)"}" ${state.solved || lk ? "disabled" : ""} aria-label="Lâmpada de ${v} metros cúbicos${o >= 0 ? ", ligada ao bloco " + LETTERS[o] : ""}"><span>${v} m³</span><span class="plug">${o >= 0 ? LETTERS[o] : "·"}</span></button>`;
+  }).join("")}</div>`;
+  const lit = state.solved ? n : state.locked.filter(Boolean).length;
+  viewGame.draw(lampScene(n, lit, false));
+}
+
+function renderOrder() {
+  const p = P(), n = p.blocks.length;
+  const els = ensureCards(p.blocks, (i) => `<button class="ctl" type="button" data-i="${i}">COLOCAR</button>`, n === 5 ? 5 : 4);
+  els.forEach((el, i) => {
+    const pos = state.order.indexOf(i);
+    el.style.setProperty("--wc", "var(--gold)");
+    el.classList.toggle("on", pos >= 0);
+    const b = el.querySelector(".ctl");
+    b.innerHTML = pos >= 0 ? `<span class="pos-num">${pos + 1}º</span> TIRAR` : "COLOCAR";
+    b.disabled = state.solved;
+    b.setAttribute("aria-label", `Bloco ${dimTxt(p.blocks[i].d)}${pos >= 0 ? ", vagão " + (pos + 1) + ". Clique para tirar" : ". Clique para colocar no trem"}`);
+  });
+  $("extra").innerHTML = `<div class="track" aria-label="Trem">${state.order.length ? state.order.map((i, k) => `<span class="car"><b>${k + 1}º</b>${dimTxt(p.blocks[i].d)}</span>`).join("") : '<span class="empty-t">O trem está vazio. Clique em COLOCAR no bloco de menor volume.</span>'}</div>`;
+  // cena: trilho com os blocos na ordem escolhida
+  const boxes = [];
+  let x = 0;
+  const placed = state.order.map((i) => p.blocks[i]);
+  const total = placed.reduce((s, b) => s + b.d[0] + 1, 0) || 8;
+  boxes.push({ o: [-0.6, -0.4, -0.35], d: [Math.max(total, 8) + 0.6, 1.2 + Math.max(0, ...placed.map((b) => b.d[1])) , 0.35], tex: "rail" });
+  placed.forEach((b) => { boxes.push({ o: [x, 0, 0], d: b.d, tex: b.tex }); x += b.d[0] + 1; });
+  viewGame.draw({ glow: "#3a2a14", labels: false, boxes, fit: { o: [0, 0, 0], d: [8, 3, 3] } });
+}
+
+function renderRoom(fresh) {
+  const r = room(), k = kind();
+  const badges = { build: "OFICINA · CONSTRUA", circuit: "CIRCUITO · LIGUE", pairs: "FIOS · LIGUE", order: "VAGÕES · ORGANIZE" };
+  $("badge").textContent = badges[k] || "SALA " + (state.room + 1);
+  $("badge").classList.toggle("new", k !== "answer");
+  $("roomNo").textContent = `Sala ${state.room + 1} de ${N()} · ${LEVELS[state.level].name}`;
+  $("roomTitle").textContent = r.title;
+  $("story").textContent = r.story;
+  $("data").innerHTML = r.data.map((d) => `<li><span>${d[0]}</span><span>${d[1]}</span></li>`).join("");
+  $("question").textContent = r.question;
+  const cardMode = k === "circuit" || k === "pairs" || k === "order";
+  $("form").hidden = k !== "answer";
+  $("builder").hidden = k !== "build";
+  $("interact").hidden = !cardMode;
+  $("cards").hidden = !cardMode;
+  if (!cardMode) clearCards();
+  if (k === "answer") {
+    $("unit").textContent = r.unit;
+    $("answer").value = state.lastAnswer || "";
+    $("answer").disabled = state.solved;
+    $("btnSubmit").disabled = state.solved;
+    viewGame.draw(r.scene);
+  } else if (k === "build") renderBuilder(r);
+  else {
+    $("btnAct").textContent = r.act;
+    $("btnAct").className = "btn " + (k === "circuit" ? "btn-power" : "btn-go");
+    $("btnAct").disabled = state.solved;
+    if (k === "circuit") renderCircuit();
+    else if (k === "pairs") renderPairs();
+    else renderOrder();
+  }
+  $("btnHint").hidden = state.solved;
+  $("btnHint").disabled = state.hint;
+  $("btnHint").textContent = state.hint ? "Dica usada" : "Pedir dica";
+  $("btnNext").hidden = !state.solved;
+  $("btnNext").textContent = state.room === N() - 1 ? "Atravessar o portal" : "Próxima sala";
+  $("hint").hidden = !state.hint;
+  $("hint").innerHTML = state.hint ? "<b>DICA</b>" + r.hint : "";
+  renderFeedback();
+  paintHotbar($("hotbar"), fresh);
+}
+function renderFeedback() {
+  const fb = $("feedback"), f = state.lastFeedback;
+  fb.hidden = !f;
+  if (!f) return;
+  fb.className = "feedback " + f.kind;
+  fb.innerHTML = `<b>${f.head}</b><span class="calc">${f.text}</span>`;
+}
+function render(fresh) {
+  showScreen(); renderBar();
+  if (state.screen === "start") { drawStart(); renderLevels(); $("playerName").value = state.name || ""; }
+  if (state.screen === "game") renderRoom(fresh);
+  if (state.screen === "win") renderWin();
+}
+function renderWin() {
+  paintHotbar($("hotbarWin"), false);
+  const lv = LEVELS[state.level];
+  $("wName").textContent = (state.name || "Minerador(a) sem nome") + " escapou da Mina Cúbica";
+  $("wDate").textContent = `Nível ${lv.name} · ${N()} salas vencidas · ${new Date(state.end || Date.now()).toLocaleDateString("pt-BR")}`;
+  $("wXp").textContent = state.xp;
+  $("wTime").textContent = fmtTime(state.end - state.start);
+  $("wErr").textContent = state.errors;
+  $("wHint").textContent = state.hints;
+  let rank;
+  if (state.errors === 0 && state.hints === 0) rank = "Título: Mestre Construtor. Nenhum erro e nenhuma dica!";
+  else if (state.errors <= Math.ceil(N() / 4)) rank = "Título: Minerador Experiente. Mandou muito bem nos volumes.";
+  else rank = "Título: Aventureiro Corajoso. Você não desistiu até o portal abrir.";
+  if (state.respawns) rank += ` (renasceu ${state.respawns}×)`;
+  if (state.level !== "dificil" && state.errors <= Math.ceil(N() / 4)) rank += ` Que tal tentar o nível ${state.level === "facil" ? "Médio" : "Difícil"}?`;
+  $("wRank").textContent = rank;
+  const note = $("saveNote");
+  const msgs = {
+    saving: "Gravando seu nome no Mural dos Mineradores…",
+    shared: "Seu resultado foi gravado no Mural dos Mineradores.",
+    local: "Seu resultado foi gravado no mural deste aparelho. Use o botão Copiar meu resultado e envie ao professor."
+  };
+  note.textContent = msgs[state.saveStatus] || "";
+  note.classList.toggle("ok", state.saveStatus === "shared");
+}
+
+/* ---------- Mural dos Mineradores ---------- */
+const LOCAL_KEY = "mina-mural";
+const Mural = { db: null, uid: null, owner: false, shared: null, failed: false, mode: "loading", tab: "facil" };
+
+function better(a, b) {
+  if (!a) return b;
+  if (!b) return a;
+  if (b.xp !== a.xp) return b.xp > a.xp ? b : a;
+  return b.time < a.time ? b : a;
+}
+function readLocal() {
+  try { const v = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function localRows(level) {
+  const by = {};
+  readLocal().forEach((r) => {
+    if ((r.level || "medio") !== level) return;
+    const k = (r.name || "").toLowerCase();
+    const row = by[k] || (by[k] = { id: "local-" + k, name: r.name, plays: 0, best: null, updated: r.date });
+    row.plays++; row.best = better(row.best, r);
+    if (r.date > row.updated) row.updated = r.date;
+  });
+  return Object.values(by);
+}
+function sharedRows(level) {
+  return (Mural.shared || []).map((doc) => {
+    const levels = doc.levels || (doc.best ? { medio: { best: doc.best, plays: doc.plays, updated: doc.updated } } : {});
+    const L = levels[level];
+    if (!L || !L.best) return null;
+    return { id: doc.id, name: doc.name, best: L.best, plays: L.plays || 1, updated: L.updated || doc.updated };
+  }).filter(Boolean);
+}
+function renderMural() {
+  const shared = Mural.db && Mural.shared && !Mural.failed;
+  const lvName = LEVELS[Mural.tab].name;
+  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === Mural.tab)));
+  const rows = (shared ? sharedRows(Mural.tab) : localRows(Mural.tab)).filter((r) => r.best);
+  rows.sort((a, b) => (b.best.xp - a.best.xp) || (a.best.time - b.best.time));
+  const cnt = `${rows.length} minerador${rows.length === 1 ? "" : "es"} no nível ${lvName}`;
+  $("muralMode").textContent = Mural.mode === "loading" ? "Carregando…" : shared ? cnt + " · mural da turma" : cnt + " · só deste aparelho";
+  $("muralNote").textContent = shared
+    ? "Todos que escaparam da mina ficam registrados aqui, com o melhor resultado de cada um em cada nível. A lista atualiza sozinha."
+    : "Este mural mostra quem jogou neste aparelho (computador ou celular). Para juntar a turma toda, peça que cada aluno use o botão Copiar meu resultado no fim do jogo.";
+  const showDel = shared && Mural.owner;
+  const head = $("muralHead");
+  if (showDel && !head.querySelector(".th-del")) head.insertAdjacentHTML("beforeend", '<th class="th-del">Apagar</th>');
+  if (!showDel) head.querySelector(".th-del")?.remove();
+  const body = $("muralBody");
+  body.textContent = "";
+  if (!rows.length) {
+    const tr = document.createElement("tr"), td = document.createElement("td");
+    td.className = "empty"; td.colSpan = showDel ? 8 : 7;
+    td.textContent = `Ninguém escapou no nível ${lvName} ainda. Seja o primeiro!`;
+    tr.appendChild(td); body.appendChild(tr); return;
+  }
+  rows.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    const mine = shared ? r.id === Mural.uid : state.screen === "win" && state.level === Mural.tab && (r.name || "").toLowerCase() === (state.name || "Sem nome").toLowerCase();
+    if (mine) tr.className = "me";
+    [[String(i + 1), "pos"], [r.name || "Sem nome", "nm"], [String(r.best.xp), ""], [fmtTime(r.best.time), ""], [String(r.best.errors), ""], [String(r.plays || 1), ""], [r.updated ? new Date(r.updated).toLocaleDateString("pt-BR") : "—", ""]]
+      .forEach(([t, c]) => { const td = document.createElement("td"); td.textContent = t; if (c) td.className = c; tr.appendChild(td); });
+    if (showDel) {
+      const td = document.createElement("td"), b = document.createElement("button");
+      b.className = "del"; b.type = "button"; b.textContent = "APAGAR"; b.dataset.id = r.id;
+      b.setAttribute("aria-label", `Apagar o resultado de ${r.name || "sem nome"} no nível ${lvName}`);
+      td.appendChild(b); tr.appendChild(td);
+    }
+    body.appendChild(tr);
+  });
+}
+document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => { Mural.tab = t.dataset.tab; renderMural(); }));
+$("muralBody").addEventListener("click", async (e) => {
+  const b = e.target.closest(".del");
+  if (!b || !Mural.db) return;
+  if (!b.classList.contains("armed")) {
+    b.classList.add("armed"); b.textContent = "CONFIRMAR?";
+    setTimeout(() => { if (b.isConnected) { b.classList.remove("armed"); b.textContent = "APAGAR"; } }, 4000);
+    return;
+  }
+  b.disabled = true; b.textContent = "…";
+  try {
+    const ref = Mural.db.doc("jogadas/" + b.dataset.id);
+    const snap = await ref.get();
+    if (!snap.exists) return;
+    const doc = JSON.parse(JSON.stringify(snap.data()));
+    const levels = doc.levels || (doc.best ? { medio: { best: doc.best, plays: doc.plays, updated: doc.updated, runs: doc.runs } } : {});
+    delete levels[Mural.tab];
+    if (!Object.keys(levels).length) await ref.delete();
+    else await ref.set({ name: doc.name, updated: doc.updated, levels });
+  } catch (err) { b.disabled = false; b.classList.remove("armed"); b.textContent = "ERRO"; }
+});
+
+async function initMural() {
+  renderMural();
+  const use = window.claude && typeof window.claude.use === "function" ? window.claude.use : null;
+  if (!use) { Mural.mode = "local"; renderMural(); return; }
+  try {
+    const [db, user] = await Promise.all([use("db"), use("user")]);
+    if (user) { Mural.uid = await user.id(); Mural.owner = await user.isOwner(); }
+    Mural.db = db;
+    if (db) {
+      db.collection("jogadas").onSnapshot((snap) => {
+        Mural.shared = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+        Mural.mode = "shared"; renderMural();
+      }, () => { Mural.failed = true; Mural.mode = "local"; renderMural(); });
+    } else Mural.mode = "local";
+  } catch (e) { Mural.mode = "local"; }
+  renderMural();
+}
+
+async function saveRun() {
+  if (state.saved) return;
+  state.saved = true;
+  const run = { name: state.name || "Sem nome", level: state.level, xp: state.xp, time: state.end - state.start, errors: state.errors, hints: state.hints, date: new Date(state.end).toISOString() };
+  try { const list = readLocal(); list.push(run); localStorage.setItem(LOCAL_KEY, JSON.stringify(list.slice(-300))); } catch (e) {}
+  state.saveStatus = "saving"; renderWin(); renderMural();
+  let ok = false;
+  if (Mural.db && Mural.uid && !Mural.failed) {
+    try {
+      const ref = Mural.db.doc("jogadas/" + Mural.uid);
+      const snap = await ref.get();
+      const prev = snap.exists ? JSON.parse(JSON.stringify(snap.data())) : {};
+      const levels = prev.levels || (prev.best ? { medio: { best: prev.best, plays: prev.plays, updated: prev.updated, runs: prev.runs } } : {});
+      const L = levels[state.level] || {};
+      levels[state.level] = { best: better(L.best, run), plays: (L.plays || 0) + 1, updated: run.date, runs: (Array.isArray(L.runs) ? L.runs : []).concat([run]).slice(-20) };
+      await ref.set({ name: run.name, updated: run.date, levels });
+      ok = true;
+    } catch (e) { ok = false; }
+  }
+  state.saveStatus = ok ? "shared" : "local";
+  if (state.screen === "win") renderWin();
+  renderMural();
+}
+
+function resultText() {
+  return `Fuga da Mina Cúbica | ${state.name || "Sem nome"} | nível ${LEVELS[state.level].name} | XP ${state.xp} | tempo ${fmtTime(state.end - state.start)} | erros ${state.errors} | dicas ${state.hints} | ${new Date(state.end).toLocaleDateString("pt-BR")}`;
+}
+$("btnCopy").addEventListener("click", () => {
+  const text = resultText(), box = $("copyText");
+  const showBox = () => {
+    box.textContent = text; box.hidden = false;
+    const rng = document.createRange(); rng.selectNodeContents(box);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(rng);
+  };
+  try {
+    navigator.clipboard.writeText(text).then(() => { $("btnCopy").textContent = "Copiado!"; box.hidden = true; }, showBox);
+  } catch (e) { showBox(); }
+});
+
+/* ---------- ações ---------- */
+function parseAnswer(s) {
+  s = String(s).trim().replace(/\s/g, "");
+  if (!s) return NaN;
+  if (s.includes(",")) s = s.replace(/\./g, "").replace(",", ".");
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, "");
+  return Number(s);
+}
+
+function win(explain) {
+  const gain = Math.max(10, 30 - 10 * state.wrong - (state.hint ? 10 : 0));
+  state.xp += gain; state.solved = true; state.gems = state.room + 1;
+  state.lastFeedback = { kind: "good", head: `CERTO! +${gain} XP · GEMA ${state.room + 1} COLETADA`, text: explain };
+  const last = state.room === N() - 1;
+  if (last) state.end = Date.now();
+  last ? sfx.power() : sfx.good();
+  render(true);
+  const g = GEMS[state.room % GEMS.length];
+  viewGame.burst([g[0], g[1], "#ffffff"]);
+  $("btnNext").focus();
+}
+function lose(msg, el) {
+  state.wrong++; state.errors++; state.hearts--;
+  if (state.wrong >= 2 && !state.hint) msg += " Se quiser, peça uma dica.";
+  state.lastFeedback = { kind: "bad", head: "-1 CORAÇÃO", text: msg };
+  sfx.bad();
+  renderBar(); renderFeedback();
+  if (el && !reduced) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+  if (state.hearts <= 0) { $("overlay").hidden = false; $("btnRespawn").focus(); return true; }
+  return false;
+}
+function warn(head, text) {
+  state.lastFeedback = { kind: "bad", head, text };
+  sfx.bad(); renderFeedback();
+}
+
+function submitAnswer(e) {
+  e.preventDefault();
+  if (state.solved) return;
+  const r = room();
+  const raw = $("answer").value, a = parseAnswer(raw);
+  state.lastAnswer = raw;
+  if (!isFinite(a)) { warn("SÓ NÚMEROS", "Digite apenas o número da resposta. A unidade já aparece ao lado."); return; }
+  if (near(a, r.answer)) { win(r.explain); return; }
+  if (!lose(r.nudge(a) || "Ainda não. Confira as medidas e refaça a conta.", document.querySelector(".field"))) $("answer").select();
+}
+
+function stepBuild(i, s) {
+  if (state.solved) return;
+  const v = state.build[i] + s;
+  if (v < 1 || v > 8) return;
+  state.build[i] = v;
+  s > 0 ? sfx.place() : sfx.remove();
+  renderBuilder(room());
+}
+function submitBuild() {
+  if (state.solved) return;
+  const r = room(), d = state.build, V = vol(d), res = r.check(d);
+  if (res.ok) { win(r.explainFor(d)); return; }
+  if (res.vol) { warn("QUASE!", `O volume está certo (${V} m³), mas ${res.why}. Ajuste as medidas sem mudar o volume. Essa não custa coração.`); return; }
+  const P0 = P();
+  let msg = `Seu bloco tem ${d[0]} × ${d[1]} × ${d[2]} = ${V} m³, mas o pedido é ${P0.T} m³.`;
+  msg += V < P0.T ? " Faltam blocos." : " Passou do volume.";
+  lose(msg, $("live"));
+}
+
+function cardClick(i) {
+  if (state.solved) return;
+  const k = kind();
+  if (k === "circuit") {
+    state.levers[i] = !state.levers[i];
+    sfx.lever(); renderCircuit();
+  } else if (k === "pairs") {
+    if (state.locked[i]) return;
+    state.sel = i;
+    sfx.lever(); renderPairs();
+  } else if (k === "order") {
+    const pos = state.order.indexOf(i);
+    if (pos >= 0) { state.order.splice(pos, 1); sfx.remove(); }
+    else { state.order.push(i); sfx.place(); }
+    renderOrder();
+  }
+}
+function valueClick(j) {
+  if (state.solved || kind() !== "pairs") return;
+  if (state.sel < 0) { warn("ESCOLHA UM BLOCO", "Primeiro clique em ESCOLHER num bloco. Depois clique na lâmpada com o volume dele."); return; }
+  const o = state.links.indexOf(j);
+  if (o >= 0 && state.locked[o]) return;
+  if (o >= 0) state.links[o] = -1;
+  state.links[state.sel] = j;
+  const next = state.links.findIndex((l, i) => l < 0 && !state.locked[i]);
+  state.sel = next;
+  state.lastFeedback = null;
+  sfx.plug(); renderPairs(); renderFeedback();
+}
+function submitAct() {
+  if (state.solved) return;
+  const k = kind(), r = room(), p = P();
+  if (k === "circuit") {
+    const wrongOn = p.cards.filter((c, i) => state.levers[i] && !c.ok).length;
+    const rightOn = p.cards.filter((c, i) => state.levers[i] && c.ok).length;
+    const missing = p.need - rightOn;
+    state.lit = rightOn;
+    if (!wrongOn && !missing) {
+      win(`${state.room === N() - 1 ? "Todas as lâmpadas acenderam e o portal abriu!" : "Todas as lâmpadas acenderam e a porta abriu!"} Volumes: ${r.explainAll}.`);
+      return;
+    }
+    const parts = [];
+    if (wrongOn) parts.push(`Curto-circuito! ${wrongOn === 1 ? "Uma alavanca ligada está" : wrongOn + " alavancas ligadas estão"} num bloco com volume diferente de ${p.T} m³.`);
+    if (missing) parts.push(`${rightOn} lâmpada${rightOn === 1 ? " acendeu" : "s acenderam"}; ainda ${missing === 1 ? "falta 1 bloco" : "faltam " + missing + " blocos"} de ${p.T} m³.`);
+    renderCircuit();
+    lose(parts.join(" "), $("cards"));
+  } else if (k === "pairs") {
+    const n = p.blocks.length;
+    if (state.links.some((l) => l < 0)) { warn("FALTAM FIOS", "Ligue todos os blocos a uma lâmpada antes de testar."); return; }
+    const right = state.links.map((j, i) => p.values[j] === p.blocks[i].v);
+    if (right.every(Boolean)) { state.locked = right; win(`Todos os fios estão certos! ${r.explainAll}.`); return; }
+    const okN = right.filter(Boolean).length;
+    right.forEach((ok, i) => { if (ok) state.locked[i] = true; else state.links[i] = -1; });
+    state.sel = right.findIndex((ok) => !ok);
+    renderPairs();
+    lose(`${okN} de ${n} fios estavam certos e ficaram presos. Os fios errados foram soltos: calcule de novo o volume desses blocos.`, $("cards"));
+  } else if (k === "order") {
+    const n = p.blocks.length;
+    if (state.order.length < n) { warn("FALTAM VAGÕES", `Coloque os ${n} blocos no trem antes de mandar.`); return; }
+    const sorted = p.blocks.map((b, i) => i).sort((a, b) => p.blocks[a].v - p.blocks[b].v);
+    const okPos = state.order.filter((i, k2) => i === sorted[k2]).length;
+    if (okPos === n) { sfx.train(); win(`O trem partiu! Do menor para o maior: ${r.explainAll}.`); return; }
+    lose(`O trem tombou! ${okPos} de ${n} vagões estavam no lugar certo. Clique em TIRAR para reorganizar.`, $("cards"));
+  }
+}
+
+function nextRoom() {
+  if (state.room === N() - 1) {
+    state.screen = "win"; clearCards(); render();
+    $("btnCopy").textContent = "Copiar meu resultado"; $("copyText").hidden = true;
+    Mural.tab = state.level; saveRun(); return;
+  }
+  state.room++; resetRoom();
+  render();
+  const k = kind();
+  (k === "answer" ? $("answer") : k === "build" ? document.querySelector(".sbtn[data-d='1']") : document.querySelector("#cards .ctl"))?.focus();
+}
+
+function respawn() {
+  state.hearts = 5; state.respawns++;
+  state.params[state.room] = TYPES[slot().type].gen(LEVELS[state.level].d);
+  resetRoom();
+  state.lastFeedback = { kind: "bad", head: "VOCÊ RENASCEU", text: "Os números desta sala mudaram. Leia as medidas de novo antes de começar." };
+  $("overlay").hidden = true;
+  render();
+}
+
+function startGame() {
+  const name = ($("playerName").value || (state && state.name) || "").trim();
+  state = freshState(selLevel); state.name = name; state.screen = "game"; state.start = Date.now();
+  clearCards(); sfx.place();
+  render(); $("answer").focus();
+}
+
+$("btnStart").addEventListener("click", startGame);
+$("playerName").addEventListener("keydown", (e) => { if (e.key === "Enter") startGame(); });
+document.querySelectorAll(".lvl").forEach((b) => b.addEventListener("click", () => {
+  selLevel = b.dataset.lv;
+  try { localStorage.setItem("mina-nivel", selLevel); } catch (e) {}
+  sfx.lever(); renderLevels();
+}));
+$("btnAgain").addEventListener("click", () => { const name = state.name; state = freshState(state.level); state.name = name; render(); });
+$("form").addEventListener("submit", submitAnswer);
+$("btnBuild").addEventListener("click", submitBuild);
+$("btnAct").addEventListener("click", submitAct);
+$("btnNext").addEventListener("click", nextRoom);
+document.querySelectorAll(".sbtn").forEach((b) => b.addEventListener("click", () => stepBuild(+b.dataset.dim, +b.dataset.d)));
+$("cards").addEventListener("click", (e) => { const b = e.target.closest(".ctl"); if (b && !b.disabled) cardClick(+b.dataset.i); });
+$("extra").addEventListener("click", (e) => { const b = e.target.closest(".val"); if (b && !b.disabled) valueClick(+b.dataset.v); });
+$("btnHint").addEventListener("click", () => {
+  if (state.hint || state.solved) return;
+  state.hint = true; state.hints++;
+  renderRoom(false);
+});
+$("btnRespawn").addEventListener("click", respawn);
+$("btnSound").addEventListener("click", () => {
+  soundOn = !soundOn;
+  try { localStorage.setItem("mina-som", soundOn ? "1" : "0"); } catch (e) {}
+  renderBar(); sfx.lever();
+});
+try { if (localStorage.getItem("mina-som") === "0") soundOn = false; } catch (e) {}
+
+/* ---------- janelas (mural, professor) e tela cheia ---------- */
+let lastFocus = null;
+function openOv(id) {
+  lastFocus = document.activeElement;
+  $(id).hidden = false;
+  $(id).querySelector("[data-close]").focus();
+  if (id === "muralOverlay") renderMural();
+}
+function closeOv(id) {
+  $(id).hidden = true;
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+$("btnMural").addEventListener("click", () => { if (state.screen !== "win") Mural.tab = state.screen === "game" ? state.level : selLevel; openOv("muralOverlay"); });
+$("btnSeeMural").addEventListener("click", () => { Mural.tab = state.level; openOv("muralOverlay"); });
+$("btnTeacher").addEventListener("click", () => openOv("teacherOverlay"));
+document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => closeOv(b.dataset.close)));
+["muralOverlay", "teacherOverlay"].forEach((id) => $(id).addEventListener("click", (e) => { if (e.target === $(id)) closeOv(id); }));
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  ["muralOverlay", "teacherOverlay"].forEach((id) => { if (!$(id).hidden) closeOv(id); });
+});
+const fsEl = document.documentElement;
+const fsReq = fsEl.requestFullscreen || fsEl.webkitRequestFullscreen;
+const fsOn = () => document.fullscreenElement || document.webkitFullscreenElement;
+if (!fsReq || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)) $("btnFull").hidden = true;
+$("btnFull").addEventListener("click", async () => {
+  try {
+    if (fsOn()) await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else await fsReq.call(fsEl);
+  } catch (e) { $("btnFull").hidden = true; }
+});
+const fsSync = () => { $("btnFull").textContent = fsOn() ? "SAIR DA TELA CHEIA" : "TELA CHEIA"; };
+document.addEventListener("fullscreenchange", fsSync);
+document.addEventListener("webkitfullscreenchange", fsSync);
+
+setInterval(() => { if (state && state.screen === "game" && !state.end) renderBar(); }, 1000);
+
+function boot(data) {
+  const saved = data && data.state;
+  state = saved && saved.v === 2 && Array.isArray(saved.slots) && LEVELS[saved.level] ? saved : freshState();
+  if (state.screen === "game" && state.hearts <= 0) $("overlay").hidden = false;
+  render();
+  initMural();
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load("10px 'Press Start 2P'").then(() => { viewGame.redraw(); viewStart.redraw(); }).catch(() => {});
+  }
+}
+if (window.claude && window.claude.hot) {
+  try { window.claude.hot.snapshot(() => ({ state })); } catch (e) {}
+}
+window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+})();
+</script>
+
+</body>
+</html>
