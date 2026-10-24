@@ -1629,7 +1629,7 @@ function applyOnlineResult(Q){
   if(Q.attack){ const d0=((r.defs||[])[Q.cellId])||0; if(d0<MAX_DEF) up[`defs/${Q.cellId}`]=d0+1; }
   const ptsOf=pid=>((Q.answers||{})[pid]===Q.q.ans)?speedPoints(Q.q,((Q.times||{})[pid])||0):0;
   const ans=Object.keys(Q.answers||{}), teamSpeed=ans.length?Math.round(ans.reduce((s2,pid)=>s2+ptsOf(pid),0)/ans.length/100)*100:0;
-  up[`stats/${t}`]={ok:(st.ok||0)+(Q.ok?1:0),bad:(st.bad||0)+(Q.ok?0:1),streak:Q.ok?(st.streak||0)+1:0,speed:(st.speed||0)+teamSpeed};
+  up[`stats/${t}`]={ok:(st.ok||0)+(Q.ok?1:0),bad:(st.bad||0)+(Q.ok?0:1),streak:Q.ok?(st.streak||0)+1:0,speed:(st.speed||0)+teamSpeed,bonus:st.bonus||0};
   Object.entries(Q.answers||{}).forEach(([pid,v])=>{
     const p=r.players&&r.players[pid]; if(!p) return;
     up[`players/${pid}/ok`]=(p.ok||0)+(v===Q.q.ans?1:0); up[`players/${pid}/bad`]=(p.bad||0)+(v===Q.q.ans?0:1);
