@@ -66,6 +66,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 .onCard h3{margin:0;font-size:20px}
 .onCard label.t{display:block;font-weight:700;margin-top:6px}
 .onCard .contBtn{margin-top:auto}
+.onCard .seg button{min-width:0;padding:6px 8px;font-size:15px}
 .codeIn{text-transform:uppercase;letter-spacing:.3em;font-weight:800;text-align:center;font-size:22px}
 .roomCode{font-size:16px;font-weight:700;color:var(--muted);margin-top:6px}
 .roomCode b{display:block;font-size:56px;letter-spacing:.18em;color:#4c1d95;line-height:1.1}
@@ -388,7 +389,19 @@ button{font-family:inherit;cursor:pointer;border:none}
       <div id="onForms" class="onGrid">
         <div class="onCard">
           <h3>👩‍🏫 Professor</h3>
-          <p class="opc">Cria uma sala usando as opções da tela inicial: nível, cronômetro, turma e nomes dos times.</p>
+          <label class="t">Quantos times?</label>
+          <div class="seg" data-key="nteams">
+            <button data-v="2" class="on">2</button><button data-v="3">3</button><button data-v="4">4</button>
+          </div>
+          <label class="t">Duração</label>
+          <div class="seg" data-key="dur">
+            <button data-v="15">15 min</button><button data-v="25" class="on">25 min</button><button data-v="35">35 min</button><button data-v="0">Sem limite</button>
+          </div>
+          <label class="t">Nível</label>
+          <div class="seg" data-key="diff">
+            <button data-v="easy" class="on">🟢 Alternativas</button><button data-v="hard">🔴 Digitar</button>
+          </div>
+          <p class="opc">Turma e nomes dos times vêm da tela inicial. Os alunos são divididos entre os times automaticamente.</p>
           <button class="contBtn" id="createBtn">Criar sala</button>
         </div>
         <div class="onCard">
@@ -410,6 +423,12 @@ button{font-family:inherit;cursor:pointer;border:none}
         <div class="tl"><h3 class="c1" id="lt1"></h3><ul id="lp1"></ul></div>
         <div class="tl" id="tlb2"><h3 class="c2" id="lt2"></h3><ul id="lp2"></ul></div>
         <div class="tl" id="tlb3"><h3 class="c3" id="lt3"></h3><ul id="lp3"></ul></div>
+      </div>
+      <div id="lobbyTeams" class="opt hidden">
+        <label class="t">Quantos times?</label>
+        <div class="seg" id="lobbySeg">
+          <button data-n="2">2 times</button><button data-n="3">3 times</button><button data-n="4">4 times</button>
+        </div>
       </div>
       <button class="bigBtn" id="hostStart">Começar a partida 🚀</button>
     </div>
@@ -1478,7 +1497,7 @@ function applyRoom(r){
   $('#roomBadge').textContent=`Sala ${O.code}`+(host?' · Professor':me?` · ${me.name}`:'');
   updateUI();
   renderOnlineQuestion(r);
-  renderBonus(r.status==='playing'?(r.bonus||null):null);
+  renderBonus(r.status==='playing'?(r.bonus||null):null); tickClock();
   if(r.status==='over'&&O.endKey!==r.worldKey){ O.endKey=r.worldKey; S.over=true; showEnd(); }
 }
 
@@ -1493,6 +1512,8 @@ function renderLobby(r){
   $('#lobbyInfo').textContent = host
     ? 'Peça para os alunos abrirem o jogo, clicarem em 🌐 Jogar online e digitarem o código (ou abrirem o link acima). Clique no nome de um aluno para trocá-lo de time.'
     : 'Você está na sala! Aguarde o professor começar a partida.';
+  $('#lobbyTeams').classList.toggle('hidden',!host);
+  $('#lobbySeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.n===r.teams.length));
   const pl=playersOf(r);
   [2,3].forEach(t=>$('#tlb'+t).classList.toggle('hidden',t>=NT()));
   range(NT()).forEach(t=>{
@@ -1903,7 +1924,7 @@ function startGame(){
   newBoard();
   $('#start').classList.add('hidden'); $('#game').classList.remove('hidden');
   $('#endModal').classList.add('hidden');
-  updateUI();
+  updateUI(); tickClock();
 }
 function finishGame(){ if(S.over) return; stopTimer(); showEnd(); }
 function goMenu(){
@@ -1916,8 +1937,8 @@ function goMenu(){
 
 document.querySelectorAll('.seg').forEach(seg=>{
   seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    seg.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
     const k=seg.dataset.key, v=b.dataset.v;
+    document.querySelectorAll(`.seg[data-key="${k}"] button`).forEach(x=>x.classList.toggle('on',x.dataset.v===v));
     if(k==='timer') S.timer = v==='on'; else if(k==='nteams') S.nteams=+v; else if(k==='dur') S.dur=+v; else S[k]=v;
     if(k==='mode'||k==='nteams') applyModeUI();
   });
@@ -1977,6 +1998,12 @@ $('#joinBtn').onclick=studentJoin;
 $('#joinName').onkeydown=e=>{if(e.key==='Enter') studentJoin()};
 $('#joinCode').oninput=e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'')};
 $('#hostStart').onclick=hostStart;
+$('#lobbySeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  const r=O.room, n=+b.dataset.n; if(!r||O.role!=='host'||r.status!=='lobby'||n===r.teams.length) return;
+  const teams=range(n).map(t=>r.teams[t]||(t<4&&$('#n'+t).value.trim())||DEFAULT_NAMES[t]);
+  const up={teams}; playersOf(r).forEach((p,i)=>{ up[`players/${p.id}/team`]=i%n; });
+  O.ref.update(up).then(()=>toast(`Agora são ${n} times. Os alunos foram redistribuídos.`)).catch(fbFail);
+});
 $('#onLobby').addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('.pchip'); if(!b||O.role!=='host'||!O.room) return;
   const p=O.room.players&&O.room.players[b.dataset.pid]; if(p) O.ref.child(`players/${b.dataset.pid}/team`).set((p.team+1)%O.room.teams.length);
