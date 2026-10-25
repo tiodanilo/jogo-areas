@@ -101,6 +101,25 @@ button{font-family:inherit;cursor:pointer;border:none}
 .shapePick.compact .spk{font-size:13px;padding:4px 8px 4px 4px}.shapePick.compact .spk svg{width:20px;height:20px}
 .wm{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(10px,env(safe-area-inset-bottom,0px));height:26px;width:auto;opacity:.55;pointer-events:none;z-index:45;border-radius:6px;user-select:none}
 @media (max-width:1100px){.wm{position:static;display:block;margin:14px auto 18px;height:20px;opacity:.5}}
+.startCard.wide{max-width:1120px;padding:18px 24px 20px}
+.stHead{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:12px;text-align:left}
+.stHead .shapesRow{margin:0;gap:6px}
+.stHead .shapesRow svg{width:32px;height:32px}
+.stHead .logo{font-size:clamp(28px,3.6vw,40px)}
+.stHead .sub{margin:2px 0 0;font-size:15px}
+.stGrid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;text-align:left}
+.stCol{display:flex;flex-direction:column;gap:8px;min-width:0}
+.stCol .opt{margin:0}
+.row{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center}
+.row.top{align-items:start}.row.top label.t{padding-top:8px}
+.row label.t{margin:0}
+.startCard .seg{gap:6px}
+.startCard .seg button{min-width:0;padding:7px 8px;font-size:15px}
+.startCard .tin textarea{min-height:46px}
+.startCard .bigBtn{margin-top:4px;padding:11px;font-size:20px}
+.startCard .bigBtn.alt{margin-top:2px;font-size:18px}
+.startCard .links .linkBtn{margin-top:2px}
+@media (max-width:900px){.stGrid{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:4px}.row.top label.t{padding-top:0}.stHead{flex-direction:column;text-align:center;gap:6px}}
 .howto{text-align:left;background:#f8fafc;border-radius:14px;padding:10px 14px;margin-top:14px;font-size:15px;color:#334155}
 .howto ul{margin:4px 0 0;padding-left:20px}
 .linkBtn{background:none;color:#7c3aed;font-weight:700;font-size:16px;margin-top:10px;text-decoration:underline}
@@ -309,108 +328,59 @@ button{font-family:inherit;cursor:pointer;border:none}
 
 <!-- ============ TELA INICIAL ============ -->
 <section id="start">
-  <div class="startCard">
-    <div class="shapesRow" id="startIcons"></div>
-    <div class="logo">Conquista das Áreas</div>
-    <p class="sub">Calcule áreas, conquiste territórios e domine o mapa!</p>
-
-    <div class="opt">
-      <label class="t">Modo de jogo</label>
-      <div class="seg" data-key="mode">
-        <button data-v="teams" class="on">👥 Time contra Time</button>
-        <button data-v="robot">🤖 Contra o Robô</button>
+  <div class="startCard wide">
+    <header class="stHead">
+      <div class="shapesRow" id="startIcons"></div>
+      <div><div class="logo">Conquista das Áreas</div>
+      <p class="sub">Calcule áreas, conquiste territórios e domine o mapa!</p></div>
+    </header>
+    <div class="stGrid">
+      <div class="stCol">
+        <div class="row"><label class="t">Modo</label>
+          <div class="seg" data-key="mode"><button data-v="teams" class="on">👥 Time contra Time</button><button data-v="robot">🤖 Contra o Robô</button></div></div>
+        <div class="row"><label class="t">Ano</label>
+          <div class="seg" data-key="ano"><button data-v="6">6º ano</button><button data-v="7" class="on">7º ano</button></div></div>
+        <div class="row top"><label class="t">Figuras</label><div class="shapePick" aria-label="Figuras do jogo"></div></div>
+        <div class="row" id="optNTeams"><label class="t">Times</label>
+          <div class="seg" data-key="nteams"><button data-v="2" class="on">2</button><button data-v="3">3</button><button data-v="4">4</button></div></div>
+        <div class="row"><label class="t">Nível</label>
+          <div class="seg" data-key="diff"><button data-v="easy" class="on">🟢 Alternativas</button><button data-v="hard">🔴 Digitar</button></div></div>
+        <div class="row"><label class="t">Duração</label>
+          <div class="seg" data-key="dur"><button data-v="15">15 min</button><button data-v="25" class="on">25 min</button><button data-v="35">35 min</button><button data-v="0">Sem limite</button></div></div>
+        <div class="row"><label class="t">Cronômetro</label>
+          <div class="seg" data-key="timer"><button data-v="on" class="on">⏱️ Com tempo</button><button data-v="off">🐢 Sem tempo</button></div></div>
       </div>
-    </div>
-<div class="opt">
-      <label class="t">Ano</label>
-      <div class="seg" data-key="ano">
-        <button data-v="6">6º ano</button>
-        <button data-v="7" class="on">7º ano</button>
-      </div>
-    </div>
-    <div class="opt">
-      <label class="t">Figuras do jogo <span class="opc">(toque para ligar ou desligar)</span></label>
-      <div class="shapePick"></div>
-    </div>
-    <div class="opt" id="optNTeams">
-      <label class="t">Quantos times?</label>
-      <div class="seg" data-key="nteams">
-        <button data-v="2" class="on">2 times</button>
-        <button data-v="3">3 times</button>
-        <button data-v="4">4 times</button>
-      </div>
-    </div>
-    <div class="opt">
-      <label class="t">Nível</label>
-      <div class="seg" data-key="diff">
-        <button data-v="easy" class="on">🟢 Fácil (alternativas)</button>
-        <button data-v="hard">🔴 Desafio (digitar)</button>
-      </div>
-    </div>
-    <div class="opt">
-      <label class="t">Duração da partida</label>
-      <div class="seg" data-key="dur">
-        <button data-v="15">15 min</button>
-        <button data-v="25" class="on">25 min</button>
-        <button data-v="35">35 min</button>
-        <button data-v="0">Sem limite</button>
-      </div>
-    </div>
-    <div class="opt">
-      <label class="t">Cronômetro de cada pergunta</label>
-      <div class="seg" data-key="timer">
-        <button data-v="on" class="on">⏱️ Com tempo</button>
-        <button data-v="off">🐢 Sem tempo</button>
-      </div>
-    </div>
-    <div class="opt">
-      <label class="t" for="turma">Turma <span class="opc">(opcional)</span></label>
-      <input id="turma" class="field" maxlength="20" placeholder="Ex.: 7º A">
-    </div>
-    <div class="opt">
-      <label class="t" id="playersLabel">Times e alunos</label>
-      <div class="teamsIn">
+      <div class="stCol">
+        <div class="opt"><label class="t" for="turma">Turma <span class="opc">(opcional)</span></label>
+          <input id="turma" class="field" maxlength="20" placeholder="Ex.: 7º A"></div>
+        <div class="opt"><label class="t" id="playersLabel">Times e alunos</label>
+          <div class="teamsIn">
         <div class="tin t0">
           <input id="n0" value="Time Azul" maxlength="18" aria-label="Nome do primeiro time">
-          <textarea id="p0" maxlength="200" placeholder="Nomes dos alunos (ex.: Ana, João, Pedro)" aria-label="Alunos do primeiro time"></textarea>
+          <textarea id="p0" rows="2" maxlength="200" placeholder="Nomes dos alunos (ex.: Ana, João, Pedro)" aria-label="Alunos do primeiro time"></textarea>
         </div>
         <div class="tin t1" id="tin1">
           <input id="n1" value="Time Laranja" maxlength="18" aria-label="Nome do segundo time">
-          <textarea id="p1" maxlength="200" placeholder="Nomes dos alunos (ex.: Bia, Lucas, Rafa)" aria-label="Alunos do segundo time"></textarea>
+          <textarea id="p1" rows="2" maxlength="200" placeholder="Nomes dos alunos (ex.: Bia, Lucas, Rafa)" aria-label="Alunos do segundo time"></textarea>
         </div>
         <div class="tin t2 hidden" id="tin2">
           <input id="n2" value="Time Rosa" maxlength="18" aria-label="Nome do terceiro time">
-          <textarea id="p2" maxlength="200" placeholder="Nomes dos alunos (ex.: Caio, Duda, Gabi)" aria-label="Alunos do terceiro time"></textarea>
+          <textarea id="p2" rows="2" maxlength="200" placeholder="Nomes dos alunos (ex.: Caio, Duda, Gabi)" aria-label="Alunos do terceiro time"></textarea>
         </div>
         <div class="tin t3 hidden" id="tin3">
           <input id="n3" value="Time Verde" maxlength="18" aria-label="Nome do quarto time">
-          <textarea id="p3" maxlength="200" placeholder="Nomes dos alunos (ex.: Léo, Mari, Teo)" aria-label="Alunos do quarto time"></textarea>
+          <textarea id="p3" rows="2" maxlength="200" placeholder="Nomes dos alunos (ex.: Léo, Mari, Teo)" aria-label="Alunos do quarto time"></textarea>
         </div>
       </div>
-    </div>
-
-    <button class="bigBtn" id="startBtn">Começar! 🚀</button>
-    <button class="bigBtn alt" id="onlineBtn">🌐 Jogar online com a turma</button>
-    <div class="links">
-      <button class="linkBtn" data-open-formulas>📖 Ver as fórmulas</button>
-      <button class="linkBtn" data-open-results>📊 Resultados</button>
-    </div>
-
-    <div class="howto">
-      <b>Como jogar</b>
-      <ul>
-        <li>O Mundo Matemático é dividido em reinos, cada um com uma figura escolhida pelo professor.</li>
-        <li>Cada time começa no seu castelo 🏰. Na sua vez, escolha um território <b>vizinho</b> (que está piscando).</li>
-        <li>A partida acaba quando o tempo termina ou não há mais territórios livres. A rodada sempre termina, para todos os times jogarem o mesmo número de vezes.</li>
-        <li>Em ⭐ e ⚔️ pode aparecer o desafio ao contrário: você recebe a área e descobre a medida que falta.</li>
-        <li>🛡️ Cada ataque deixa o território mais protegido: roubar fica cada vez mais difícil (níveis 2, 3 e 4). Território de um reino dominado 👑 também é mais difícil. No nível 4, a 🏯 Fortaleza, não há dica.</li>
-        <li>Acertou a área da figura? O território é seu!</li>
-        <li>💎 Tesouros ficam no meio da ilha e valem 3 pontos: corra para chegar primeiro! ⭐ vale 2 pontos e ⚔️ ataca o território do adversário (contas mais difíceis).</li>
-        <li>Duas pontuações extras: 🎯 <b>Acertos</b> (quantas perguntas você acertou) e ⚡ <b>Rapidez</b> (cada acerto vale até 1000 pontos: a cada 10% do tempo que passa, cai 100).</li>
-        <li>👑 Domine um reino inteiro e ganhe +3 pontos!</li>
-        <li>🎁 Conquiste um território Bônus e seu time joga um minijogo (jogo da velha, lógica ou clique relâmpago) valendo até +2 pontos.</li>
-        <li>Quando não houver mais territórios livres, ganha quem tiver mais pontos.</li>
-      </ul>
+        </div>
+        <button class="bigBtn" id="startBtn">Começar! 🚀</button>
+        <button class="bigBtn alt" id="onlineBtn">🌐 Jogar online com a turma</button>
+        <div class="links">
+          <button class="linkBtn" id="howBtn">❓ Como jogar</button>
+          <button class="linkBtn" data-open-formulas>📖 Fórmulas</button>
+          <button class="linkBtn" data-open-results>📊 Resultados</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -482,7 +452,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 <!-- ============ JOGO ============ -->
 <section id="game" class="hidden">
   <div class="topbar">
-    <h1>Conquista das Áreas <span id="roomBadge" class="roomBadge hidden"></span><span id="clock" class="roomBadge clock hidden"></span></h1>
+    <h1>Conquista das Áreas <span id="roomBadge" class="roomBadge hidden"></span><span id="clock" class="roomBadge clock hidden"></span><span id="stageBadge" class="roomBadge"></span></h1>
     <div class="tools">
       <button data-open-formulas title="Fórmulas">📖</button>
       <button id="soundBtn" title="Som">🔊</button>
@@ -524,6 +494,29 @@ button{font-family:inherit;cursor:pointer;border:none}
     <div class="timer" id="timer"><div></div></div>
     <div id="qAnswer"></div>
     <div id="feedback"></div>
+  </div>
+</div>
+
+<!-- ============ COMO JOGAR ============ -->
+<div class="modal hidden" id="hModal">
+  <div class="mcard wide">
+    <h2>❓ Como jogar</h2>
+    <div class="howto">
+      <ul>
+        <li>O Mundo Matemático é dividido em reinos, cada um com uma figura escolhida pelo professor.</li>
+        <li>Cada time começa no seu castelo 🏰. Na sua vez, escolha um território <b>vizinho</b> (que está piscando).</li>
+        <li>A partida acaba quando o tempo termina ou não há mais territórios livres. A rodada sempre termina, para todos os times jogarem o mesmo número de vezes.</li>
+        <li>Em ⭐ e ⚔️ pode aparecer o desafio ao contrário: você recebe a área e descobre a medida que falta.</li>
+        <li>🛡️ Cada ataque deixa o território mais protegido: roubar fica cada vez mais difícil (níveis 2, 3 e 4). Território de um reino dominado 👑 também é mais difícil. No nível 4, a 🏯 Fortaleza, não há dica.</li>
+        <li>Acertou a área da figura? O território é seu!</li>
+        <li>💎 Tesouros ficam no meio da ilha e valem 3 pontos: corra para chegar primeiro! ⭐ vale 2 pontos e ⚔️ ataca o território do adversário (contas mais difíceis).</li>
+        <li>Duas pontuações extras: 🎯 <b>Acertos</b> (quantas perguntas você acertou) e ⚡ <b>Rapidez</b> (cada acerto vale até 1000 pontos: a cada 10% do tempo que passa, cai 100).</li>
+        <li>👑 Domine um reino inteiro e ganhe +3 pontos!</li>
+        <li>🎁 Conquiste um território Bônus e seu time joga um minijogo (jogo da velha, lógica ou clique relâmpago) valendo até +2 pontos.</li>
+        <li>📈 A partida tem 4 etapas: começa com medidas pequenas, para calcular de cabeça, e elas crescem a cada 3 rodadas.</li>
+      </ul>
+    </div>
+    <button class="contBtn" id="hClose">Entendi!</button>
   </div>
 </div>
 
@@ -973,37 +966,45 @@ function renderHUD(){
   }
   renderKingdoms();
 }
-const updateUI = () => {renderHUD(); renderBoard();};
+function renderStage(){
+  const st=currentStage(), el=$('#stageBadge'); el.textContent=STAGE_LABEL[st];
+  el.title='As medidas começam pequenas e crescem a cada etapa (etapas mudam a cada 3 rodadas).';
+  if(S.lastStage && st>S.lastStage && !S.over) toast(`📈 Etapa ${st} de 4: as medidas vão ficar maiores!`,3000);
+  S.lastStage=st;
+}
+const updateUI = () => {renderHUD(); renderBoard(); renderStage();};
 
 /* ================== GERADOR DE QUESTÕES ================== */
-function gen(shape,lvl){
-  const lo = [3,3,7,10,12][lvl], hi = [12,12,18,24,30][lvl];
+// Etapas: a partida começa com medidas pequenas (cálculo mental) e elas crescem a cada etapa.
+const STAGE_BASE={1:[2,6],2:[3,9],3:[4,12],4:[6,15]}, LVL_ADD={1:[0,0],2:[1,3],3:[3,6],4:[5,10]};
+function gen(shape,lvl,stage=3){
+  const lo = STAGE_BASE[stage][0]+LVL_ADD[lvl][0], hi = STAGE_BASE[stage][1]+LVL_ADD[lvl][1];
   const u = pick(['cm','m','cm']);
-  const q = {shape,u,lvl,v:{},wrong:{}};
+  const q = {shape,u,lvl,stage,v:{},wrong:{}};
   switch(shape){
     case 'quadrado':{
-      const l=rnd(lo, [11,11,16,20,25][lvl]); q.v={l}; q.ans=l*l;
+      const l=rnd(lo, Math.max(lo+1,hi-1)); q.v={l}; q.ans=l*l;
       q.calc=`A = ${l} × ${l} = ${q.ans} ${u}²`;
       q.wrong={[4*l]:'Esse é o perímetro (soma dos lados)! Área é lado × lado.',[2*l]:'Você somou só dois lados. Área é lado × lado.',[l*l+l]:'Quase! Área é lado × lado.'};
       break;}
     case 'retangulo':{
-      let b=rnd(lo+2,hi+2), h=rnd(lo,hi-1); if(b===h) b++;
+      let b=rnd(lo+1,hi+1), h=rnd(lo,hi-1); if(b===h) b++;
       q.v={b,h}; q.ans=b*h;
       q.calc=`A = ${b} × ${h} = ${q.ans} ${u}²`;
       q.wrong={[2*(b+h)]:'Esse é o perímetro! Área é base × altura.',[b+h]:'Você somou. Área é base × altura (multiplicação).'};
       if((b*h)%2===0) q.wrong[b*h/2]='No retângulo não divide por 2! Área = b × h.';
       break;}
     case 'losango':{
-      let D=rnd(lo+3,hi+4), d=rnd(lo,hi-1); if(d>=D) D=d+3; if((D*d)%2) D++;
+      let D=rnd(lo+2,hi+3), d=rnd(lo,hi-1); if(d>=D) D=d+2; if((D*d)%2) D++;
       q.v={D,d}; q.ans=D*d/2;
       q.calc=`A = (${D} × ${d}) ÷ 2 = ${D*d} ÷ 2 = ${q.ans} ${u}²`;
       q.wrong={[D*d]:'Faltou dividir por 2!',[D+d]:'Você somou as diagonais. Multiplique e divida por 2.',[(D+d)*2]:'Área do losango = (D × d) ÷ 2.'};
       break;}
     case 'paralelogramo':{
-      const triples = lvl>=3 ? [[12,16,20],[16,12,20],[15,20,25],[20,15,25],[7,24,25],[9,12,15],[8,15,17]]
-        : lvl===2 ? [[5,12,13],[12,5,13],[6,8,10],[8,15,17],[9,12,15],[8,6,10]] : [[3,4,5],[4,3,5],[6,8,10],[8,6,10]];
+      const triples = hi>15 ? [[12,16,20],[16,12,20],[15,20,25],[20,15,25],[7,24,25],[9,12,15],[8,15,17],[6,8,10],[8,6,10]]
+        : hi>9 ? [[3,4,5],[4,3,5],[6,8,10],[8,6,10],[5,12,13],[12,5,13]] : [[3,4,5],[4,3,5]];
       const [o,h,s]=pick(triples);
-      const b=rnd(o+3,o+[8,8,12,16,20][lvl]);
+      const b=rnd(Math.max(3,lo+1),hi+1);
       q.v={o,h,s,b}; q.ans=b*h;
       q.calc=`A = ${b} × ${h} = ${q.ans} ${u}²`;
       q.note=`O lado inclinado (${s} ${u}) não entra na conta: usamos a altura!`;
@@ -1019,7 +1020,7 @@ function gen(shape,lvl){
       if((b+h)*2!==b*h/2) q.wrong[(b+h)*2]='Área do triângulo = (b × h) ÷ 2.';
       break;}
     case 'trapezio':{
-      let b=rnd(Math.max(2,lo-1),hi-2), B=b+rnd(2,lvl>=2?10:6), h=rnd(lo,hi-2);
+      let b=rnd(Math.max(2,lo-1),Math.max(2,hi-2)), B=b+rnd(2,hi<=9?4:hi<=15?7:10), h=rnd(lo,Math.max(lo,hi-2));
       if(((B+b)*h)%2) h++;
       const x0=rnd(0,B-b);
       q.v={B,b,h,x0}; q.ans=(B+b)*h/2;
@@ -1028,7 +1029,7 @@ function gen(shape,lvl){
       break;}
   }
   delete q.wrong[q.ans];
-  if(Math.random() < ([0,0,.4,.7,1][lvl]||0)) makeInverse(q);
+  if(Math.random() < ([0,0,.4,.7,1][lvl]||0)*(stage===1&&lvl<4?.5:1)) makeInverse(q);
   return q;
 }
 
@@ -1258,7 +1259,7 @@ function showFeedback(q,o){
 function openQuestion(x){
   S.busy=true;
   const attack = x.owner!==null;
-  const q = gen(x.shape,questionLevel(x));
+  const q = gen(x.shape,questionLevel(x),currentStage());
   S.current={x,q,attack,done:false,t0:Date.now()};
   fillQuestionModal(x,q,S.turn,attack,true,null,(val,btn)=>answer(val,btn));
   startTimer(Date.now()+timeLimit(q)*1000,()=>answer(null),q);
@@ -1288,6 +1289,12 @@ function speedPoints(q,ms){
   return 1000 - 100*Math.floor(used*10);
 }
 const secs = ms => Math.max(1,Math.round(ms/1000));
+function roundsPlayed(){
+  if(O.on){ const r=O.room, n=(r&&r.teams)?r.teams.length:2, pl=(r&&r.played)||{}; return Math.min(...range(n).map(i=>pl[i]||0)); }
+  return (S.played&&S.played.length)?Math.min(...S.played):0;
+}
+function currentStage(){ const r=roundsPlayed()+1; return r<=3?1 : r<=6?2 : r<=9?3 : 4; }
+const STAGE_LABEL={1:'🧠 Etapa 1/4 · de cabeça',2:'📈 Etapa 2/4',3:'📈 Etapa 3/4',4:'🔥 Etapa 4/4'};
 const LEVEL_NAME = {2:'⚔️ Ataque',3:'⚔️⚔️ Ataque difícil',4:'🏯 Fortaleza'};
 function logQuestion(team,x,q,ok,given){
   S.log.push({team,name:x.name,shape:x.shape,q,ok,given});
@@ -1555,7 +1562,7 @@ async function syncFromRoom(r){
     if(!O.on||!w||!O.room||O.room.worldKey!==key) return;
     if(O.worldKey!==key){
       buildWorld(w); O.worldKey=key; O.kInit=false; O.endKey=null; O.qKey=null; O.fbKey=null;
-      S.recorded=false; S.over=false; S.endShown=false; O.endReq=false; $('#endModal').classList.add('hidden');
+      S.recorded=false; S.over=false; S.endShown=false; O.endReq=false; S.lastStage=0; $('#endModal').classList.add('hidden');
     }
     r=O.room;
   }
@@ -1644,7 +1651,7 @@ function allAnswered(r,Q){
 }
 function onlineAsk(c){
   const r=O.room; if(!isHumanTurn()) return;
-  const attack=c.owner!==null, q=gen(c.shape,questionLevel(c));
+  const attack=c.owner!==null, q=gen(c.shape,questionLevel(c),currentStage());
   q.opts=options(q);
   O.ref.child('question').set({key:newId(),cellId:c.id,pid:O.me,team:r.turn.team,attack,q,phase:'asking',startedAt:firebase.database.ServerValue.TIMESTAMP}).catch(fbFail);
 }
@@ -2007,7 +2014,7 @@ function startGame(){
     : range(N).map(t=>$('#n'+t).value.trim()||DEFAULT_NAMES[t]);
   S.over=false; S.recorded=false;
   S.stats=range(N).map(()=>({ok:0,bad:0,streak:0,speed:0}));
-  S.played=range(N).map(()=>0); S.finalRound=false; S.log=[]; S.endShown=false;
+  S.played=range(N).map(()=>0); S.finalRound=false; S.log=[]; S.endShown=false; S.lastStage=0;
   S.timeUp=false; S.endsAt = S.dur ? Date.now()+S.dur*60000 : 0; S.bonusSt=null; renderBonus(null);
   S.turn=0; S.busy=false; S.robotTarget=null;
   newBoard();
@@ -2088,6 +2095,9 @@ $('#hintBtn').onclick=()=>{$('#hint').classList.remove('hidden'); $('#hintBtn').
 document.querySelectorAll('[data-open-formulas]').forEach(b=>b.onclick=()=>{ renderFormulas(); $('#fModal').classList.remove('hidden'); });
 renderShapePicks();
 $('#fClose').onclick=()=>$('#fModal').classList.add('hidden');
+$('#howBtn').onclick=()=>$('#hModal').classList.remove('hidden');
+$('#hClose').onclick=()=>$('#hModal').classList.add('hidden');
+$('#hModal').onclick=e=>{if(e.target.id==='hModal') $('#hModal').classList.add('hidden')};
 $('#fModal').onclick=e=>{if(e.target.id==='fModal') $('#fModal').classList.add('hidden')};
 
 $('#startIcons').innerHTML=SHAPES.map(icon).join('');
