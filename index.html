@@ -93,17 +93,42 @@ button{font-family:inherit;cursor:pointer;border:none}
 .kchip.k2{border-color:var(--t2)}.kchip.k3{border-color:var(--t3)}
 .pill.p2{background:var(--t2)}.pill.p3{background:var(--t3)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 2px 0 4px;vertical-align:middle}
+.shapePick{display:flex;flex-wrap:wrap;gap:6px}
+.spk{display:flex;align-items:center;gap:6px;padding:6px 10px 6px 6px;border-radius:12px;background:#f1f5f9;color:#64748b;font-weight:700;font-size:15px;border:3px solid transparent;transition:.15s}
+.spk svg{width:26px;height:26px;color:#94a3b8}
+.spk.on{background:#ede9fe;border-color:#7c3aed;color:#4c1d95}.spk.on svg{color:#7c3aed}
+.spk:focus-visible{outline:3px solid #7c3aed;outline-offset:2px}
+.shapePick.compact .spk{font-size:13px;padding:4px 8px 4px 4px}.shapePick.compact .spk svg{width:20px;height:20px}
+.wm{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(10px,env(safe-area-inset-bottom,0px));height:26px;width:auto;opacity:.55;pointer-events:none;z-index:45;border-radius:6px;user-select:none}
+@media (max-width:1100px){.wm{position:static;display:block;margin:14px auto 18px;height:20px;opacity:.5}}
 .howto{text-align:left;background:#f8fafc;border-radius:14px;padding:10px 14px;margin-top:14px;font-size:15px;color:#334155}
 .howto ul{margin:4px 0 0;padding-left:20px}
 .linkBtn{background:none;color:#7c3aed;font-weight:700;font-size:16px;margin-top:10px;text-decoration:underline}
 
 /* ---------- JOGO ---------- */
-#game{max-width:960px;margin:0 auto;padding-block:10px 30px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#game{max-width:1680px;margin:0 auto;padding-block:10px 30px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .topbar h1{font-size:22px;margin:0;font-weight:800;color:#4c1d95;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tools{display:flex;gap:6px}
 .tools button{background:var(--card);border-radius:12px;padding:6px 10px;font-size:15px;font-weight:700;
   box-shadow:0 3px 0 #bcd3ee;color:var(--ink)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+.mainCol,.side{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mainCol .banner,.side .progress,.side .scores{margin-bottom:0}
+.mapWrap{width:min(100%,calc((100vh - 150px) * 1.607));margin:0 auto;max-width:100%}
+.side .scores{grid-template-columns:1fr}
+.side .kingdoms{grid-template-columns:1fr;margin-top:0}
+.side .ktip{text-align:left;margin-top:0}
+@media (max-width:1100px){
+  .layout{display:flex;flex-direction:column;gap:8px}
+  .mainCol,.side{display:contents}
+  .side .scores{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));order:1}
+  .side .progress{order:2}
+  .mainCol .banner{order:3}
+  .mapWrap{order:4;width:100%}
+  .side .ktip{order:5;text-align:center}
+  .side .kingdoms{order:6;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+}
 .scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:8px}
 .score{background:var(--card);border-radius:16px;padding:8px 12px;border:4px solid transparent;transition:.25s;
   box-shadow:0 4px 0 #bcd3ee;position:relative}
@@ -182,6 +207,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 .fig .dash{stroke:#dc2626;stroke-width:2.5;stroke-dasharray:7 5}
 .fig .diag{stroke:#0f766e;stroke-width:2.5;stroke-dasharray:7 5}
 .fig .ra{fill:none;stroke:#dc2626;stroke-width:2}
+.fig text{paint-order:stroke;stroke:#f8fafc;stroke-width:4px;stroke-linejoin:round}
 .fig .lab{font:700 17px 'Baloo 2',sans-serif;fill:#1e293b}
 .fig .labh{font:700 17px 'Baloo 2',sans-serif;fill:#dc2626}
 .fig .labd{font:700 17px 'Baloo 2',sans-serif;fill:#0f766e}
@@ -295,6 +321,17 @@ button{font-family:inherit;cursor:pointer;border:none}
         <button data-v="robot">🤖 Contra o Robô</button>
       </div>
     </div>
+<div class="opt">
+      <label class="t">Ano</label>
+      <div class="seg" data-key="ano">
+        <button data-v="6">6º ano</button>
+        <button data-v="7" class="on">7º ano</button>
+      </div>
+    </div>
+    <div class="opt">
+      <label class="t">Figuras do jogo <span class="opc">(toque para ligar ou desligar)</span></label>
+      <div class="shapePick"></div>
+    </div>
     <div class="opt" id="optNTeams">
       <label class="t">Quantos times?</label>
       <div class="seg" data-key="nteams">
@@ -362,7 +399,7 @@ button{font-family:inherit;cursor:pointer;border:none}
     <div class="howto">
       <b>Como jogar</b>
       <ul>
-        <li>O Mundo Matemático tem 5 reinos, um para cada figura.</li>
+        <li>O Mundo Matemático é dividido em reinos, cada um com uma figura escolhida pelo professor.</li>
         <li>Cada time começa no seu castelo 🏰. Na sua vez, escolha um território <b>vizinho</b> (que está piscando).</li>
         <li>A partida acaba quando o tempo termina ou não há mais territórios livres. A rodada sempre termina, para todos os times jogarem o mesmo número de vezes.</li>
         <li>Em ⭐ e ⚔️ pode aparecer o desafio ao contrário: você recebe a área e descobre a medida que falta.</li>
@@ -389,6 +426,12 @@ button{font-family:inherit;cursor:pointer;border:none}
       <div id="onForms" class="onGrid">
         <div class="onCard">
           <h3>👩‍🏫 Professor</h3>
+          <label class="t">Ano</label>
+          <div class="seg" data-key="ano">
+            <button data-v="6">6º ano</button><button data-v="7" class="on">7º ano</button>
+          </div>
+          <label class="t">Figuras</label>
+          <div class="shapePick compact"></div>
           <label class="t">Quantos times?</label>
           <div class="seg" data-key="nteams">
             <button data-v="2" class="on">2</button><button data-v="3">3</button><button data-v="4">4</button>
@@ -448,6 +491,12 @@ button{font-family:inherit;cursor:pointer;border:none}
       <button id="menuBtn" title="Menu">🏠</button>
     </div>
   </div>
+  <div class="layout">
+  <div class="mainCol">
+    <div class="banner" id="banner"></div>
+    <div class="mapWrap"><svg id="map" viewBox="0 0 900 560" role="group" aria-label="Mapa do Mundo Matemático"></svg></div>
+  </div>
+  <aside class="side">
   <div class="scores">
     <div class="score s0" id="sc0"></div>
     <div class="score s1" id="sc1"></div>
@@ -455,10 +504,10 @@ button{font-family:inherit;cursor:pointer;border:none}
     <div class="score s3 hidden" id="sc3"></div>
   </div>
   <div class="progress" id="progress"></div>
-  <div class="banner" id="banner"></div>
-  <div class="mapWrap"><svg id="map" viewBox="0 0 900 560" role="group" aria-label="Mapa do Mundo Matemático"></svg></div>
   <div class="ktip">💎 Tesouro = 3 pontos · ⭐ = 2 · comum = 1 · 🎁 Bônus = minijogo valendo até +2 · 👑 Domine um reino inteiro e ganhe <b>+3 pontos</b> — e seus territórios ficam mais difíceis de roubar. 🛡️ Cada ataque deixa o território mais protegido.</div>
   <div class="kingdoms" id="kingdoms"></div>
+  </aside>
+  </div>
 </section>
 
 <!-- ============ PERGUNTA ============ -->
@@ -530,6 +579,7 @@ button{font-family:inherit;cursor:pointer;border:none}
   </div>
 </div>
 
+<img class="wm" alt="" aria-hidden="true" src="data:image/png;base64,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">
 <div id="toasts" aria-live="polite"></div>
 <script>
 /* ================== CONFIGURAÇÃO ================== */
@@ -553,10 +603,13 @@ const cellValue = c => c.treasure ? TREASURE_PTS : c.star ? 2 : 1;
 const DEFAULT_NAMES = ['Time Azul','Time Laranja','Time Rosa','Time Verde'];
 const range = n => Array.from({length:n},(_,i)=>i);
 const NT = () => S.names.length;
-const SHAPES = ['quadrado','retangulo','losango','paralelogramo','trapezio'];
-const NAMES  = {quadrado:'Quadrado',retangulo:'Retângulo',losango:'Losango',paralelogramo:'Paralelogramo',trapezio:'Trapézio'};
-const ARTIGO = {quadrado:'do',retangulo:'do',losango:'do',paralelogramo:'do',trapezio:'do'};
+const SHAPES = ['quadrado','retangulo','triangulo','paralelogramo','losango','trapezio'];
+// figuras sugeridas por ano (o professor pode ligar/desligar cada uma)
+const ANO_SHAPES = { '6':['quadrado','retangulo','triangulo'], '7':['quadrado','retangulo','triangulo','paralelogramo','losango','trapezio'] };
+const NAMES  = {quadrado:'Quadrado',retangulo:'Retângulo',triangulo:'Triângulo',losango:'Losango',paralelogramo:'Paralelogramo',trapezio:'Trapézio'};
+const ARTIGO = {quadrado:'do',retangulo:'do',triangulo:'do',losango:'do',paralelogramo:'do',trapezio:'do'};
 const FORMULAS = {
+  triangulo:'A = (b × h) ÷ 2',
   quadrado:'A = ℓ × ℓ',
   retangulo:'A = b × h',
   losango:'A = (D × d) ÷ 2',
@@ -564,6 +617,7 @@ const FORMULAS = {
   trapezio:'A = (B + b) × h ÷ 2'
 };
 const INV_HINT = {
+  triangulo:'h = 2 × A ÷ b',
   quadrado:'ℓ × ℓ = A (procure o número que vezes ele mesmo dá a área)',
   retangulo:'h = A ÷ b',
   losango:'d = 2 × A ÷ D',
@@ -572,6 +626,7 @@ const INV_HINT = {
 };
 const hintOf = q => q.inv ? INV_HINT[q.shape] : FORMULAS[q.shape];
 const DESCR = {
+  triangulo:'Base vezes altura, dividido por 2. A altura é a linha tracejada, que forma ângulo reto com a base.',
   quadrado:'Lado vezes lado (todos os lados são iguais).',
   retangulo:'Base vezes altura.',
   losango:'Diagonal maior vezes diagonal menor, dividido por 2.',
@@ -580,7 +635,7 @@ const DESCR = {
 };
 
 const S = {
-  mode:'teams', diff:'easy', timer:true, sound:true, nteams:2, dur:25, endsAt:0, timeUp:false,
+  mode:'teams', diff:'easy', timer:true, sound:true, nteams:2, ano:'7', shapes:ANO_SHAPES['7'].slice(), dur:25, endsAt:0, timeUp:false,
   names:['Time Azul','Time Laranja'], players:['',''], turma:'', over:false, recorded:false,
   cells:[], turn:0, busy:false, played:[0,0], finalRound:false, log:[], current:null, robotTarget:null,
   stats:[{ok:0,bad:0,streak:0,speed:0},{ok:0,bad:0,streak:0,speed:0}]
@@ -605,6 +660,7 @@ const shuffle = a => {for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.rand
 function icon(shape,attrs=''){
   const p = {
     quadrado:'<rect x="8" y="8" width="24" height="24" rx="1"/>',
+    triangulo:'<polygon points="13,6 37,33 3,33"/>',
     retangulo:'<rect x="3" y="12" width="34" height="17" rx="1"/>',
     losango:'<polygon points="20,3 37,20 20,37 3,20"/>',
     paralelogramo:'<polygon points="13,10 38,10 27,30 2,30"/>',
@@ -648,13 +704,20 @@ function confetti(){
 
 /* ================== MUNDO MATEMÁTICO (MAPA) ================== */
 const MW=900, MH=560;
-const KINGDOMS={quadrado:'Reino dos Quadrados',retangulo:'Planície dos Retângulos',losango:'Cristais do Losango',paralelogramo:'Deserto Paralelogramo',trapezio:'Serra dos Trapézios'};
-const KCOLOR={quadrado:'#bfe3a1',retangulo:'#f3dc8f',losango:'#d8cbf5',paralelogramo:'#f5c3a6',trapezio:'#d3c9b4'};
+const KNAMES={quadrado:['Reino dos Quadrados','Vale dos Quadrados','Ilha Quadrada'],retangulo:['Planície dos Retângulos','Campos Retangulares','Vila Retangular'],
+  triangulo:['Montes Triangulares','Pirâmides do Triângulo','Picos de Três Pontas'],losango:['Cristais do Losango','Geleira do Losango','Minas do Losango'],
+  paralelogramo:['Deserto Paralelogramo','Dunas Paralelas','Oásis Inclinado'],trapezio:['Serra dos Trapézios','Vulcões Trapézios','Planalto Trapézio']};
+const KINGDOMS=Object.fromEntries(Object.entries(KNAMES).map(([k,v])=>[k,v[0]]));
+const KCOLORS={quadrado:['#bfe3a1','#a5d888','#d6efc5'],retangulo:['#f3dc8f','#eecd68','#f8e9b8'],triangulo:['#b8e2e8','#97d3dc','#d4eff3'],
+  losango:['#d8cbf5','#c3b0ef','#e8e0fb'],paralelogramo:['#f5c3a6','#efab86','#f9dac8'],trapezio:['#d3c9b4','#c2b598','#e3dccd']};
+const KCOLOR=Object.fromEntries(Object.entries(KCOLORS).map(([k,v])=>[k,v[0]]));
+const kColorOf = c => (S.kingdoms&&S.kingdoms[c.kingdom]&&S.kingdoms[c.kingdom].color) || KCOLOR[c.shape];
 const TNAMES={
   quadrado:['Praça Perfeita','Vila Quatro Lados','Forte do Lado','Campo Igual','Torre Quadrada','Jardim do ℓ²','Aldeia Esquadro','Bosque Reto','Colina Lado a Lado'],
   retangulo:['Porto Comprido','Campo da Base','Vila da Altura','Estrada Larga','Fazenda b × h','Celeiro Retângulo','Ponte Reta','Lago Retangular','Trilha Comprida'],
   losango:['Pico Diagonal','Mina do D','Gruta do d','Cristal Brilhante','Vale das Diagonais','Torre do Losango','Lago Espelho','Caverna (D×d)÷2','Gelo Cintilante'],
   paralelogramo:['Ladeira Inclinada','Dunas Tortas','Oásis da Altura','Rampa do Vento','Vila Paralela','Miragem da Base','Cânion Inclinado','Forte Torto','Areias Deslizantes'],
+  triangulo:['Pico Agudo','Vértice Alto','Rampa da Base','Torre de Três Lados','Vila b × h ÷ 2','Monte da Altura','Ponta da Flecha','Colina Triangular','Mirante do Vértice','Trilha dos Ângulos','Vale da Metade'],
   trapezio:['Monte das Bases','Vulcão B + b','Penhasco da Altura','Serra Alta','Pico Trapézio','Vale Escondido','Mirante Duas Bases','Rocha ÷ 2','Desfiladeiro']
 };
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -684,7 +747,8 @@ function centroid(poly){
 }
 const dist=(a,b)=>Math.hypot(a.cx-b.cx,a.cy-b.cy);
 
-function genWorld(seed,nb=2){
+function genWorld(seed,nb=2,shapeList=SHAPES){
+  const SH=(shapeList&&shapeList.length)?shapeList.slice():SHAPES.slice(), K=Math.max(5,SH.length);
   const R=mulberry32(seed), cols=9, rows=6;
   let pts=[];
   for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
@@ -726,9 +790,9 @@ function genWorld(seed,nb=2){
   if(bases.some(b=>b.adj.length<2)) return null;
   if(bases.some(b=>b.adj.some(n=>bases.includes(cells[n])))) return null;
   bases.forEach((b,i)=>{b.base=true; b.owner=i;});
-  // 5 reinos crescendo a partir de sementes espalhadas
+  // reinos crescendo a partir de sementes espalhadas (um por figura; repetidos quando há poucas figuras)
   const free=cells.filter(c=>!c.base), chosen=bases.slice(), seeds=[];
-  for(let k=0;k<5;k++){
+  for(let k=0;k<K;k++){
     let pickC=null, pd=-1;
     for(const c of free){ if(seeds.includes(c)) continue; const d=Math.min(...chosen.map(x=>dist(x,c))); if(d>pd){pd=d;pickC=c} }
     seeds.push(pickC); chosen.push(pickC); pickC.kingdom=k;
@@ -737,7 +801,7 @@ function genWorld(seed,nb=2){
   let progress=true;
   while(progress){
     progress=false;
-    for(let k=0;k<5;k++){
+    for(let k=0;k<K;k++){
       const front=new Set();
       kcells[k].forEach(id=>cells[id].adj.forEach(n=>{const c=cells[n]; if(!c.base&&c.kingdom<0) front.add(c)}));
       if(!front.size) continue;
@@ -748,12 +812,14 @@ function genWorld(seed,nb=2){
   if(free.some(c=>c.kingdom<0)) return null;
   if(kcells.some(a=>a.length<3||a.length>9)) return null;
   // cada reino precisa ser alcançável sem passar por castelo (já garantido pelo crescimento)
-  const shapes=SHAPES.slice(); for(let i=shapes.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[shapes[i],shapes[j]]=[shapes[j],shapes[i]]}
+  const shapes=SH; for(let i=shapes.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[shapes[i],shapes[j]]=[shapes[j],shapes[i]]}
+  const pools={}, used={};
   const kingdoms=kcells.map((ids,k)=>{
-    const shape=shapes[k], names=TNAMES[shape].slice();
-    for(let i=names.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[names[i],names[j]]=[names[j],names[i]]}
-    ids.forEach((id,n)=>{cells[id].shape=shape; cells[id].name=names[n]||(KINGDOMS[shape]+' '+(n+1))});
-    return {shape,name:KINGDOMS[shape],cells:ids,owner:null};
+    const shape=shapes[k%shapes.length], vi=used[shape]=(used[shape]===undefined?0:used[shape]+1);
+    if(!pools[shape]){ const nm=TNAMES[shape].slice(); for(let i=nm.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[nm[i],nm[j]]=[nm[j],nm[i]]} pools[shape]=nm; }
+    const kname=KNAMES[shape][vi%3]+(vi>=3?' '+(vi+1):'');
+    ids.forEach((id,n)=>{cells[id].shape=shape; cells[id].name=pools[shape].shift()||(kname+' '+(n+1))});
+    return {shape,name:kname,color:KCOLORS[shape][vi%3],cells:ids,owner:null};
   });
   // 💎 Tesouros: territórios no meio do caminho, à mesma distância dos castelos (corrida para chegar primeiro)
   const hop=src=>{const d=cells.map(()=>Infinity), qq=[src.id]; d[src.id]=0; while(qq.length){const c=qq.shift(); cells[c].adj.forEach(n=>{if(d[n]===Infinity){d[n]=d[c]+1;qq.push(n)}})} return d;};
@@ -789,7 +855,7 @@ const isHumanTurn = () => O.on
 
 function newBoard(){
   let w=null, tries=0;
-  while(!w && tries++<600) w=genWorld(Math.floor(Math.random()*2147483647),NT());
+  while(!w && tries++<800) w=genWorld(Math.floor(Math.random()*2147483647),NT(),S.shapes);
   S.cells=w.cells; S.edges=w.edges; S.kingdoms=w.kingdoms;
 }
 function updateKingdoms(){
@@ -815,7 +881,7 @@ function renderBoard(){
     if(tg.has(c)) cls+=' can t'+S.turn;
     if(c.pop){cls+=' pop'; c.pop=false}
     if(S.robotTarget===c) cls+=' thinking';
-    const fill=c.owner!==null?`var(--t${c.owner})`:(c.base?'#e2e8f0':KCOLOR[c.shape]);
+    const fill=c.owner!==null?`var(--t${c.owner})`:(c.base?'#e2e8f0':kColorOf(c));
     let inner=`<path d="${pd(c)}" style="fill:${fill}"/>`;
     if(c.base) inner+=`<text class="castle" x="${c.cx.toFixed(1)}" y="${(c.cy+13).toFixed(1)}">🏰</text>`;
     else{
@@ -869,7 +935,7 @@ function renderKingdoms(){
     const cs=k.cells.map(i=>S.cells[i]), f=cs.filter(c=>c.owner===null).length;
     const st = k.owner!==null ? `👑 ${esc(S.names[k.owner])} +${KINGDOM_BONUS}`
       : range(NT()).map(t=>`<span class="dot" style="background:var(--t${t})"></span>${cs.filter(c=>c.owner===t).length}`).join('')+` · livres ${f}`;
-    return `<div class="kchip${k.owner!==null?' k'+k.owner:''}"><div class="ksw" style="background:${KCOLOR[k.shape]}">${icon(k.shape)}</div>
+    return `<div class="kchip${k.owner!==null?' k'+k.owner:''}"><div class="ksw" style="background:${k.color||KCOLOR[k.shape]}">${icon(k.shape)}</div>
       <div style="min-width:0"><b>${esc(k.name)}</b><div class="kst">${NAMES[k.shape]} · ${st}</div></div></div>`;
   }).join('');
 }
@@ -944,6 +1010,14 @@ function gen(shape,lvl){
       q.wrong={[b*s]:'Você usou o lado inclinado. Use a ALTURA (linha tracejada)!',[2*(b+s)]:'Esse é o perímetro! Área = base × altura.'};
       if((b*h)%2===0) q.wrong[b*h/2]='No paralelogramo não divide por 2! Área = b × h.';
       break;}
+    case 'triangulo':{
+      let b=rnd(lo+1,hi+2), h=rnd(lo,hi); if((b*h)%2) b++;
+      const ax=rnd(Math.round(b*.15),Math.round(b*.85));
+      q.v={b,h,ax}; q.ans=b*h/2;
+      q.calc=`A = (${b} × ${h}) ÷ 2 = ${b*h} ÷ 2 = ${q.ans} ${u}²`;
+      q.wrong={[b*h]:'Faltou dividir por 2! O triângulo é metade do retângulo.',[b+h]:'Você somou. Multiplique base × altura e divida por 2.'};
+      if((b+h)*2!==b*h/2) q.wrong[(b+h)*2]='Área do triângulo = (b × h) ÷ 2.';
+      break;}
     case 'trapezio':{
       let b=rnd(Math.max(2,lo-1),hi-2), B=b+rnd(2,lvl>=2?10:6), h=rnd(lo,hi-2);
       if(((B+b)*h)%2) h++;
@@ -953,6 +1027,7 @@ function gen(shape,lvl){
       q.wrong={[(B+b)*h]:'Faltou dividir por 2!',[B*h]:'Você usou só a base maior. Some as duas bases!',[b*h]:'Você usou só a base menor. Some as duas bases!'};
       break;}
   }
+  delete q.wrong[q.ans];
   if(Math.random() < ([0,0,.4,.7,1][lvl]||0)) makeInverse(q);
   return q;
 }
@@ -984,6 +1059,12 @@ function makeInverse(q){
       q.calc=`A = b × h → h = A ÷ b = ${A} ÷ ${v.b} = ${v.h} ${u}`;
       add(A/v.s,'Você dividiu pelo lado inclinado. Divida a área pela base.');
       add(A-v.b,'Você subtraiu. Para achar a altura, divida a área pela base.');
+      break;
+    case 'triangulo':
+      v.hide='h'; q.ans=v.h; q.title=`A área do triângulo é ${A} ${u}². Quanto mede a altura?`;
+      q.calc=`A = (b × h) ÷ 2 → h = 2 × A ÷ b = 2 × ${A} ÷ ${v.b} = ${v.h} ${u}`;
+      add(A/v.b,'Faltou multiplicar a área por 2.');
+      add(A-v.b,'Você subtraiu. Use h = 2 × A ÷ b.');
       break;
     case 'trapezio':
       v.hide='h'; q.ans=v.h; q.title=`A área do trapézio é ${A} ${u}². Quanto mede a altura?`;
@@ -1018,6 +1099,7 @@ function draw(q){
     case 'losango':w=v.D;h=v.d;break;
     case 'paralelogramo':w=v.o+v.b;h=v.h;break;
     case 'trapezio':w=v.B;h=v.h;break;
+    case 'triangulo':w=v.b;h=v.h;break;
   }
   const k=Math.min((W-2*padX)/w,(H-2*padY)/h);
   const ox=(W-w*k)/2, oy=(H-h*k)/2;
@@ -1054,6 +1136,13 @@ function draw(q){
       g+=lab(X(v.b/2),Y(v.h)+26,M('b',v.b));
       g+=lab(X(v.o)+8,Y(v.h/2)+6,M('h',v.h),'start','labh');
       g+=lab(X(v.o/2)-10,Y(v.h/2)+4,`${v.s} ${U}`,'end','side');
+      break;
+    case 'triangulo':
+      g+=poly([[0,v.h],[v.b,v.h],[v.ax,0]]);
+      g+=line(v.ax,0,v.ax,v.h)+ra(X(v.ax),Y(v.h));
+      g+=lab(X(v.b/2),Y(v.h)+26,M('b',v.b));
+      if(v.ax<=v.b/2) g+=lab(X(v.ax)+8,Y(v.h*0.78)+6,M('h',v.h),'start','labh');
+      else g+=lab(X(v.ax)-8,Y(v.h*0.78)+6,M('h',v.h),'end','labh');
       break;
     case 'trapezio':
       g+=poly([[v.x0,0],[v.x0+v.b,0],[v.B,v.h],[0,v.h]]);
@@ -1095,7 +1184,7 @@ const stopTimer=()=>clearInterval(timerId);
 
 function fillQuestionModal(x,q,team,attack,interactive,waitMsg,onAnswer){
   $('#qTeam').className='pill p'+team; $('#qTeam').textContent=S.names[team];
-  $('#qTags').innerHTML=`<span class="tag" style="background:${KCOLOR[x.shape]};color:#3b2f22">📍 ${esc(x.name)}</span> `+(x.treasure?`<span class="tag" style="background:#e0f2fe;color:#075985">💎 Tesouro: vale ${TREASURE_PTS} pontos</span> `:x.star?'<span class="tag">⭐ vale 2 pontos</span> ':'')+(attack?`<span class="tag atk">${LEVEL_NAME[q.lvl]||'⚔️ Ataque'} · nível ${q.lvl}</span>`:'')+(q.inv?' <span class="tag inv">🔄 Ao contrário</span>':'')+(q.lvl===4?' <span class="tag">🚫 Sem dica</span>':'');
+  $('#qTags').innerHTML=`<span class="tag" style="background:${kColorOf(x)};color:#3b2f22">📍 ${esc(x.name)}</span> `+(x.treasure?`<span class="tag" style="background:#e0f2fe;color:#075985">💎 Tesouro: vale ${TREASURE_PTS} pontos</span> `:x.star?'<span class="tag">⭐ vale 2 pontos</span> ':'')+(attack?`<span class="tag atk">${LEVEL_NAME[q.lvl]||'⚔️ Ataque'} · nível ${q.lvl}</span>`:'')+(q.inv?' <span class="tag inv">🔄 Ao contrário</span>':'')+(q.lvl===4?' <span class="tag">🚫 Sem dica</span>':'');
   $('#qTitle').textContent= q.title || `Qual é a área ${ARTIGO[x.shape]} ${NAMES[x.shape].toLowerCase()}?`;
   $('#qFig').innerHTML=draw(q);
   $('#hint').classList.add('hidden'); $('#hint').textContent='💡 '+hintOf(q);
@@ -1326,7 +1415,7 @@ function recordGame(){
     const st=S.stats[t], tot=st.ok+st.bad, me=sc[t], others=range(NT()).filter(o=>o!==t), adv=Math.max(...others.map(o=>sc[o]));
     const rank=1+sc.filter(v=>v>me).length;
     rows.push({data,hora,turma:S.turma,modo:O.on?'Online':(S.mode==='robot'?'Contra o Robô':'Time contra Time'),
-      nivel:S.diff==='hard'?'Desafio':'Fácil',time:S.names[t],
+      nivel:(S.diff==='hard'?'Desafio':'Fácil')+` · ${S.ano}º ano`,time:S.names[t],
       alunos:O.on?playersOf(O.room).filter(p=>p.team===t).map(p=>`${p.name} (🎯${p.ok||0}/${(p.ok||0)+(p.bad||0)} ⚡${p.speed||0})`).join(', '):S.players[t],adversario:others.map(o=>S.names[o]).join(' / '),
       pontos:me,adv,territorios:count(t),acertos:st.ok,erros:st.bad,aprov:tot?Math.round(st.ok/tot*100):0,rapidez:st.speed||0,
       resultado: me===best ? (nWin>1?'Empate':'Venceu') : (NT()===2?'Perdeu':rank+'º lugar')});
@@ -1404,7 +1493,7 @@ async function hostCreate(){
     await O.db.ref('salas/'+code+'/estado').set({
       status:'lobby', host:O.me,
       teams:range(S.nteams).map(t=>$('#n'+t).value.trim()||DEFAULT_NAMES[t]),
-      config:{diff:S.diff,timer:S.timer,dur:S.dur,turma:$('#turma').value.trim()},
+      config:{diff:S.diff,timer:S.timer,dur:S.dur,ano:S.ano,shapes:S.shapes.slice(),turma:$('#turma').value.trim()},
       createdAt:firebase.database.ServerValue.TIMESTAMP
     });
     subscribe();
@@ -1459,7 +1548,7 @@ async function syncFromRoom(r){
   if(!r||!r.status){toast('Esta sala não existe mais.'); leaveOnline(); return}
   O.room=r;
   S.names=range(r.teams.length).map(t=>r.teams[t]);
-  S.diff=r.config.diff; S.timer=r.config.timer; S.dur=r.config.dur||0; S.turma=r.config.turma||''; S.mode='teams';
+  S.diff=r.config.diff; S.timer=r.config.timer; S.shapes=(r.config.shapes||SHAPES).slice(); S.ano=r.config.ano||'7'; S.dur=r.config.dur||0; S.turma=r.config.turma||''; S.mode='teams';
   if(r.status==='lobby'){ renderLobby(r); return; }
   if(O.worldKey!==r.worldKey){
     const key=r.worldKey, w=(await O.wref.once('value')).val();
@@ -1476,7 +1565,7 @@ async function syncFromRoom(r){
 function buildWorld(w){
   S.cells=w.cells.map((c,i)=>({id:i,poly:c.poly,cx:c.cx,cy:c.cy,adj:c.adj||[],kingdom:c.kingdom,shape:c.shape||null,name:c.name||'',star:!!c.star,treasure:!!c.treasure,gift:!!c.gift,giftUsed:false,base:!!c.base,owner:null,pop:false}));
   S.edges=w.edges||[];
-  S.kingdoms=(w.kingdoms||[]).map(k=>({shape:k.shape,name:k.name,cells:k.cells||[],owner:null}));
+  S.kingdoms=(w.kingdoms||[]).map(k=>({shape:k.shape,name:k.name,color:k.color||KCOLOR[k.shape],cells:k.cells||[],owner:null}));
 }
 
 function applyRoom(r){
@@ -1674,12 +1763,12 @@ async function hostStart(){
   if(range(N).some(t=>!pl.some(p=>p.team===t))){toast('Cada time precisa de pelo menos um aluno na sala');return}
   const b=$('#hostStart'); b.disabled=true;
   try{
-    let w=null,tries=0; while(!w&&tries++<600) w=genWorld(Math.floor(Math.random()*2147483647),N);
+    let w=null,tries=0; while(!w&&tries++<800) w=genWorld(Math.floor(Math.random()*2147483647),N,r.config.shapes||SHAPES);
     const rd=v=>Math.round(v*10)/10, pt=v=>[rd(v[0]),rd(v[1])];
     await O.wref.set({
       cells:w.cells.map(c=>({poly:c.poly.map(pt),cx:rd(c.cx),cy:rd(c.cy),adj:c.adj,kingdom:c.kingdom,shape:c.shape||'',name:c.name||'',star:c.star,treasure:!!c.treasure,gift:!!c.gift,base:c.base})),
       edges:w.edges.map(e=>({a:e.a,b:e.b,p1:pt(e.p1),p2:pt(e.p2)})),
-      kingdoms:w.kingdoms.map(k=>({shape:k.shape,name:k.name,cells:k.cells}))
+      kingdoms:w.kingdoms.map(k=>({shape:k.shape,name:k.name,color:k.color,cells:k.cells}))
     });
     const first=pickPlayer(r,0,0);
     const stats={}, counters={}; range(N).forEach(t=>{stats[t]={ok:0,bad:0,streak:0,speed:0}; counters[t]=0}); counters[0]=first.idx+1;
@@ -1939,10 +2028,27 @@ document.querySelectorAll('.seg').forEach(seg=>{
   seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
     const k=seg.dataset.key, v=b.dataset.v;
     document.querySelectorAll(`.seg[data-key="${k}"] button`).forEach(x=>x.classList.toggle('on',x.dataset.v===v));
-    if(k==='timer') S.timer = v==='on'; else if(k==='nteams') S.nteams=+v; else if(k==='dur') S.dur=+v; else S[k]=v;
+    if(k==='timer') S.timer = v==='on'; else if(k==='nteams') S.nteams=+v; else if(k==='dur') S.dur=+v;
+    else if(k==='ano'){ S.ano=v; S.shapes=ANO_SHAPES[v].slice(); renderShapePicks(); }
+    else S[k]=v;
     if(k==='mode'||k==='nteams') applyModeUI();
   });
 });
+function renderShapePicks(){
+  document.querySelectorAll('.shapePick').forEach(box=>{
+    box.innerHTML=SHAPES.map(sh=>`<button type="button" class="spk${S.shapes.includes(sh)?' on':''}" data-sh="${sh}" aria-pressed="${S.shapes.includes(sh)}">${icon(sh)}<span>${NAMES[sh]}</span></button>`).join('');
+    box.querySelectorAll('.spk').forEach(b=>b.onclick=()=>{
+      const sh=b.dataset.sh, on=S.shapes.includes(sh);
+      if(on && S.shapes.length===1){ toast('Escolha pelo menos uma figura'); return; }
+      S.shapes = on ? S.shapes.filter(x=>x!==sh) : SHAPES.filter(x=>x===sh||S.shapes.includes(x));
+      renderShapePicks();
+    });
+  });
+}
+function renderFormulas(){
+  const list=(S.shapes&&S.shapes.length)?S.shapes:SHAPES;
+  $('#fgrid').innerHTML=list.map(s=>`<div class="fitem">${icon(s)}<div><b>${NAMES[s]}</b><div class="f">${FORMULAS[s]}</div><div class="d">${DESCR[s]}</div></div></div>`).join('');
+}
 function applyModeUI(){
   const robot=S.mode==='robot';
   $('#optNTeams').classList.toggle('hidden',robot);
@@ -1979,7 +2085,8 @@ $('#rCopy').onclick=()=>{
 };
 $('#soundBtn').onclick=()=>{S.sound=!S.sound; $('#soundBtn').textContent=S.sound?'🔊':'🔇'};
 $('#hintBtn').onclick=()=>{$('#hint').classList.remove('hidden'); $('#hintBtn').classList.add('hidden')};
-document.querySelectorAll('[data-open-formulas]').forEach(b=>b.onclick=()=>$('#fModal').classList.remove('hidden'));
+document.querySelectorAll('[data-open-formulas]').forEach(b=>b.onclick=()=>{ renderFormulas(); $('#fModal').classList.remove('hidden'); });
+renderShapePicks();
 $('#fClose').onclick=()=>$('#fModal').classList.add('hidden');
 $('#fModal').onclick=e=>{if(e.target.id==='fModal') $('#fModal').classList.add('hidden')};
 
