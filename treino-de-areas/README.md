@@ -20,8 +20,15 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 
 - **Loja** com 29 itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
 - **Níveis infinitos**: cada nível pede um pouco mais de XP. Títulos de Aprendiz a Lenda Geométrica e um troféu a cada 5 níveis.
-- **Quadro de honra** com os melhores jogadores do aparelho.
-- O progresso fica salvo no navegador (localStorage), pelo nome do aluno.
+- **Menino ou menina**, escolhido ao criar a conta, com 3 penteados para cada um.
+- **Meu mundo**: um terreno quadriculado em que cada quadradinho vale 1 m². O aluno gasta moedas em construções (árvore 1 m², casa 2 × 2 = 4 m², piscina 3 × 2 = 6 m², quadra 4 × 3 = 12 m², castelo 4 × 4 = 16 m²…) e pode aumentar o terreno a 12 moedas por m².
+- **Quadro de honra de todos** que jogam no site, em "Todos" ou "Meu ano", com primeiro nome e inicial do sobrenome.
+
+## Onde fica o progresso
+
+- Com o servidor instalado (pasta `servidor/`), o aluno entra com **nome + ano + senha de 4 figuras** e o progresso fica numa planilha Google. Funciona em qualquer computador.
+- Sem o servidor (`const API='';`), o progresso fica só no navegador daquele aparelho.
+- Duas abas abertas ao mesmo tempo nunca apagam o progresso uma da outra: vale sempre o perfil com mais XP.
 
 ## Lista de exercícios em PDF
 
