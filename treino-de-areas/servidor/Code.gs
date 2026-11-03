@@ -1,16 +1,17 @@
 /**
  * Áreas do Tio Danilo — servidor do progresso dos alunos e do quadro de honra.
  *
- * Fica dentro de uma Planilha Google (Extensões > Apps Script) e é publicado como
+ * Projeto do Apps Script ligado à planilha "Treino de Áreas — alunos" (ID abaixo), publicado como
  * "App da Web": Executar como = Eu; Quem pode acessar = Qualquer pessoa.
  * Cada aluno ocupa uma linha da aba "jogadores". Para tirar alguém do quadro, apague a linha.
  */
+const PLANILHA_ID = '1JouLmAOOjlO9q5mhMLXhL27FFCfLMStuOi104A01rtU';
 const ABA = 'jogadores';
 const COLS = ['id', 'nome', 'publico', 'ano', 'senha', 'xp', 'moedas', 'nivel', 'm2', 'avatar', 'dados', 'atualizado'];
 const C = Object.fromEntries(COLS.map((c, i) => [c, i]));
 
 function aba_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = SpreadsheetApp.openById(PLANILHA_ID);
   let s = ss.getSheetByName(ABA);
   if (!s) {
     s = ss.insertSheet(ABA);

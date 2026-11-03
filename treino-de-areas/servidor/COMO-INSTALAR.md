@@ -5,8 +5,8 @@ Guarda o progresso de cada aluno (moedas, nível, avatar, mundo) e monta o quadr
 ## Instalar (uma vez só)
 
 1. Crie uma planilha nova em https://sheets.new e dê o nome **Treino de Áreas — alunos**.
-2. Na planilha, abra **Extensões → Apps Script**.
-3. Apague o que estiver no editor, cole todo o conteúdo do arquivo `Code.gs` desta pasta e clique em **Salvar**.
+2. Copie o ID da planilha (a parte do endereço entre `/d/` e `/edit`).
+3. Abra https://script.google.com/create, apague o que estiver no editor, cole o conteúdo de `Code.gs`, troque o valor de `PLANILHA_ID` pelo ID copiado e clique em **Salvar**.
 4. Clique em **Implantar → Nova implantação**.
    - Tipo: **App da Web**
    - Executar como: **Eu**
