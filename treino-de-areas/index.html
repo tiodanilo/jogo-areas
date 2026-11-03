@@ -34,6 +34,8 @@
   --shape-fill:#1D3164; --shape-stroke:#8FB0FF; color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
 body{background-color:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:24px 24px;min-height:100vh}
@@ -56,7 +58,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .who .av{width:34px;height:34px}
 .who span{font-weight:800;max-width:12ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-main{padding-block:24px 64px}
+main{padding-block:16px 32px}
 .screen{display:flex;flex-direction:column;gap:20px}
 .panel{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
 .eyebrow{margin:0;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;color:var(--blue)}
@@ -126,6 +128,16 @@ input:focus{border-color:var(--blue);outline:none}
 .empty{color:var(--ink-2);margin:0}
 .teacher{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;background:var(--card)}
 .teacher p{margin:4px 0 0;color:var(--ink-2);max-width:60ch}
+
+.step{max-width:620px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.step h1{font-size:clamp(1.8rem,4.5vw,2.4rem);font-weight:800}
+.who-row{display:flex;gap:14px;align-items:center;background:var(--paper);border-radius:14px;padding:10px 14px}
+.avatar-small{width:76px;flex:none}
+.avatar-small svg{display:block;width:100%;height:auto}
+.stats.compact{gap:2px}
+.stats.compact h3{font-size:1.2rem}
+.home-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px}
+.actions .btn.big{flex:1 1 auto}
 
 /* jogo */
 .hud{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:12px 16px}
@@ -256,45 +268,49 @@ input:focus{border-color:var(--blue);outline:none}
 </header>
 
 <main class="wrap">
-  <!-- INÍCIO -->
+  <!-- INÍCIO: passo 1 -->
   <section id="sc-home" class="screen">
-    <div class="hero">
-      <p class="eyebrow">Geometria · figuras planas</p>
-      <h1>Calcule áreas, ganhe moedas e <mark>monte seu avatar</mark>.</h1>
+    <div class="panel step">
+      <div><p class="eyebrow">Passo 1 de 2</p><h1>Quem vai jogar?</h1></div>
+      <div class="who-row"><div class="avatar-small" id="home-av"></div><div class="stats compact" id="home-stats"></div></div>
+      <div class="field">
+        <label for="in-nome" class="lab">Seu nome</label>
+        <input id="in-nome" type="text" autocomplete="off" maxlength="24" placeholder="Ex.: Ana Clara">
+      </div>
+      <div class="field"><span class="lab">Seu ano</span><div class="chips" id="anos"></div></div>
+      <p class="err" id="err" role="alert"></p>
+      <div class="actions"><button class="btn primary big" type="button" id="next1">Continuar</button></div>
     </div>
-    <div class="home-grid">
-      <form class="panel setup" id="setup" novalidate>
-        <div class="field">
-          <label for="in-nome" class="lab">Seu nome</label>
-          <input id="in-nome" type="text" autocomplete="off" maxlength="24" placeholder="Ex.: Ana Clara">
-          <p class="hello" id="hello">Escreva seu nome para começar ou continuar de onde parou.</p>
+    <nav class="home-links" aria-label="Outras opções">
+      <button class="linkbtn" type="button" id="go-shop">Loja do avatar</button>
+      <button class="linkbtn" type="button" id="go-rank">Quadro de honra</button>
+      <button class="linkbtn" type="button" id="go-pdf">Professor: lista em PDF</button>
+    </nav>
+  </section>
+
+  <!-- INÍCIO: passo 2 -->
+  <section id="sc-setup" class="screen" hidden>
+    <div class="panel step">
+      <div><p class="eyebrow">Passo 2 de 2</p><h1>Monte o seu treino</h1></div>
+      <div class="field"><span class="lab">Figuras <small>· já marcamos as do seu ano</small></span><div class="chips" id="shapes"></div></div>
+      <div class="field"><span class="lab">Modo</span>
+        <div class="seg" id="modo">
+          <button type="button" data-v="facil" aria-pressed="true"><b>Fácil</b><small>com alternativas · 5 moedas</small></button>
+          <button type="button" data-v="dificil" aria-pressed="false"><b>Difícil</b><small>digitar a resposta · 10 moedas</small></button>
         </div>
-        <div class="field"><span class="lab">Seu ano</span><div class="chips" id="anos"></div></div>
-        <div class="field"><span class="lab">Figuras <small>· escolha uma ou mais</small></span><div class="chips" id="shapes"></div></div>
-        <div class="field two">
-          <div class="field"><span class="lab">Modo</span>
-            <div class="seg" id="modo">
-              <button type="button" data-v="facil" aria-pressed="true"><b>Fácil</b><small>com alternativas · 5 moedas</small></button>
-              <button type="button" data-v="dificil" aria-pressed="false"><b>Difícil</b><small>digitar a resposta · 10 moedas</small></button>
-            </div>
-          </div>
-          <div class="field"><span class="lab">Perguntas</span><div class="chips" id="qtd"></div></div>
-        </div>
-        <p class="err" id="err" role="alert"></p>
-        <div class="actions">
-          <button class="btn primary big" type="submit">Jogar</button>
-          <button class="btn ghost" type="button" id="go-shop">Loja do avatar</button>
-        </div>
-      </form>
-      <aside class="side">
-        <div class="panel avatar-card"><div class="avatar-big" id="home-av"></div><div class="stats" id="home-stats"></div></div>
-        <div class="panel"><h2 class="h2">Quadro de honra</h2><ol class="rank" id="rank"></ol></div>
-      </aside>
+      </div>
+      <div class="field"><span class="lab">Perguntas</span><div class="chips" id="qtd"></div></div>
+      <p class="err" id="err2" role="alert"></p>
+      <div class="actions"><button class="btn ghost" type="button" id="back1">Voltar</button><button class="btn primary big" type="button" id="play">Jogar</button></div>
     </div>
-    <div class="panel teacher">
-      <div><p class="eyebrow">Para professores</p><h2 class="h2" style="margin:2px 0 0">Lista de exercícios para imprimir</h2>
-        <p>Use as mesmas figuras e o mesmo ano escolhidos acima para montar uma folha em PDF, com espaço para o nome do aluno e gabarito no final.</p></div>
-      <button class="btn yellow" type="button" id="go-pdf">Criar lista em PDF</button>
+  </section>
+
+  <!-- QUADRO DE HONRA -->
+  <section id="sc-rank" class="screen" hidden>
+    <div class="panel step">
+      <div><p class="eyebrow">Neste aparelho</p><h1>Quadro de honra</h1></div>
+      <ol class="rank" id="rank"></ol>
+      <div class="actions"><button class="btn ghost" type="button" id="rank-back">Voltar</button></div>
     </div>
   </section>
 
@@ -607,7 +623,8 @@ function ensureProfile(){const k=keyOf(S.nome);if(!db.profiles[k]){db.profiles[k
   const p=db.profiles[k];p.name=S.nome.trim();p.ano=S.ano;saveDB();return p;}
 let P=null; // perfil ativo
 
-function statsHTML(p,showCoins=true){const li=levelInfo(p.xp);const tr=Math.floor(li.lvl/5);
+function statsHTML(p,showCoins=true,compact=false){const li=levelInfo(p.xp);const tr=Math.floor(li.lvl/5);
+  if(compact)return `<h3>${esc(p.name||'Novo jogador')}</h3><div class="lvl-line">Nível ${li.lvl} · ${esc(titleOf(li.lvl))}</div><div class="coins">${COIN} ${p.coins} moedas</div>`;
   return `<h3>${esc(p.name||'Novo jogador')}</h3><div class="lvl-line">Nível ${li.lvl} · ${esc(titleOf(li.lvl))}</div>
   <div class="xpbar" title="${li.into} de ${li.need} XP"><i style="width:${Math.round(li.into/li.need*100)}%"></i></div>
   <div class="lvl-line">${li.need-li.into} XP para o nível ${li.lvl+1}</div>
@@ -615,9 +632,12 @@ function statsHTML(p,showCoins=true){const li=levelInfo(p.xp);const tr=Math.floo
   ${tr?`<div class="trophies">${TROPHY.repeat(Math.min(tr,8))}${tr>8?` ×${tr}`:''} <span>${tr} troféu${tr>1?'s':''}</span></div>`:''}`;}
 
 /* ---------- navegação ---------- */
-const SCREENS=['home','game','result','shop','pdf'];let cur='home',backTo='home';
-function show(n){SCREENS.forEach(s=>$('#sc-'+s).hidden=s!==n);cur=n;window.scrollTo({top:0});updateWho();}
-function updateWho(){const w=$('#who');if(P&&cur!=='home'&&cur!=='pdf'){w.hidden=false;w.innerHTML=`<span class="av">${avatarSVG(P)}</span><span>${esc(P.name)}</span><span class="coins">${COIN}${P.coins}</span>`;}else w.hidden=true;}
+const SCREENS=['home','setup','rank','game','result','shop','pdf'];let cur='home',backTo='home';
+function show(n){SCREENS.forEach(s=>$('#sc-'+s).hidden=s!==n);cur=n;try{window.scrollTo(0,0)}catch(e){}
+  /* dentro do Google Sites, leva a página até o topo do jogo */
+  try{document.querySelector('.topbar').scrollIntoView({block:'start'})}catch(e){}
+  updateWho();}
+function updateWho(){const w=$('#who');if(P&&!['home','setup','rank','pdf'].includes(cur)){w.hidden=false;w.innerHTML=`<span class="av">${avatarSVG(P)}</span><span>${esc(P.name)}</span><span class="coins">${COIN}${P.coins}</span>`;}else w.hidden=true;}
 $('#who').onclick=()=>{if(cur!=='shop'){backTo=cur;openShop()}};
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2600);}
 
@@ -628,31 +648,32 @@ function chip(label,on,attrs=''){return `<button type="button" class="chip" aria
 function shapeChips(sel){return SHAPES.map(s=>chip(`<svg class="ico" viewBox="0 0 24 24">${s.icon}</svg>${s.nome}`,sel.has(s.id),`data-id="${s.id}"`)).join('')}
 function renderHome(){
   $('#anos').innerHTML=[4,5,6,7,8,9].map(a=>chip(`${a}º ano`,S.ano===a,`data-v="${a}"`)).join('');
-  $('#shapes').innerHTML=shapeChips(S.shapes);
-  $('#qtd').innerHTML=[5,10,15,20].map(n=>chip(n,S.qtd===n,`data-v="${n}"`)).join('');
-  document.querySelectorAll('#modo button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.modo));
-  renderHomeProfile();renderRank();
+  renderHomeProfile();
 }
 function renderHomeProfile(){const p=findProfile(S.nome);const shown=p||{...DEFAULT,name:S.nome.trim()};
-  $('#home-av').innerHTML=avatarSVG(shown);$('#home-stats').innerHTML=statsHTML(shown);
-  const h=$('#hello');
-  if(!S.nome.trim())h.textContent='Escreva seu nome para começar ou continuar de onde parou.';
-  else if(p)h.innerHTML=`Que bom te ver de novo, <b>${esc(p.name)}</b>! Você tem ${p.coins} moedas.`;
-  else h.innerHTML=`Olá, <b>${esc(S.nome.trim())}</b>! Seu progresso fica salvo com esse nome.`;}
+  $('#home-av').innerHTML=avatarSVG(shown);
+  $('#home-stats').innerHTML=S.nome.trim()?statsHTML(shown,true,true)+(p?'':'<div class="lvl-line">Novo jogador: o progresso fica salvo com esse nome.</div>'):'<h3>Olá!</h3><div class="lvl-line">Escreva seu nome para começar ou continuar de onde parou.</div>';}
 function renderRank(){const list=Object.values(db.profiles).sort((a,b)=>b.xp-a.xp).slice(0,10);
   $('#rank').innerHTML=list.length?list.map((p,i)=>{const li=levelInfo(p.xp);return `<li><button type="button" data-n="${esc(p.name)}"><span class="pos">${i+1}</span><span class="av">${avatarSVG(p)}</span><span class="nm">${esc(p.name)}<small>${p.ano}º ano · nível ${li.lvl}</small></span><span class="coins">${COIN}${p.coins}</span></button></li>`}).join('')
    :'<p class="empty">Ninguém jogou neste computador ainda. Quem terminar a primeira partida aparece aqui.</p>';}
-$('#rank').addEventListener('click',e=>{const b=e.target.closest('button[data-n]');if(!b)return;const p=findProfile(b.dataset.n);$('#in-nome').value=b.dataset.n;S.nome=b.dataset.n;if(p){S.ano=p.ano;S.shapes=defaultShapes(p.ano)}renderHome();$('#in-nome').focus();});
+function renderSetup(){$('#shapes').innerHTML=shapeChips(S.shapes);
+  $('#qtd').innerHTML=[5,10,15,20].map(n=>chip(n,S.qtd===n,`data-v="${n}"`)).join('');
+  document.querySelectorAll('#modo button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.modo));$('#err2').textContent='';}
+function goHome(){show('home');renderHome();}
+$('#rank').addEventListener('click',e=>{const b=e.target.closest('button[data-n]');if(!b)return;const p=findProfile(b.dataset.n);$('#in-nome').value=b.dataset.n;S.nome=b.dataset.n;if(p){S.ano=p.ano;S.shapes=defaultShapes(p.ano)}goHome();});
 $('#in-nome').addEventListener('input',e=>{S.nome=e.target.value;const p=findProfile(S.nome);if(p&&p.ano!==S.ano){S.ano=p.ano;S.shapes=defaultShapes(p.ano);renderHome();}else renderHomeProfile();$('#err').textContent='';});
+$('#in-nome').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#next1').click()}});
 $('#anos').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.ano=+b.dataset.v;S.shapes=defaultShapes(S.ano);renderHome();});
-$('#shapes').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id;S.shapes.has(id)?S.shapes.delete(id):S.shapes.add(id);b.setAttribute('aria-pressed',S.shapes.has(id));$('#err').textContent='';});
-$('#qtd').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.qtd=+b.dataset.v;renderHome();});
+$('#shapes').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id;S.shapes.has(id)?S.shapes.delete(id):S.shapes.add(id);b.setAttribute('aria-pressed',S.shapes.has(id));$('#err2').textContent='';});
+$('#qtd').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.qtd=+b.dataset.v;renderSetup();});
 $('#modo').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.modo=b.dataset.v;document.querySelectorAll('#modo button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
-$('#setup').addEventListener('submit',e=>{e.preventDefault();
-  if(!S.nome.trim()){$('#err').textContent='Escreva seu nome para salvar suas moedas.';$('#in-nome').focus();return}
-  if(!S.shapes.size){$('#err').textContent='Escolha pelo menos uma figura.';return}
-  startGame();});
+$('#next1').onclick=()=>{if(!S.nome.trim()){$('#err').textContent='Escreva seu nome para salvar suas moedas.';$('#in-nome').focus();return}
+  if(!S.shapes.size)S.shapes=defaultShapes(S.ano);show('setup');renderSetup();};
+$('#back1').onclick=goHome;
+$('#play').onclick=()=>{if(!S.shapes.size){$('#err2').textContent='Escolha pelo menos uma figura.';return}startGame();};
 $('#go-shop').onclick=()=>{if(!S.nome.trim()){$('#err').textContent='Escreva seu nome para abrir a sua loja.';$('#in-nome').focus();return}P=ensureProfile();backTo='home';openShop();};
+$('#go-rank').onclick=()=>{show('rank');renderRank();};
+$('#rank-back').onclick=goHome;
 $('#go-pdf').onclick=()=>{PD.ano=S.ano;PD.shapes=new Set(S.shapes.size?S.shapes:defaultShapes(S.ano));openPDF();};
 
 /* ---------- jogo ---------- */
@@ -691,7 +712,7 @@ function resolve(ok){G.done=true;const q=G.qs[G.i];const fb=$('#q-fb');const bef
   if(after>before){const novos=ITEMS.filter(it=>it.lvl===after).map(it=>it.nome);toast(`Subiu para o nível ${after}!${novos.length?' Novo na loja: '+novos.join(', ')+'.':''}`);}
   const n=$('#q-next');n.hidden=false;setTimeout(()=>n.focus(),20);}
 $('#q-next').onclick=()=>{if(G.i<G.qs.length-1){G.i++;renderQ()}else finish()};
-$('#q-quit').onclick=()=>{if(G.i===0&&!G.done){show('home');renderHome();return}finish(true)};
+$('#q-quit').onclick=()=>{if(G.i===0&&!G.done){show('setup');renderSetup();return}finish(true)};
 document.addEventListener('keydown',e=>{if(cur==='game'&&G&&G.done&&e.key==='Enter'&&document.activeElement!==$('#q-next')){e.preventDefault();$('#q-next').click()}
   if(cur==='game'&&G&&!G.done&&G.modo==='facil'&&/^[1-4]$/.test(e.key)){const b=document.querySelectorAll('.opt')[+e.key-1];b&&b.click()}});
 function finish(early=false){const answered=G.i+(G.done?1:0);const n=G.qs.length;
@@ -705,7 +726,7 @@ function finish(early=false){const answered=G.i+(G.done?1:0);const n=G.qs.length
   $('#res-next').textContent=(cheap.length?`Você já pode comprar: ${cheap.slice(0,3).map(i=>i.nome).join(', ')}. `:'')+(nx?`No nível ${nx.lvl} libera: ${nx.nome}.`:`A cada 5 níveis você ganha um troféu.`);
   $('#res-saved').textContent=`Progresso salvo com o nome ${P.name} neste aparelho.`;
   show('result');}
-$('#res-again').onclick=startGame;$('#res-home').onclick=()=>{show('home');renderHome()};$('#res-shop').onclick=()=>{backTo='result';openShop()};
+$('#res-again').onclick=startGame;$('#res-home').onclick=goHome;$('#res-shop').onclick=()=>{backTo='result';openShop()};
 
 /* ---------- loja ---------- */
 let tab='shirt';
@@ -737,7 +758,7 @@ $('#shop-body').addEventListener('click',e=>{const b=e.target.closest('button');
   else if(act==='use'){P.eq[tab]=it.id}
   else if(act==='buy'){if(P.coins<it.price)return;P.coins-=it.price;P.owned.push(it.id);P.eq[tab]=it.id;toast(`${it.nome} é seu!`)}
   saveDB();renderShop();});
-$('#shop-back').onclick=()=>{if(backTo==='result'){$('#res-av').innerHTML=avatarSVG(P);$('#res-stats').innerHTML=statsHTML(P);show('result')}else{show('home');renderHome()}};
+$('#shop-back').onclick=()=>{if(backTo==='result'){$('#res-av').innerHTML=avatarSVG(P);$('#res-stats').innerHTML=statsHTML(P);show('result')}else goHome()};
 
 /* ---------- PDF ---------- */
 const PD={ano:7,shapes:new Set(),qtd:12,set:[]};
@@ -758,7 +779,7 @@ $('#pdf-anos').addEventListener('click',e=>{const b=e.target.closest('.chip');if
 $('#pdf-shapes').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id;PD.shapes.has(id)?PD.shapes.delete(id):PD.shapes.add(id);b.setAttribute('aria-pressed',PD.shapes.has(id));regen();});
 $('#pdf-qtd').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;PD.qtd=+b.dataset.v;renderPDFForm();regen();});
 $('#pdf-ctx').onchange=regen;$('#pdf-form-show').onchange=renderSheet;$('#pdf-gab').onchange=renderSheet;$('#pdf-title').oninput=renderSheet;
-$('#pdf-new').onclick=regen;$('#pdf-back').onclick=()=>{show('home');renderHome()};
+$('#pdf-new').onclick=regen;$('#pdf-back').onclick=goHome;
 const pdfSafe=s=>s.replace(/π/g,'pi').replace(/★/g,'*');
 function primsPDF(doc,p,ox,oy,k){
   doc.setLineWidth(.35);
