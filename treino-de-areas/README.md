@@ -24,9 +24,25 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 - Sons gerados no próprio navegador, com botão para desligar no topo: fanfarra no acerto, "plim" para cada moeda que chega ao contador e caixa registradora ao terminar de contar e ao comprar.
 - **Conquistas** (13), com moedas de prêmio: sequências, total de acertos, modo difícil, todas as figuras, metros quadrados construídos, tamanho do terreno e níveis.
 
+## Cuidar da cidade
+
+- **Mato**: cada erro numa partida faz nascer um matinho no terreno (ocupa 1 m²). No fim da partida vem a **revanche** com as figuras erradas (números novos): cada acerto vale metade das moedas e limpa um matinho.
+- **Dias sem jogar**: a cada dia longe (até 4), aparece lixo no terreno ou uma construção estraga (goteira, praga na horta, água suja na piscina, rede rasgada…). Construção quebrada não conta pontos do mundo.
+- **Felicidade da cidade** (0 a 100%): com 80% ou mais, cada acerto vale +1 moeda; abaixo de 50%, chove na ilha e os moradores param de passear.
+- **Conserto**: tocar no mato, no lixo ou na construção com "!" abre uma conta de área. Nas construções, a conta usa as medidas reais do piso (e os andares). Cada conserto vale 4 moedas.
+- **Resposta rápida**: até 6 s no modo fácil (15 s no difícil) vale +2 moedas.
+
+## Fliperama
+
+Passatempos que custam 1 ficha. O aluno ganha fichas terminando partidas de áreas (1 ficha com pelo menos 1 estrela, 2 com 3 estrelas; a conta nova começa com 1).
+
+- **Chuva de moedas** (clique rápido, 20 s): até 25 moedas.
+- **Balões das áreas** (30 s): estourar o balão com a área do terreno mostrado; errar tira 2 s. Até 30 moedas.
+- **Memória das áreas**: pares de terreno e área; menos jogadas, mais moedas (até 30).
+
 ## Avatar e níveis
 
-- **Loja** com 29 itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
+- **Loja** com 49 itens em raridades (comum, raro, épico, lendário), oferta do dia com 40% de desconto, provador antes de comprar, efeitos animados (brilho, estrelas, fogo), asas e 5 conjuntos com prêmio. Itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
 - **Níveis infinitos**: cada nível pede um pouco mais de XP. Títulos de Aprendiz a Lenda Geométrica e um troféu a cada 5 níveis.
 - **Menino ou menina**, escolhido ao criar a conta, com 3 penteados para cada um.
 - **Meu mundo em 3D**: uma ilha com o terreno cercado, as construções e o avatar, que o aluno gira e aproxima (arrastar, roda do mouse ou botões + − ⟳) e onde constrói tocando no terreno. O botão **Planta** mostra a vista de cima quadriculada. À noite (modo escuro) as janelas acendem. Usa [three.js](https://threejs.org) r128 pelo cdnjs, carregado só quando o mundo é aberto; sem WebGL, o jogo mostra a planta.
