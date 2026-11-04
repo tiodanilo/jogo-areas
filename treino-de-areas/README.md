@@ -22,7 +22,7 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 - Cada figura aparece como um terreno cercado na grama, com as medidas em plaquinhas. Do 4º ao 6º ano, quadrados e retângulos mostram os quadradinhos de 1 unidade.
 - Trilha de progresso da partida, moedas voando até o contador, avatar que comemora ou fica triste, festa com confete ao subir de nível e de 1 a 3 estrelas no fim.
 - Sons gerados no próprio navegador, com botão para desligar no topo: fanfarra no acerto, "plim" para cada moeda que chega ao contador e caixa registradora ao terminar de contar e ao comprar.
-- **Conquistas** (13), com moedas de prêmio: sequências, total de acertos, modo difícil, todas as figuras, metros quadrados construídos, tamanho do terreno e níveis.
+- **Conquistas**, com moedas de prêmio: sequências, total de acertos, modo difícil, todas as figuras, metros quadrados construídos, tamanho do terreno e níveis.
 
 ## Cuidar da cidade
 
@@ -39,6 +39,17 @@ Passatempos que custam 1 ficha. O aluno ganha fichas terminando partidas de áre
 - **Chuva de moedas** (clique rápido, 20 s): até 25 moedas.
 - **Balões das áreas** (30 s): estourar o balão com a área do terreno mostrado; errar tira 2 s. Até 30 moedas.
 - **Memória das áreas**: pares de terreno e área; menos jogadas, mais moedas (até 30).
+
+## Fazenda e mercado
+
+Outro jeito de ganhar moedas, em tempo real (de 3 a 30 minutos): o aluno produz no Meu mundo e vende no Mercado.
+
+- **Horta** (nível 2): a semente custa por m² (horta 3 × 2 = 6 m² de tomate = 6 × 3 = 18 moedas) e cada m² dá 1 caixa por nível da horta. Alface (3 min), cenoura (8 min), tomate (15 min) e morango (30 min), liberados por nível.
+- **Galinheiro** (nível 3) e **curral** (nível 5): cada galinha precisa de 1 m² e cada vaca de 3 m² (curral 3 × 3 = 9 m² ÷ 3 = 3 vacas). O nível da construção multiplica a lotação e acelera a produção. O filhote cresce, vira adulto e dá ovos ou leite (guarda até 3). Adultos também podem ser vendidos.
+- **Padaria** (nível 6) e **sorveteria** (nível 8): 3 ovos + 1 leite = 1 bolo; 2 morangos + 1 leite = 1 sorvete. O aluno escolhe quantos fazer e o jogo mostra a conta dos ingredientes e do tempo.
+- **Mercado**: a quitanda paga melhor, com preço que muda todo dia, uma "procura do dia" e limite de 15 de cada produto por dia; o supermercado compra tudo por 80% da tabela. Em toda venda o aluno calcula quantidade × preço: acertando, ganha 10% a mais.
+- Na ilha 3D e na planta, as plantas crescem, os bichos aparecem e um marcador verde avisa quando há algo pronto. O mundo se atualiza sozinho.
+- Conquistas novas: primeira colheita, granjeiro, confeiteiro, sorveteiro, feirante e empresário.
 
 ## Avatar e níveis
 

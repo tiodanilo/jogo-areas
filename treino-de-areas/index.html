@@ -331,7 +331,7 @@ input:focus{border-color:var(--blue);outline:none}
 @keyframes drift{from{transform:translateX(-160px)}to{transform:translateX(760px)}}
 .bob{animation:bob 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}
 @keyframes bob{50%{transform:translateY(-4px)}}
-.home-links{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;max-width:680px;width:100%;margin:0 auto}
+.home-links{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;max-width:760px;width:100%;margin:0 auto}
 @media (max-width:600px){.home-links{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .tilebtn{border:0;border-radius:18px;background:var(--card);box-shadow:0 5px 0 var(--card-edge),0 10px 24px var(--shadow);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--f-display);font-weight:800;font-size:1rem;line-height:1.1;cursor:pointer;color:var(--ink);text-align:center}
 .tilebtn:hover{transform:translateY(-2px)}
@@ -491,6 +491,69 @@ input:focus{border-color:var(--blue);outline:none}
 .flap{animation:flap 1.3s ease-in-out infinite;transform-origin:120px 176px}
 @keyframes flap{50%{transform:scaleX(.9)}}
 
+
+/* fazenda e mercado */
+.gi{width:36px;height:36px;flex:none}
+.gi.s{width:24px;height:24px;vertical-align:middle}
+.gi.big{width:64px;height:64px}
+.wmap .rdy{animation:bob 1.3s ease-in-out infinite;transform-box:fill-box}
+.prod-card{max-width:540px;text-align:left;align-items:stretch}
+.prod-card h2{font-size:1.7rem;color:var(--ink)}
+.prod-body{display:flex;flex-direction:column;gap:10px}
+.prod-info{margin:0;font-weight:700;color:var(--ink-2);line-height:1.35}
+.prod-info b{color:var(--ink);font-variant-numeric:tabular-nums}
+.crop-list{display:flex;flex-direction:column;gap:8px}
+.crop{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--card)}
+.crop b,.grow b{font-family:var(--f-display);font-size:1.1rem}
+.crop small,.grow small{display:block;font-weight:700;color:var(--ink-2);line-height:1.3;font-variant-numeric:tabular-nums}
+.crop.locked{opacity:.55}
+.crop .btn{display:inline-flex;gap:4px;align-items:center;white-space:nowrap}
+.grow{display:flex;gap:12px;align-items:center;background:var(--paper);border-radius:14px;padding:10px 12px}
+.grow .gi{width:52px;height:52px}
+.grow > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.grow .xpbar{background:var(--card)}
+.grow .xpbar i{background:var(--go)}
+.grow.ready{background:var(--good-soft);border:2px solid var(--good)}
+.an-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.an{border:2px solid var(--line);border-radius:12px;padding:6px;text-align:center;font-size:.8rem;font-weight:700;color:var(--ink-2);background:var(--card);display:flex;flex-direction:column;align-items:center;gap:2px;font-variant-numeric:tabular-nums}
+.an .gi{width:42px;height:42px}
+.an.small .gi{width:30px;height:30px}
+.an.ok{border-color:var(--good);background:var(--good-soft);color:var(--ink)}
+.prod-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.prod-acts .btn{display:inline-flex;gap:6px;align-items:center}
+.stepper{display:inline-flex;align-items:center;gap:8px}
+.stepper button{width:42px;height:42px;border-radius:12px;border:2px solid var(--line);background:var(--card);font-size:1.4rem;font-weight:800;cursor:pointer;color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.stepper output{min-width:2.4ch;text-align:center;font-family:var(--f-display);font-weight:800;font-size:1.6rem;font-variant-numeric:tabular-nums}
+.recipe{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:800;font-family:var(--f-display);font-size:1.15rem}
+.recipe .note{font-family:var(--f-body,inherit);font-size:.85rem}
+.mk-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.mk-top h1{font-size:clamp(1.8rem,4.5vw,2.4rem);font-weight:800}
+.mk-hot{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,var(--good-soft),var(--paper))}
+.mk-hot b{font-family:var(--f-display);font-size:1.35rem;display:block}
+.mk-hot small{font-weight:700;color:var(--ink-2)}
+.mk-hot .eyebrow{margin:0}
+.mk-inv{display:flex;flex-wrap:wrap;gap:8px}
+.mk-item{display:flex;align-items:center;gap:6px;background:var(--paper);border-radius:999px;padding:4px 14px 4px 6px;font-weight:700}
+.mk-item b{font-family:var(--f-display);font-size:1.25rem;font-variant-numeric:tabular-nums}
+.mk-item .gi{width:30px;height:30px}
+.mk-list{display:flex;flex-direction:column;gap:8px}
+.mk-row{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,320px);gap:10px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--card)}
+.mk-row.none{opacity:.6}
+.mk-name b{font-family:var(--f-display);font-size:1.15rem}
+.mk-name small{display:block;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.mk-name .hot{display:inline-block;background:var(--good);color:#fff;border-radius:999px;padding:0 8px;font-size:.75rem;vertical-align:middle}
+.mk-btns{display:flex;flex-direction:column;gap:2px}
+.mk-btns .btn{display:flex;justify-content:space-between;align-items:center;gap:6px;width:100%;min-width:0;padding:8px 10px;font-size:.9rem}
+.mk-btns .pr{white-space:nowrap}
+.mk-btns .pr{display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums}
+.mk-btns small{text-align:center;font-weight:700;color:var(--ink-2);font-size:.75rem}
+.mk-sells{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:640px){.mk-row{grid-template-columns:auto minmax(0,1fr)}.mk-sells{grid-column:1/-1}.mk-btns .btn{flex-direction:column;gap:0;font-size:.85rem}}
+.mk-shops{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px}
+.mk-shops div{background:var(--paper);border-radius:14px;padding:10px 12px;font-weight:700;color:var(--ink-2);font-size:.9rem;line-height:1.35}
+.mk-shops b{display:block;color:var(--ink);font-family:var(--f-display);font-size:1.1rem}
+#sell-qty{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sell-card #sell-opts .opt{font-size:1.5rem}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -566,6 +629,7 @@ input:focus{border-color:var(--blue);outline:none}
     </div>
     <nav class="home-links" aria-label="Outras opções">
       <button class="tilebtn" type="button" id="go-arcade"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 14h36v6a4 4 0 0 0 0 8v6H6v-6a4 4 0 0 0 0-8z" fill="#FF6B9A" stroke="#C2185B" stroke-width="2.5"/><path d="M18 14v20" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/><polygon points="30,18 32,23 37,23 33,26 35,31 30,28 25,31 27,26 23,23 28,23" fill="#FFD43B"/></svg>Fliperama</button>
+      <button class="tilebtn" type="button" id="go-market"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="20" width="34" height="22" fill="#F5E1C0" stroke="#A0703C" stroke-width="2"/><path d="M4 12h40l-3 10H7z" fill="#FF6B9A"/><path d="M12 12l-2 10M20 12l-1 10M28 12l1 10M36 12l2 10" stroke="#FFFFFF" stroke-width="3"/><rect x="11" y="28" width="26" height="6" rx="2" fill="#8A5A2B"/><circle cx="16" cy="27" r="4" fill="#E5484D"/><circle cx="24" cy="27" r="4" fill="#7BC950"/><polygon points="29,24 37,25 31,31" fill="#FF8A3D"/></svg>Mercado</button>
       <button class="tilebtn" type="button" id="go-world"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="30" width="44" height="14" rx="5" fill="#8DCF7B"/><rect x="10" y="20" width="16" height="14" fill="#F4E3C3"/><polygon points="7,22 18,11 29,22" fill="#D9363E"/><rect x="16" y="26" width="5" height="8" fill="#7A4B25"/><circle cx="36" cy="22" r="8" fill="#2E8B57"/><rect x="35" y="28" width="3" height="7" fill="#7A4B25"/></svg>Meu mundo</button>
       <button class="tilebtn" type="button" id="go-shop"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 8 L4 16 L9 24 L13 21 V42 H35 V21 L39 24 L44 16 L34 8 Q24 16 14 8Z" fill="#3A6FF7"/><path d="M19 9 Q24 14 29 9" fill="none" stroke="#1C47C9" stroke-width="3"/><polygon points="24,22 26,27 31,27 27,30 29,35 24,32 19,35 21,30 17,27 22,27" fill="#FFD43B"/></svg>Loja do avatar</button>
       <button class="tilebtn" type="button" id="go-rank"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 6h22v10a11 11 0 0 1-22 0z" fill="#F2B705"/><path d="M13 10H6a7 7 0 0 0 8 9M35 10h7a7 7 0 0 1-8 9" fill="none" stroke="#C99400" stroke-width="3"/><rect x="21" y="26" width="6" height="9" fill="#C99400"/><rect x="14" y="35" width="20" height="7" rx="2" fill="#8A6500"/></svg>Quadro de honra</button>
@@ -664,7 +728,7 @@ input:focus{border-color:var(--blue);outline:none}
     <div class="panel world-top">
       <div><p class="eyebrow">Meu mundo · cada quadradinho = 1 m²</p><h1 id="w-title">Meu terreno</h1><p class="w-stats" id="w-stats"></p></div>
       <div class="happy" id="w-happy"></div>
-      <div class="actions"><span class="pill" id="w-coins"></span><button class="btn ghost small" type="button" id="w-back">Voltar</button></div>
+      <div class="actions"><span class="pill" id="w-coins"></span><button class="btn yellow small" type="button" id="w-mk">Mercado</button><button class="btn ghost small" type="button" id="w-back">Voltar</button></div>
     </div>
     <div class="world-grid">
       <div class="panel w-mapbox">
@@ -696,6 +760,19 @@ input:focus{border-color:var(--blue);outline:none}
       <div class="arc-area" id="arc-area"></div>
       <div class="arc-end" id="arc-end" hidden></div>
     </div>
+  </section>
+
+  <!-- MERCADO -->
+  <section id="sc-market" class="screen" hidden>
+    <div class="panel mk-top">
+      <div><p class="eyebrow">Fazenda e comércio</p><h1>Mercado</h1><p class="note">Venda o que você plantou, criou e fez. Antes de receber, faça a conta: acertando, ganha 10% a mais.</p></div>
+      <div class="actions"><span class="pill" id="mk-coins"></span><button class="btn ghost small" type="button" id="mk-world">Meu mundo</button><button class="btn ghost small" type="button" id="mk-back">Voltar</button></div>
+    </div>
+    <div class="panel mk-hot" id="mk-hot"></div>
+    <div class="panel"><h2 class="h2">Celeiro</h2><div class="mk-inv" id="mk-inv"></div></div>
+    <div class="panel"><h2 class="h2">Preços de hoje</h2>
+      <div class="mk-shops"><div><b>Quitanda</b>Paga melhor e o preço muda todo dia. Compra até 15 de cada produto por dia.</div><div><b>Supermercado</b>Compra tudo, sem limite, mas paga só 80% do preço da tabela.</div></div>
+      <div class="mk-list" id="mk-list"></div></div>
   </section>
 
   <!-- LOJA -->
@@ -756,6 +833,15 @@ input:focus{border-color:var(--blue);outline:none}
   <div class="modal-card fix-card"><p class="eyebrow" id="fix-eye">Resolva a conta para consertar</p><h2 id="fix-title"></h2><div class="fig-wrap" id="fix-fig"></div><p class="fix-q" id="fix-q"></p>
     <div class="opts" id="fix-opts"></div><div class="feedback" id="fix-fb" hidden></div>
     <div class="actions"><button class="btn ghost" type="button" id="fix-close">Depois</button><button class="btn go" type="button" id="fix-next" hidden>Outra conta</button></div></div>
+</div>
+<div class="modal" id="prod-modal" hidden role="dialog" aria-modal="true" aria-labelledby="prod-title">
+  <div class="modal-card prod-card"><p class="eyebrow" id="prod-eye"></p><h2 id="prod-title"></h2><div class="prod-body" id="prod-body"></div>
+    <div class="actions"><button class="btn ghost small" type="button" id="prod-edit">Melhorar ou remover</button><button class="btn ghost small" type="button" id="prod-mk">Ir ao mercado</button><button class="btn go small" type="button" id="prod-close">Fechar</button></div></div>
+</div>
+<div class="modal" id="sell-modal" hidden role="dialog" aria-modal="true" aria-labelledby="sell-title">
+  <div class="modal-card fix-card sell-card"><p class="eyebrow" id="sell-eye"></p><h2 id="sell-title"></h2><div id="sell-qty"></div><p class="fix-q" id="sell-q"></p>
+    <div class="opts" id="sell-opts"></div><div class="feedback" id="sell-fb" hidden></div>
+    <div class="actions"><button class="btn ghost" type="button" id="sell-close">Cancelar</button><button class="btn go" type="button" id="sell-go">Vender</button></div></div>
 </div>
 <canvas id="fx" aria-hidden="true"></canvas>
 
@@ -1063,7 +1149,7 @@ function levelInfo(xp){let lvl=1,acc=0,need=60;while(xp>=acc+need){acc+=need;lvl
 function titleOf(lvl){const i=Math.floor((lvl-1)/3);return i<TITLES.length-1?TITLES[i]:`${TITLES[TITLES.length-1]}${lvl>=27?' '+'★'.repeat(Math.min(5,Math.floor((lvl-24)/3))):''}`;}
 
 /* ---------- perfis ---------- */
-const DEFAULT={name:'',ano:7,coins:0,xp:0,fichas:1,owned:['sh-basica','bg-caderno'],eq:{shirt:'sh-basica',bg:'bg-caderno',hat:null,acc:null,vehicle:null,pet:null,fx:null},look:{g:'m',skin:1,hair:0,style:0},world:{w:6,h:4,items:[]},rounds:[],total:0,best:0};
+const DEFAULT={name:'',ano:7,coins:0,xp:0,fichas:1,owned:['sh-basica','bg-caderno'],eq:{shirt:'sh-basica',bg:'bg-caderno',hat:null,acc:null,vehicle:null,pet:null,fx:null},look:{g:'m',skin:1,hair:0,style:0},world:{w:6,h:4,items:[]},inv:{},rounds:[],total:0,best:0};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const pid=(nome,ano)=>keyOf(nome)+'|'+Number(ano);
 function normalize(p){p=p&&typeof p==='object'?p:{};const d=clone(DEFAULT);
@@ -1121,7 +1207,7 @@ function statsHTML(p,showCoins=true,compact=false){const li=levelInfo(p.xp);cons
   ${tr?`<div class="trophies">${TROPHY.repeat(Math.min(tr,8))}${tr>8?` ×${tr}`:''} <span>${tr} troféu${tr>1?'s':''}</span></div>`:''}`;}
 
 /* ---------- navegação ---------- */
-const SCREENS=['home','login','setup','rank','game','result','shop','world','arcade','pdf'];let cur='home',backTo='home';
+const SCREENS=['home','login','setup','rank','game','result','shop','world','arcade','market','pdf'];let cur='home',backTo='home';
 function show(n){if(n!=='arcade'&&typeof AR!=='undefined')stopArc();SCREENS.forEach(s=>$('#sc-'+s).hidden=s!==n);cur=n;try{window.scrollTo(0,0)}catch(e){}
   /* dentro do Google Sites, leva a página até o topo do jogo */
   try{document.querySelector('.topbar').scrollIntoView({block:'start'})}catch(e){}
@@ -1142,7 +1228,7 @@ function renderHome(){
 function renderHomeProfile(){const p=findProfile(S.nome);const shown=p||normalize({name:S.nome.trim()});
   $('#home-av').innerHTML=heroSVG(shown);
   $('#home-stats').innerHTML=!S.nome.trim()?'<h3>Olá!</h3><div class="lvl-line">Escreva seu nome e escolha seu ano.</div>'
-    :p?statsHTML(shown,true,true)+`<div class="lvl-line">Mundo: ${worldStage(p).nome}${p.world.items.length?` · ${happy(p)}% feliz`:''}</div>`:`<h3>${esc(S.nome.trim())}</h3><div class="lvl-line">Toque em Continuar para entrar ou criar sua conta.</div>`;}
+    :p?statsHTML(shown,true,true)+`<div class="lvl-line">Mundo: ${worldStage(p).nome}${p.world.items.length?` · ${happy(p)}% feliz`:''}${farmReady(p)?` · <b>${farmReady(p)} pronto${farmReady(p)>1?'s':''} na fazenda</b>`:''}</div>`:`<h3>${esc(S.nome.trim())}</h3><div class="lvl-line">Toque em Continuar para entrar ou criar sua conta.</div>`;}
 function renderSetup(){$('#shapes').innerHTML=shapeChips(S.shapes);
   $('#qtd').innerHTML=[5,10,15,20].map(n=>chip(n,S.qtd===n,`data-v="${n}"`)).join('');
   document.querySelectorAll('#modo button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.modo));$('#err2').textContent='';}
@@ -1179,7 +1265,7 @@ $('#gender').addEventListener('click',e=>{const b=e.target.closest('.gbtn');if(!
 $('#pw-keys').addEventListener('click',e=>{const b=e.target.closest('.pw-key');if(!b)return;
   if(b.dataset.k==='del')LG.pw=LG.pw.slice(0,-1);else if(LG.pw.length<4)LG.pw+=b.dataset.k;$('#err-lg').textContent='';renderLogin();});
 function goAfter(){if(!P)return;if(!S.shapes.size)S.shapes=defaultShapes(S.ano);const ev=neglect();saveProfile();if(ev.length)setTimeout(()=>toast(`Enquanto você esteve fora: ${ev.join(', ').toLowerCase()}. Vá ao Meu mundo consertar!`),600);
-  if(LG.after==='arcade'){backTo='home';openArcade();}else if(LG.after==='shop'){backTo='home';openShop();}else if(LG.after==='world'){backTo='home';openWorld();}else{show('setup');renderSetup();}}
+  if(LG.after==='arcade'){backTo='home';openArcade();}else if(LG.after==='shop'){backTo='home';openShop();}else if(LG.after==='world'){backTo='home';openWorld();}else if(LG.after==='market'){backTo='home';openMarket('home');}else{show('setup');renderSetup();}}
 async function beginLogin(after){const nome=S.nome.trim();
   if(nome.length<2){$('#err').textContent='Escreva seu nome (pelo menos 2 letras) para salvar suas moedas.';$('#in-nome').focus();return}
   if(!/^[\p{L} '.-]+$/u.test(nome)){$('#err').textContent='Use só letras no nome.';return}
@@ -1326,6 +1412,12 @@ const ACH=[
  {id:'vila',nome:'Vila',desc:'Seu mundo vira Vila',r:60,ok:p=>worldStage(p).i>=2},
  {id:'cidade',nome:'Cidade',desc:'Seu mundo vira Cidade',r:120,ok:p=>worldStage(p).i>=3},
  {id:'metro',nome:'Metrópole',desc:'Seu mundo vira Metrópole',r:200,ok:p=>worldStage(p).i>=4},
+ {id:'colhe1',nome:'Primeira colheita',desc:'Colha a horta pela primeira vez',r:15,ok:p=>(p.colh||0)>=1},
+ {id:'ovos30',nome:'Granjeiro',desc:'Colete 30 ovos',r:30,ok:p=>((p.prod||{}).ovo||0)>=30},
+ {id:'bolo1',nome:'Confeiteiro',desc:'Faça um bolo na padaria',r:30,ok:p=>((p.prod||{}).bolo||0)>=1},
+ {id:'sorv1',nome:'Sorveteiro',desc:'Faça um sorvete',r:30,ok:p=>((p.prod||{}).sorvete||0)>=1},
+ {id:'feira',nome:'Feirante',desc:'Venda 100 produtos no mercado',r:50,ok:p=>(p.vend||0)>=100},
+ {id:'mk1000',nome:'Empresário',desc:'Ganhe 1000 moedas no mercado',r:100,ok:p=>(p.mkg||0)>=1000},
 ];
 const MEDAL='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 2h8l4 14h-8zM34 2h-8l-4 14h8z" fill="#2F6BFF"/><circle cx="24" cy="30" r="15" fill="#F2B705" stroke="#C99400" stroke-width="3"/><polygon points="24,21 26.6,27 33,27.4 28,31.4 29.6,37.6 24,34.2 18.4,37.6 20,31.4 15,27.4 21.4,27" fill="#FFF3B0"/></svg>';
 /* o prêmio entra como moedas e XP juntos, assim as moedas nunca passam do total já ganho */
@@ -1412,9 +1504,13 @@ const BUILD=[
  {id:'casa',nome:'Casa',w:2,h:2,price:80,lvl:1},
  {id:'horta',nome:'Horta',w:3,h:2,price:120,lvl:2},
  {id:'piscina',nome:'Piscina',w:3,h:2,price:200,lvl:3},
+ {id:'galinheiro',nome:'Galinheiro',w:2,h:2,price:150,lvl:3},
  {id:'quadra',nome:'Quadra',w:4,h:3,price:380,lvl:4},
  {id:'lago',nome:'Lago',w:3,h:3,price:300,lvl:5},
+ {id:'curral',nome:'Curral',w:3,h:3,price:350,lvl:5},
+ {id:'padaria',nome:'Padaria',w:3,h:2,price:500,lvl:6},
  {id:'escola',nome:'Escola',w:4,h:3,price:650,lvl:7},
+ {id:'sorveteria',nome:'Sorveteria',w:2,h:2,price:600,lvl:8},
  {id:'castelo',nome:'Castelo',w:4,h:4,price:1200,lvl:10},
  {id:'base',nome:'Base de foguetes',w:3,h:3,price:1500,lvl:12},
 ];
@@ -1425,7 +1521,8 @@ const UPG={arvore:['Árvore','Árvore grande','Árvore com balanço'],flores:['C
   casa:['Casa','Sobrado de 2 andares','Prédio de 3 andares'],horta:['Horta','Horta com espantalho','Horta com estufa'],
   piscina:['Piscina','Piscina com escorregador','Clube com guarda-sóis'],quadra:['Quadra','Quadra com arquibancada','Estádio com refletores'],
   lago:['Lago','Lago com píer','Lago com chafariz'],escola:['Escola','Escola de 2 andares','Escola de 3 andares'],
-  castelo:['Castelo','Castelo com bandeiras','Castelo real de 3 andares'],base:['Base de foguetes','Base com torre de controle','Base com lançamentos']};
+  castelo:['Castelo','Castelo com bandeiras','Castelo real de 3 andares'],base:['Base de foguetes','Base com torre de controle','Base com lançamentos'],
+  galinheiro:['Galinheiro','Galinheiro grande','Granja com silo'],curral:['Curral','Curral com feno','Fazenda leiteira'],padaria:['Padaria','Padaria com mesinhas','Confeitaria de 2 andares'],sorveteria:['Sorveteria','Sorveteria com mesinhas','Sorveteria neon']};
 const lvName=it=>(UPG[it.t]||[])[(it.lv||1)-1]||(BMAP[it.t]||{}).nome||it.t;
 const upCost=(bd,lv)=>bd.price*lv;                 /* do nível lv para lv+1 */
 const upReq=(bd,lv)=>bd.lvl+(lv===1?1:3);           /* nível do jogador exigido */
@@ -1462,7 +1559,7 @@ const WS={sel:null,rot:false,pick:null,view:'3d'};
 function selDims(){const b=BMAP[WS.sel];return WS.rot?[b.h,b.w]:[b.w,b.h];}
 function occupied(wd,skip=-1){const g=new Set();wd.items.forEach((it,i)=>{if(i===skip)return;for(let a=0;a<it.w;a++)for(let c=0;c<it.h;c++)g.add((it.x+a)+','+(it.y+c));});(wd.probs||[]).forEach(q=>g.add(q.x+','+q.y));return g;}
 /* ---------- cuidar da cidade: mato (erros), lixo e estragos (dias sem jogar) ---------- */
-const DANO={arvore:'Árvore doente',flores:'Flores murchas',casa:'Goteira no telhado',horta:'Praga na horta',piscina:'Água suja na piscina',quadra:'Rede rasgada',lago:'Lago sujo',escola:'Janela quebrada',castelo:'Muro rachado',base:'Pane no foguete'};
+const DANO={arvore:'Árvore doente',flores:'Flores murchas',casa:'Goteira no telhado',horta:'Praga na horta',piscina:'Água suja na piscina',quadra:'Rede rasgada',lago:'Lago sujo',escola:'Janela quebrada',castelo:'Muro rachado',base:'Pane no foguete',galinheiro:'Raposa no galinheiro',curral:'Cerca quebrada',padaria:'Forno quebrado',sorveteria:'Freezer desligado'};
 const PROBNOME={mato:'Mato',lixo:'Lixo'};
 function freeTiles(wd){const o=occupied(wd),out=[];for(let y=0;y<wd.h;y++)for(let x=0;x<wd.w;x++)if(!o.has(x+','+y))out.push([x,y]);return out;}
 function addProb(k){const wd=P.world;wd.probs=wd.probs||[];if(wd.probs.length>=8)return false;const fr=freeTiles(wd);if(!fr.length)return false;const [x,y]=pick(fr);wd.probs.push({k,x,y});return true;}
@@ -1484,10 +1581,10 @@ function worldSVG(p){const wd=p.world,W=wd.w*TS,H=wd.h*TS,VW=WLEFT+W+WPAD,VH=H+W
       s+=h===0?`<g pointer-events="none"><circle cx="${cx}" cy="${cy}" r="3" fill="#FFF"/><circle cx="${cx}" cy="${cy}" r="1.3" fill="#FFD43B"/></g>`
         :`<path d="M${cx} ${cy} l-3 -6 M${cx} ${cy} l0 -7 M${cx} ${cy} l3 -6" stroke="#5FAE55" stroke-width="1.8" stroke-linecap="round" pointer-events="none"/>`;}}
   wd.items.forEach(it=>{const X=WLEFT+it.x*TS,Y=WPAD+it.y*TS;s+=`<rect x="${X+6}" y="${Y+8}" width="${it.w*TS-8}" height="${it.h*TS-8}" rx="7" fill="rgba(0,0,0,.14)" pointer-events="none"/>`;});
-  wd.items.forEach((it,i)=>{const X=WLEFT+it.x*TS,Y=WPAD+it.y*TS,IW=it.w*TS,IH=it.h*TS;const art=(BD[it.t]||BD.arvore)(X+3,Y+3,IW-6,IH-6);
+  wd.items.forEach((it,i)=>{const X=WLEFT+it.x*TS,Y=WPAD+it.y*TS,IW=it.w*TS,IH=it.h*TS;const art=(BD[it.t]||BD.arvore)(X+3,Y+3,IW-6,IH-6,it);
     const badge=(it.lv||1)>1?`<g pointer-events="none"><circle cx="${X+IW-9}" cy="${Y+9}" r="8.5" fill="#FFD43B" stroke="#B8790F" stroke-width="2"/><text x="${X+IW-9}" y="${Y+13}" text-anchor="middle" font-size="11" font-weight="800" fill="#3A2C00" font-family="sans-serif">${it.lv}</text></g>`:'';
     const broke=it.dano?`<rect x="${X+3}" y="${Y+3}" width="${IW-6}" height="${IH-6}" rx="6" fill="rgba(70,70,80,.45)"/><g pointer-events="none"><circle cx="${X+11}" cy="${Y+11}" r="9" fill="#D9363E" stroke="#fff" stroke-width="2"/><text x="${X+11}" y="${Y+16}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" font-family="sans-serif">!</text></g>`:'';
-    s+=`<g class="it" data-i="${i}">${it.t==='arvore'?`<g class="sway">${art}</g>`:art}${badge}${broke}<rect x="${X+1}" y="${Y+1}" width="${IW-2}" height="${IH-2}" rx="5" fill="transparent" stroke="${WS.pick===i?'#FFD43B':'transparent'}" stroke-width="3.5"/></g>`;});
+    s+=`<g class="it" data-i="${i}">${it.t==='arvore'?`<g class="sway">${art}</g>`:art}${badge}${broke}${readyBadge(it,X,Y,IW)}<rect x="${X+1}" y="${Y+1}" width="${IW-2}" height="${IH-2}" rx="5" fill="transparent" stroke="${WS.pick===i?'#FFD43B':'transparent'}" stroke-width="3.5"/></g>`;});
   (wd.probs||[]).forEach((q,i)=>{const X=WLEFT+q.x*TS,Y=WPAD+q.y*TS;
     s+=`<g class="pb" data-p="${i}" style="cursor:pointer"><rect x="${X}" y="${Y}" width="${TS}" height="${TS}" fill="transparent"/>`+(q.k==='mato'
       ?[[10,30],[20,26],[30,31],[15,18],[26,16]].map(([a,b])=>`<path d="M${X+a} ${Y+b} l-4 -10 M${X+a} ${Y+b} l0 -13 M${X+a} ${Y+b} l5 -10" stroke="#2F6B2F" stroke-width="2.6" stroke-linecap="round"/>`).join('')
@@ -1505,7 +1602,7 @@ function worldSVG(p){const wd=p.world,W=wd.w*TS,H=wd.h*TS,VW=WLEFT+W+WPAD,VH=H+W
 function cellAt(e){const svg=$('#w-map .wmap');if(!svg)return null;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
   const m=svg.getScreenCTM();if(!m)return null;const q=pt.matrixTransform(m.inverse());
   const x=Math.floor((q.x-WLEFT)/TS),y=Math.floor((q.y-WPAD)/TS);if(x<0||y<0||x>=P.world.w||y>=P.world.h)return null;return {x,y};}
-function openWorld(){WS.sel=null;WS.pick=null;WS.rot=false;show('world');renderWorld();}
+function openWorld(){WS.sel=null;WS.pick=null;WS.rot=false;show('world');renderWorld();farmWatch();}
 function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,area=wd.w*wd.h,b=built(P),lvl=levelInfo(P.xp).lvl;
   $('#w-title').textContent=`O mundo de ${P.name.split(/\s+/)[0]}`;
   const pts=Math.max(worldPts(P),wd.pmax||0),st=stageOf(pts);
@@ -1520,7 +1617,7 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
   if(WS.view==='3d')show3D();else{$('#w-3d').hidden=true;$('#w-map').hidden=false;}
   const sel=WS.sel?BMAP[WS.sel]:null;
   $('#w-hint').innerHTML=sel?(()=>{const [w,h]=selDims();return `Toque no terreno para colocar: <b>${sel.nome}</b> (${w} × ${h} = ${w*h} m²).`})()
-    :(WS.view==='3d'?'Arraste para girar. ':'')+((wd.probs||[]).length||wd.items.some(i=>i.dano)?'<b>Toque no mato, no lixo ou na construção com ! para consertar.</b> ':'')+(wd.items.length?'Toque numa construção para ver a área dela, ou escolha outra ao lado.':'Escolha uma construção ao lado e toque no terreno para colocar.');
+    :(WS.view==='3d'?'Arraste para girar. ':'')+((wd.probs||[]).length||wd.items.some(i=>i.dano)?'<b>Toque no mato, no lixo ou na construção com ! para consertar.</b> ':'')+(wd.items.some(isProd)?'<b>Toque na horta, nos animais ou na loja para produzir.</b> ':'')+(wd.items.length?'Toque numa construção para ver a área dela, ou escolha outra ao lado.':'Escolha uma construção ao lado e toque no terreno para colocar.');
   let box='';
   if(sel){const [w,h]=selDims();box=`<div class="selbox"><span>${sel.nome}: ${w} × ${h} = ${w*h} m²</span><span class="actions">${sel.w!==sel.h?'<button class="btn ghost small" type="button" data-w="rot">Girar</button>':''}<button class="btn ghost small" type="button" data-w="cancel">Cancelar</button></span></div>`;}
   else if(WS.pick!==null&&wd.items[WS.pick]){const it=wd.items[WS.pick],bd=BMAP[it.t]||{nome:it.t,price:0,lvl:1},lv=it.lv||1,back=Math.floor(spent(bd,lv)/2),fl=floorsOf(it),a=it.w*it.h;
@@ -1530,7 +1627,7 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
         :`<button class="btn ${P.coins>=c?'yellow':'ghost'} small" type="button" data-w="up" ${P.coins>=c?'':'disabled'}>Melhorar para ${esc(nx)} · ${COIN}${c}</button>`;}
     else up='<span class="note">Nível máximo!</span>';
     box=`<div class="selbox"><span>${esc(lvName(it))}<span class="lvtag">nível ${lv}/${LVMAX}</span><small>Piso: ${it.w} × ${it.h} = ${a} m²${fl>1?` · ${fl} andares: ${a} × ${fl} = ${a*fl} m² de área construída`:''} · vale ${a*lv} pontos</small></span>
-      <span class="actions">${up}<button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
+      <span class="actions">${isProd(it)&&!it.dano?'<button class="btn go small" type="button" data-w="open">Abrir</button>':''}${up}<button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
   $('#w-sel').innerHTML=box;
   $('#w-build').innerHTML=BUILD.map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id;
     const btn=locked?`<span class="m2">Libera no nível ${bd.lvl}</span>`:P.coins>=bd.price?`<button type="button" class="btn ${on?'primary':'yellow'}" data-b="${bd.id}">${on?'Escolhida':`${COIN}${bd.price}`}</button>`:`<button type="button" class="btn ghost" disabled>${COIN}${bd.price}</button>`;
@@ -1542,6 +1639,7 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
     <p class="note">Cada m² novo custa ${M2PRICE} moedas.</p></div>`;}
 $('#w-build').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;WS.sel=WS.sel===b.dataset.b?null:b.dataset.b;WS.rot=false;WS.pick=null;renderWorld();});
 $('#w-sel').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;const a=b.dataset.w;
+  if(a==='open'&&WS.pick!==null){openProd(WS.pick);return}
   if(a==='rot')WS.rot=!WS.rot;else if(a==='cancel')WS.sel=null;else if(a==='close')WS.pick=null;
   else if(a==='up'&&WS.pick!==null){const it=P.world.items[WS.pick],bd=BMAP[it.t],lv=it.lv||1;if(!bd||lv>=LVMAX)return;const c=upCost(bd,lv);
     if(P.coins<c||levelInfo(P.xp).lvl<upReq(bd,lv))return;const st0=worldStage(P).i;
@@ -1557,6 +1655,7 @@ $('#w-land').addEventListener('click',e=>{const b=e.target.closest('[data-land]'
 function worldTap(c,pickIdx,probIdx){
   if(!WS.sel&&probIdx!=null){openFix('prob',probIdx);return}
   if(!WS.sel&&pickIdx!=null&&P.world.items[pickIdx]&&P.world.items[pickIdx].dano){openFix('dano',pickIdx);return}
+  if(!WS.sel&&pickIdx!=null&&isProd(P.world.items[pickIdx])){WS.pick=null;openProd(pickIdx);return}
   if(WS.sel){if(!c)return;const bd=BMAP[WS.sel],[w,h]=selDims();const st0=worldStage(P).i;
     if(!fits(P.world,c.x,c.y,w,h)){toast(`Não cabe aí: ${bd.nome} precisa de ${w} × ${h} = ${w*h} m² livres.`);return}
     if(P.coins<bd.price){toast('Moedas insuficientes.');return}
@@ -1720,7 +1819,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
       this.anim.push({o:g,t:'cloud',k:.25+rand()*.3});}
     /* construções */
     wd.items.forEach((it,idx)=>{const g=new T.Group();g.position.set(it.x+it.w/2-W/2,.12,it.y+it.h/2-H/2);g.userData.idx=idx;this.items.add(g);
-      (this.models[it.t]||this.models.arvore).call(this,g,it.w,it.h,it.lv||1);g.userData.base=g.position.y;
+      (this.models[it.t]||this.models.arvore).call(this,g,it.w,it.h,it.lv||1,it);g.userData.base=g.position.y;this.readyMark(g,it);
       if(it.dano){const sm=this.M(0x8A8F99,{transparent:true,opacity:.7});for(let k=0;k<3;k++){const pf=this.mesh(new T.SphereGeometry(.22,8,6),sm,0,1.2,0,g);pf.castShadow=false;this.anim.push({o:pf,t:'smoke',k:k*.33,x:(k-1)*.25});}
         const wn=new T.Group();g.add(wn);this.mesh(new T.OctahedronGeometry(.28,0),this.M(0xD9363E,{emissive:0xD9363E,emissiveIntensity:.5}),0,0,0,wn).scale.y=1.4;
         this.box(.07,.24,.08,this.M(0xFFFFFF),0,-.06,.2,wn);this.anim.push({o:wn,t:'warn',k:2.3+(it.lv||1)*.5});}
@@ -1862,6 +1961,10 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
         else if(a.t==='flutter'){o.position.set(Math.cos(s*1.2+a.k)*a.r,.6+Math.sin(s*3+a.k)*.12,Math.sin(s*1.2+a.k)*a.r);a.w[0].rotation.y=Math.sin(s*18)*.7;a.w[1].rotation.y=-Math.sin(s*18)*.7;}
         else if(a.t==='jet')o.scale.y=.8+Math.sin(s*7)*.2;
         else if(a.t==='spin')o.rotation.z+=.025;
+        else if(a.t==='peck'){o.rotation.z=Math.max(0,Math.sin(s*3+a.k))*-.5;o.position.y=.08+Math.max(0,Math.sin(s*1.3+a.k*2))*.05;}
+        else if(a.t==='graze')o.rotation.y=a.r+Math.sin(s*.4+a.k)*.6;
+        else if(a.t==='turn')o.rotation.y=s*.8;
+        else if(a.t==='ready'){o.position.y=a.k+Math.sin(s*3)*.12;o.rotation.y=s*2.2;}
         else if(a.t==='beam')o.rotation.y=s*1.2;
         else if(a.t==='boat'){const q=s*a.sp+a.k;o.position.set(Math.cos(q)*a.r,-.25+Math.sin(s*2+a.k)*.04,Math.sin(q)*a.r);o.rotation.y=-q;}
         else if(a.t==='balloon'){o.position.y=a.y+Math.sin(s*.7)*.5;o.position.x=a.x+Math.sin(s*.15)*1.5;}
@@ -1918,6 +2021,299 @@ $('#w-view').addEventListener('click',e=>{const b=e.target.closest('button');if(
 $('#w-3d').addEventListener('click',e=>{const b=e.target.closest('[data-z]');if(!b)return;const z=b.dataset.z;if(z==='in')W3.zoom(.85);else if(z==='out')W3.zoom(1/.85);else W3.turn();});
 try{const v=localStorage.getItem('td-areas-vista');if(v==='2d'||v==='3d')WS.view=v}catch(e){}
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(cur==='world'&&WS.view==='3d'&&W3.ok)W3.build(P)})}catch(e){}
+
+/* ---------- fazenda: horta, criação de animais, comércio e mercado (toda venda é uma conta) ---------- */
+const MIN=60000;
+const GOODS={
+ alface:{nome:'Alface',un:'caixa',uns:'caixas',base:2},
+ cenoura:{nome:'Cenoura',un:'caixa',uns:'caixas',base:4},
+ tomate:{nome:'Tomate',un:'caixa',uns:'caixas',base:7},
+ morango:{nome:'Morango',un:'caixa',uns:'caixas',base:12},
+ ovo:{nome:'Ovo',un:'ovo',uns:'ovos',base:3},
+ leite:{nome:'Leite',un:'balde',uns:'baldes',base:8},
+ galinha:{nome:'Galinha',un:'galinha',uns:'galinhas',base:30},
+ vaca:{nome:'Vaca',un:'vaca',uns:'vacas',base:140},
+ bolo:{nome:'Bolo',un:'bolo',uns:'bolos',base:40},
+ sorvete:{nome:'Sorvete',un:'pote',uns:'potes',base:45},
+};
+/* semente: preço por m²; colheita: 1 caixa por m² × nível da horta */
+const CROPS={alface:{min:3,seed:1,lvl:2},cenoura:{min:8,seed:2,lvl:3},tomate:{min:15,seed:3,lvl:5},morango:{min:30,seed:5,lvl:7}};
+/* cada bicho precisa de m2 metros quadrados; o nível multiplica a lotação e divide o tempo de produção */
+const ANIMALS={
+ galinheiro:{bicho:'galinha',bichos:'galinhas',filhote:'pintinho',filhotes:'pintinhos',buy:15,grow:5,cycle:6,good:'ovo',m2:1,art:'Cada galinha precisa de 1 m²'},
+ curral:{bicho:'vaca',bichos:'vacas',filhote:'bezerro',filhotes:'bezerros',buy:70,grow:20,cycle:12,good:'leite',m2:3,art:'Cada vaca precisa de 3 m²'}};
+const RECIPES={padaria:{good:'bolo',verbo:'Assar',need:{ovo:3,leite:1},min:6},sorveteria:{good:'sorvete',verbo:'Fazer',need:{morango:2,leite:1},min:6}};
+const PRODUCERS=new Set(['horta','galinheiro','curral','padaria','sorveteria']);
+const qn=(n,id)=>`${n} ${n===1?GOODS[id].un:GOODS[id].uns}`+(GOODS[id].un==='caixa'||GOODS[id].un==='balde'||GOODS[id].un==='pote'?` de ${GOODS[id].nome.toLowerCase()}`:'');
+function fmtLeft(ms){const s=Math.ceil(ms/1000);if(s<60)return `${s} s`;const m=Math.floor(s/60),r=s%60;return r?`${m} min ${r} s`:`${m} min`;}
+
+function cropState(it){const c=it.crop;if(!c||!CROPS[c.id])return null;const tot=CROPS[c.id].min*MIN,el=Date.now()-c.t0;
+  return {id:c.id,k:Math.max(0,Math.min(1,el/tot)),left:Math.max(0,tot-el),ready:el>=tot,qty:it.w*it.h*(it.lv||1)};}
+const capOf=it=>Math.floor(it.w*it.h/ANIMALS[it.t].m2)*(it.lv||1);
+function animalInfo(it){const A=ANIMALS[it.t],now=Date.now(),cyc=A.cycle*MIN/(it.lv||1);
+  return (it.an||[]).map(a=>{const ad=a.t0+A.grow*MIN,adult=now>=ad,from=Math.max(a.last||0,ad);const n=adult?Math.min(3,Math.floor((now-from)/cyc)):0;
+    return {a,adult,growLeft:Math.max(0,ad-now),k:Math.min(1,(now-a.t0)/(A.grow*MIN)),n,next:adult&&n<3?cyc-((now-from)%cyc):0};});}
+function jobState(it){const j=it.job;if(!j)return null;const el=Date.now()-j.t0;return {q:j.q,k:Math.max(0,Math.min(1,el/j.dur)),left:Math.max(0,j.dur-el),ready:el>=j.dur};}
+function readyOf(it){if(it.dano)return 0;if(it.t==='horta'){const c=cropState(it);return c&&c.ready?1:0}
+  if(ANIMALS[it.t])return animalInfo(it).some(x=>x.n>0)?1:0;
+  if(RECIPES[it.t]){const j=jobState(it);return j&&j.ready?1:0}return 0;}
+const farmReady=p=>((p.world&&p.world.items)||[]).filter(readyOf).length;
+/* muda quando algo na fazenda muda de fase (para redesenhar o mundo sozinho) */
+function farmSig(p){return p.world.items.map(it=>{if(it.t==='horta'){const c=cropState(it);return c?c.id+Math.floor(c.k*4):'-'}
+  if(ANIMALS[it.t])return animalInfo(it).map(x=>(x.adult?'A':'f')+(x.n?1:0)).join('');
+  if(RECIPES[it.t]){const j=jobState(it);return j?(j.ready?'R':'j'):'-'}return ''}).join('|');}
+
+/* ícones dos produtos (viewBox 40 × 40) */
+const GART={
+ alface:'<circle cx="20" cy="23" r="13" fill="#5DAE3B"/><circle cx="14" cy="19" r="8" fill="#7BC950"/><circle cx="26" cy="19" r="8" fill="#7BC950"/><circle cx="20" cy="15" r="8" fill="#9BDB6A"/><path d="M20 12v18M14 20l6 6 6-6" stroke="#4A8F2C" stroke-width="1.6" fill="none"/>',
+ cenoura:'<path d="M12 14 L30 18 L14 34 Z" fill="#FF8A3D"/><path d="M16 21h5M15 26h4" stroke="#D9661A" stroke-width="1.8" stroke-linecap="round"/><path d="M12 14 l-2 -9 M12 14 l4 -8 M12 14 l-8 -4" stroke="#3FAE6A" stroke-width="3" stroke-linecap="round"/>',
+ tomate:'<circle cx="20" cy="22" r="13" fill="#E5484D"/><circle cx="15" cy="18" r="3.5" fill="#FF8A8D"/><polygon points="20,8 22,13 27,12 23,15 25,19 20,16 15,19 17,15 13,12 18,13" fill="#3FAE6A"/>',
+ morango:'<path d="M20 35 C8 26 8 13 20 13 C32 13 32 26 20 35Z" fill="#E5484D"/><g fill="#FFE38A"><circle cx="15" cy="19" r="1.2"/><circle cx="21" cy="18" r="1.2"/><circle cx="26" cy="20" r="1.2"/><circle cx="17" cy="25" r="1.2"/><circle cx="23" cy="25" r="1.2"/><circle cx="20" cy="30" r="1.2"/></g><path d="M12 13 Q20 6 28 13 Q20 11 12 13Z" fill="#3FAE6A"/>',
+ ovo:'<ellipse cx="20" cy="22" rx="11" ry="14" fill="#FFF6E5" stroke="#E0C9A6" stroke-width="2"/><ellipse cx="16" cy="17" rx="3" ry="4" fill="#FFFFFF"/>',
+ leite:'<path d="M9 13h22l-3 22H12z" fill="#B9C2D3" stroke="#8E99AD" stroke-width="2"/><ellipse cx="20" cy="13" rx="11" ry="4" fill="#FFFFFF" stroke="#8E99AD" stroke-width="2"/><path d="M11 13 Q20 2 29 13" fill="none" stroke="#8E99AD" stroke-width="2"/>',
+ galinha:'<ellipse cx="20" cy="25" rx="12" ry="10" fill="#FFFFFF" stroke="#D9D2C3" stroke-width="1.5"/><circle cx="27" cy="14" r="6.5" fill="#FFFFFF" stroke="#D9D2C3" stroke-width="1.5"/><path d="M24 8 q2 -4 4 0 q2 -4 3 1" fill="#E5484D"/><polygon points="33,14 37,15.5 33,17" fill="#FFB020"/><circle cx="28" cy="13" r="1.3" fill="#1E1E2A"/><path d="M8 22 q-4 -3 -1 -7" stroke="#D9D2C3" stroke-width="3" fill="none"/>',
+ vaca:'<rect x="6" y="10" width="28" height="24" rx="10" fill="#FFFFFF" stroke="#1E1E2A" stroke-width="1.5"/><ellipse cx="13" cy="15" rx="5" ry="4" fill="#1E1E2A"/><ellipse cx="28" cy="20" rx="3" ry="4" fill="#1E1E2A"/><rect x="11" y="24" width="18" height="10" rx="5" fill="#F5A3B5"/><circle cx="16" cy="29" r="1.5" fill="#B35A6E"/><circle cx="24" cy="29" r="1.5" fill="#B35A6E"/><circle cx="15" cy="19" r="1.6" fill="#1E1E2A"/><circle cx="25" cy="19" r="1.6" fill="#1E1E2A"/><path d="M8 11 l-4 -4 M32 11 l4 -4" stroke="#C9A27A" stroke-width="3" stroke-linecap="round"/>',
+ bolo:'<rect x="7" y="20" width="26" height="14" rx="3" fill="#A0622D"/><path d="M7 20 h26 v5 q-3 3 -6 0 q-3 3 -7 0 q-3 3 -6 0 q-3 3 -7 0z" fill="#FF9EC3"/><rect x="7" y="27" width="26" height="2" fill="#FFE38A"/><circle cx="20" cy="15" r="3.5" fill="#E5484D"/><path d="M20 12 q2 -4 5 -4" stroke="#3FAE6A" stroke-width="1.5" fill="none"/>',
+ sorvete:'<polygon points="13,20 27,20 20,38" fill="#E9B872" stroke="#C48A3E" stroke-width="1.5"/><path d="M15 24 l8 8 M18 21 l7 7 M25 24 l-8 8" stroke="#C48A3E" stroke-width="1"/><circle cx="20" cy="15" r="8" fill="#FF9EC3"/><circle cx="15" cy="20" r="4.5" fill="#FF9EC3"/><circle cx="25" cy="20" r="4.5" fill="#FF9EC3"/><circle cx="20" cy="7" r="2.5" fill="#E5484D"/>',
+ pintinho:'<circle cx="20" cy="24" r="10" fill="#FFD43B"/><circle cx="25" cy="15" r="6" fill="#FFD43B"/><polygon points="30,15 34,16 30,18" fill="#FF8A3D"/><circle cx="26" cy="14" r="1.2" fill="#1E1E2A"/>',
+ bezerro:'<rect x="9" y="12" width="22" height="20" rx="9" fill="#F4E3C3" stroke="#8A5A2B" stroke-width="1.5"/><ellipse cx="25" cy="18" rx="3" ry="3" fill="#8A5A2B"/><rect x="13" y="23" width="14" height="8" rx="4" fill="#F5A3B5"/><circle cx="16" cy="19" r="1.4" fill="#1E1E2A"/><circle cx="24" cy="19" r="1.4" fill="#1E1E2A"/>',
+};
+const gIcon=(id,cls='gi')=>`<svg viewBox="0 0 40 40" class="${cls}" aria-hidden="true">${GART[id]||''}</svg>`;
+
+/* ---------- desenhos da planta (2D) ---------- */
+function scatter(n,x0,y0,x1,y1){const out=[];if(!n)return out;const rw=x1-x0,rh=y1-y0,c=Math.max(1,Math.ceil(Math.sqrt(n*rw/rh))),r=Math.ceil(n/c);
+  for(let i=0;i<n;i++){const a=i%c,b=Math.floor(i/c);out.push([x0+rw*(a+.5)/c+((b%2)?rw/c/4:0),y0+rh*(b+.5)/r]);}return out;}
+const CROP2D={alface:['#7BC950',null],cenoura:['#3FAE6A','#FF8A3D'],tomate:['#3E9B5C','#E5484D'],morango:['#3FAE6A','#E5484D']};
+function hortaArt(x,y,W,H,it){if(!it)return null;let s=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="5" fill="#7A5230"/>`;const cs=cropState(it);
+  for(let r=0;r<Math.floor(H/16);r++){const ry=y+10+r*16;s+=`<rect x="${n1(x+4)}" y="${n1(ry-3)}" width="${n1(W-8)}" height="6" rx="3" fill="#5E3E22"/>`;
+    if(!cs)continue;const [lc,fc]=CROP2D[cs.id],sc=.35+.65*cs.k;
+    for(let c=0;c<Math.floor(W/14);c++){const px=x+10+c*14;
+      if(cs.id==='alface')s+=`<circle cx="${n1(px)}" cy="${n1(ry-2)}" r="${n1(5*sc)}" fill="${lc}"/><circle cx="${n1(px-1)}" cy="${n1(ry-3)}" r="${n1(2.4*sc)}" fill="#A8E07A"/>`;
+      else{s+=`<path d="M${n1(px)} ${n1(ry)} l${n1(-4*sc)} ${n1(-7*sc)} M${n1(px)} ${n1(ry)} l0 ${n1(-8*sc)} M${n1(px)} ${n1(ry)} l${n1(4*sc)} ${n1(-7*sc)}" stroke="${lc}" stroke-width="2.4" stroke-linecap="round"/>`;
+        if(cs.k>=.7)s+=`<circle cx="${n1(px+3)}" cy="${n1(ry-2)}" r="2.3" fill="${fc}"/>`;}}}
+  return s;}
+function ricons(n,kind,x0,y0,x1,y1){return scatter(Math.min(n,8),x0,y0,x1,y1).map(([cx,cy])=>kind==='galinha'
+  ?`<ellipse cx="${n1(cx)}" cy="${n1(cy)}" rx="5.5" ry="4.5" fill="#FFFFFF" stroke="#CFC6B4"/><circle cx="${n1(cx+4)}" cy="${n1(cy-3.5)}" r="2.8" fill="#FFFFFF" stroke="#CFC6B4"/><circle cx="${n1(cx+4)}" cy="${n1(cy-6.5)}" r="1.4" fill="#E5484D"/><polygon points="${n1(cx+6.6)},${n1(cy-3.8)} ${n1(cx+9)},${n1(cy-3)} ${n1(cx+6.6)},${n1(cy-2.2)}" fill="#FFB020"/>`
+  :kind==='pintinho'?`<circle cx="${n1(cx)}" cy="${n1(cy)}" r="3.3" fill="#FFD43B"/><circle cx="${n1(cx+2.6)}" cy="${n1(cy-2.4)}" r="2" fill="#FFD43B"/>`
+  :kind==='vaca'?`<ellipse cx="${n1(cx)}" cy="${n1(cy)}" rx="10" ry="6.5" fill="#FFFFFF" stroke="#2A2D36" stroke-width="1.2"/><ellipse cx="${n1(cx-3)}" cy="${n1(cy-1.5)}" rx="3" ry="2.4" fill="#2A2D36"/><ellipse cx="${n1(cx+4)}" cy="${n1(cy+2)}" rx="2" ry="1.6" fill="#2A2D36"/><ellipse cx="${n1(cx+10)}" cy="${n1(cy-3)}" rx="4" ry="3.4" fill="#FFFFFF" stroke="#2A2D36" stroke-width="1.2"/><ellipse cx="${n1(cx+12)}" cy="${n1(cy-2)}" rx="2" ry="1.6" fill="#F5A3B5"/>`
+  :`<ellipse cx="${n1(cx)}" cy="${n1(cy)}" rx="6.5" ry="4.5" fill="#E9C99A" stroke="#8A5A2B" stroke-width="1"/><ellipse cx="${n1(cx+6.5)}" cy="${n1(cy-2)}" rx="2.8" ry="2.4" fill="#E9C99A" stroke="#8A5A2B" stroke-width="1"/>`).join('');}
+function animalCounts(it,dflt){if(!it)return dflt;const ai=animalInfo(it);return [ai.filter(x=>x.adult).length,ai.filter(x=>!x.adult).length];}
+const BD_FARM={
+ galinheiro:(x,y,W,H,it)=>{const [ad,fi]=animalCounts(it,[2,1]);const cw=W*.46,ch=H*.42;
+   let s=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#E9D3A0"/><rect x="${n1(x+2)}" y="${n1(y+2)}" width="${n1(W-4)}" height="${n1(H-4)}" rx="5" fill="none" stroke="#A0703C" stroke-width="2.5" stroke-dasharray="6 3"/>`;
+   s+=`<rect x="${n1(x+5)}" y="${n1(y+5+ch*.35)}" width="${n1(cw)}" height="${n1(ch*.65)}" fill="#B5653A"/><polygon points="${n1(x+2)},${n1(y+7+ch*.35)} ${n1(x+5+cw/2)},${n1(y+4)} ${n1(x+8+cw)},${n1(y+7+ch*.35)}" fill="#D9363E"/><rect x="${n1(x+5+cw/2-4)}" y="${n1(y+5+ch-9)}" width="8" height="9" rx="4" fill="#5C3A1E"/>`;
+   return s+ricons(ad,'galinha',x+W*.18,y+H*.55,x+W*.88,y+H-8)+ricons(fi,'pintinho',x+W*.6,y+10,x+W-8,y+H*.45);},
+ curral:(x,y,W,H,it)=>{const [ad,fi]=animalCounts(it,[1,1]);
+   let s=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#A8D07A"/><rect x="${n1(x+3)}" y="${n1(y+3)}" width="${n1(W-6)}" height="${n1(H-6)}" rx="4" fill="none" stroke="#8A5A2B" stroke-width="3"/><rect x="${n1(x+3)}" y="${n1(y+3)}" width="${n1(W-6)}" height="${n1(H-6)}" rx="4" fill="none" stroke="#C9A27A" stroke-width="1.5" stroke-dasharray="2 8"/>`;
+   const bw=W*.34,bh=H*.36;s+=`<rect x="${n1(x+W-bw-7)}" y="${n1(y+7+bh*.3)}" width="${n1(bw)}" height="${n1(bh*.7)}" fill="#C0392B"/><polygon points="${n1(x+W-bw-10)},${n1(y+9+bh*.3)} ${n1(x+W-7-bw/2)},${n1(y+6)} ${n1(x+W-4)},${n1(y+9+bh*.3)}" fill="#7B241C"/><path d="M${n1(x+W-7-bw/2-7)} ${n1(y+7+bh*.55)} l14 ${n1(bh*.45-1)} M${n1(x+W-7-bw/2+7)} ${n1(y+7+bh*.55)} l-14 ${n1(bh*.45-1)}" stroke="#FFFFFF" stroke-width="2"/>`;
+   s+=`<rect x="${n1(x+9)}" y="${n1(y+10)}" width="${n1(W*.3)}" height="7" rx="3" fill="#8A5A2B"/><rect x="${n1(x+11)}" y="${n1(y+11)}" width="${n1(W*.3-4)}" height="4" rx="2" fill="#E9C46A"/>`;
+   return s+ricons(ad,'vaca',x+12,y+H*.5,x+W-22,y+H-12)+ricons(fi,'bezerro',x+12,y+H*.3,x+W*.55,y+H*.5);},
+ padaria:(x,y,W,H)=>{const wy=y+H*.3;let s=`<rect x="${n1(x+3)}" y="${n1(wy)}" width="${n1(W-6)}" height="${n1(H*.7-2)}" fill="#F5E1C0" stroke="#C9A27A" stroke-width="1.5"/><rect x="${n1(x)}" y="${n1(y+4)}" width="${n1(W)}" height="${n1(H*.3)}" rx="4" fill="#8A4B2A"/>`;
+   const nst=Math.max(4,Math.floor(W/14));for(let i=0;i<nst;i++)s+=`<path d="M${n1(x+i*W/nst)} ${n1(wy-2)} h${n1(W/nst)} v8 a${n1(W/nst/2)} 5 0 0 1 ${n1(-W/nst)} 0z" fill="${i%2?'#FFFFFF':'#FF6B9A'}"/>`;
+   s+=`<ellipse cx="${n1(x+W/2)}" cy="${n1(y+4+H*.15)}" rx="${n1(W*.16)}" ry="6" fill="#E0A35A" stroke="#A0622D" stroke-width="1.5"/><path d="M${n1(x+W/2-6)} ${n1(y+H*.15+1)} l3 5 M${n1(x+W/2)} ${n1(y+H*.15)} l3 5 M${n1(x+W/2+6)} ${n1(y+H*.15+1)} l3 5" stroke="#A0622D" stroke-width="1.4"/>`;
+   return s+`<rect x="${n1(x+10)}" y="${n1(wy+14)}" width="${n1(W*.32)}" height="${n1(H*.3)}" fill="#7FC8F8" stroke="#fff" stroke-width="2"/><rect x="${n1(x+W-26)}" y="${n1(y+H-24)}" width="14" height="22" fill="#7A4B25"/>`;},
+ sorveteria:(x,y,W,H)=>{const wy=y+H*.42;let s=`<rect x="${n1(x+3)}" y="${n1(wy)}" width="${n1(W-6)}" height="${n1(H*.58-2)}" rx="3" fill="#FFD6E8" stroke="#E78FB3" stroke-width="1.5"/>`;
+   const nst=5;for(let i=0;i<nst;i++)s+=`<rect x="${n1(x+i*W/nst)}" y="${n1(wy-6)}" width="${n1(W/nst)}" height="10" fill="${i%2?'#FFFFFF':'#5CC9A7'}"/>`;
+   const cx=x+W/2;s+=`<polygon points="${n1(cx-8)},${n1(y+H*.24)} ${n1(cx+8)},${n1(y+H*.24)} ${n1(cx)},${n1(wy-6)}" fill="#E9B872" stroke="#C48A3E"/><circle cx="${n1(cx)}" cy="${n1(y+H*.2)}" r="9" fill="#FF9EC3"/><circle cx="${n1(cx-5)}" cy="${n1(y+H*.12)}" r="6" fill="#9BE3C8"/><circle cx="${n1(cx+2)}" cy="${n1(y+5)}" r="2.5" fill="#E5484D"/>`;
+   return s+`<rect x="${n1(x+9)}" y="${n1(wy+10)}" width="${n1(W-18)}" height="9" rx="3" fill="#FFFFFF"/><rect x="${n1(cx-6)}" y="${n1(y+H-20)}" width="12" height="18" fill="#C2185B"/>`;},
+};
+Object.assign(BD,BD_FARM);
+const BD_HORTA0=BD.horta;BD.horta=(x,y,W,H,it)=>hortaArt(x,y,W,H,it)||BD_HORTA0(x,y,W,H);
+function readyBadge(it,X,Y,IW){if(!readyOf(it))return '';const g=it.t==='horta'?it.crop.id:ANIMALS[it.t]?ANIMALS[it.t].good:RECIPES[it.t].good;
+  return `<g class="rdy" pointer-events="none"><circle cx="${X+IW/2}" cy="${Y+17}" r="15" fill="#FFFFFF" stroke="#22B357" stroke-width="3"/><svg x="${X+IW/2-11}" y="${Y+6}" width="22" height="22" viewBox="0 0 40 40">${GART[g]}</svg></g>`;}
+
+/* ---------- janela da construção que produz ---------- */
+const PM={idx:null,timer:0,sig:'',q:1};
+const isProd=it=>it&&PRODUCERS.has(it.t);
+function openProd(idx){PM.idx=idx;PM.q=1;PM.sig='';renderProd();$('#prod-modal').hidden=false;clearInterval(PM.timer);PM.timer=setInterval(tickProd,1000);
+  setTimeout(()=>{const b=$('#prod-body .btn:not([disabled])')||$('#prod-close');b&&b.focus()},60);}
+function closeProd(){clearInterval(PM.timer);$('#prod-modal').hidden=true;if(cur==='world')renderWorld();}
+function prodSig(it){return farmSig({world:{items:[it]}})+'|'+P.coins+'|'+JSON.stringify(P.inv)+'|'+(it.an||[]).length+'|'+(it.lv||1);}
+function tickProd(){const it=P&&P.world.items[PM.idx];if(!it||$('#prod-modal').hidden){clearInterval(PM.timer);return}
+  if(prodSig(it)!==PM.sig){const f=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.pa:null;renderProd();if(f){const b=$(`#prod-body [data-pa="${f}"]`);b&&b.focus();}return}
+  document.querySelectorAll('#prod-body [data-end]').forEach(el=>{el.textContent=fmtLeft(Math.max(0,+el.dataset.end-Date.now()))});
+  document.querySelectorAll('#prod-body [data-t0]').forEach(el=>{el.style.width=Math.min(100,(Date.now()-el.dataset.t0)/el.dataset.dur*100)+'%'});}
+const bar=(t0,dur)=>`<div class="xpbar"><i data-t0="${t0}" data-dur="${dur}" style="width:${Math.min(100,(Date.now()-t0)/dur*100)}%"></i></div>`;
+const inv=id=>(P.inv&&P.inv[id])||0;
+function renderProd(){const it=P.world.items[PM.idx];if(!it)return;PM.sig=prodSig(it);const lv=it.lv||1,a=it.w*it.h,plv=levelInfo(P.xp).lvl;let h='';
+  $('#prod-title').textContent=lvName(it);
+  if(it.t==='horta'){$('#prod-eye').textContent='Horta · plantar e colher';const cs=cropState(it);
+    h+=`<p class="prod-info">Canteiro de <b>${it.w} m × ${it.h} m = ${a} m²</b>. Cada m² dá ${lv===1?'1 caixa':`${lv} caixas (horta nível ${lv})`} na colheita.</p>`;
+    if(!cs){h+=`<p class="prod-info">Escolha a semente. Ela custa por m²:</p><div class="crop-list">`+Object.entries(CROPS).map(([id,c])=>{const cost=c.seed*a,qty=a*lv,lock=plv<c.lvl;
+        return `<div class="crop ${lock?'locked':''}">${gIcon(id)}<div><b>${GOODS[id].nome}</b><small>Semente: ${a} × ${c.seed} = ${cost} moeda${cost>1?'s':''}</small><small>Colheita: ${qty} caixas em ${c.min} min · tabela ${COIN}${GOODS[id].base} a caixa</small></div>`+
+          (lock?`<span class="note">Nível ${c.lvl}</span>`:`<button type="button" class="btn ${P.coins>=cost?'yellow':'ghost'} small" data-pa="plant-${id}" ${P.coins>=cost?'':'disabled'}>Plantar · ${COIN}${cost}</button>`)+`</div>`}).join('')+'</div>';}
+    else if(!cs.ready){const c=CROPS[cs.id];h+=`<div class="grow">${gIcon(cs.id)}<div><b>${GOODS[cs.id].nome} crescendo</b>${bar(it.crop.t0,c.min*MIN)}<small>Pronta em <span data-end="${it.crop.t0+c.min*MIN}">${fmtLeft(cs.left)}</span>. Vai dar ${qn(cs.qty,cs.id)}.</small></div></div>
+      <p class="note">Enquanto espera, jogue uma partida de áreas!</p>`;}
+    else h+=`<div class="grow ready">${gIcon(cs.id)}<div><b>Pronta para colher!</b><small>${a} m² × ${lv} = ${qn(cs.qty,cs.id)}</small></div></div><div class="prod-acts"><button type="button" class="btn go" data-pa="harvest">Colher ${cs.qty} caixas</button></div>`;}
+  else if(ANIMALS[it.t]){const A=ANIMALS[it.t],ai=animalInfo(it),cap=capOf(it),base=Math.floor(a/A.m2),stock=ai.reduce((t,x)=>t+x.n,0),adults=ai.filter(x=>x.adult);
+    $('#prod-eye').textContent=it.t==='galinheiro'?'Criação de galinhas':'Criação de vacas';
+    h+=`<p class="prod-info">${A.art}. Este ${it.t} tem <b>${it.w} m × ${it.h} m = ${a} m²</b>: cabem ${A.m2>1?`${a} ÷ ${A.m2} = `:''}${base}${lv>1?` × ${lv} (nível ${lv}) = ${cap}`:''} ${cap===1?A.bicho:A.bichos}.</p>`;
+    h+=`<p class="prod-info">${A.filhote[0].toUpperCase()+A.filhote.slice(1)} vira ${A.bicho} em ${A.grow} min. Cada ${A.bicho} dá 1 ${GOODS[A.good].un} a cada ${n1(A.cycle/lv)} min e guarda até 3.</p>`;
+    h+=ai.length?`<div class="an-grid">`+ai.map(x=>x.adult
+        ?`<div class="an ${x.n?'ok':''}">${gIcon(A.bicho)}${x.n?`<b>${qn(x.n,A.good)}</b>`:`<span>Próximo: <span data-end="${Date.now()+x.next}">${fmtLeft(x.next)}</span></span>`}</div>`
+        :`<div class="an small">${gIcon(A.filhote)}<span>Cresce em <span data-end="${x.a.t0+A.grow*MIN}">${fmtLeft(x.growLeft)}</span></span></div>`).join('')+`</div>`
+      :`<p class="note">Ainda vazio. Compre ${it.t==='galinheiro'?'um pintinho':'um bezerro'} para começar.</p>`;
+    h+=`<div class="prod-acts">`;
+    if(stock)h+=`<button type="button" class="btn go" data-pa="collect">${gIcon(A.good,'gi s')} Coletar ${qn(stock,A.good)}</button>`;
+    h+=ai.length<cap?`<button type="button" class="btn ${P.coins>=A.buy?'yellow':'ghost'}" data-pa="buy" ${P.coins>=A.buy?'':'disabled'}>Comprar ${A.filhote} · ${COIN}${A.buy}</button>`:`<span class="note">Lotado: ${ai.length} de ${cap}. Melhore o ${it.t} para caber mais.</span>`;
+    if(adults.length)h+=`<button type="button" class="btn ghost" data-pa="sellan">Levar 1 ${A.bicho} ao mercado</button>`;
+    h+=`</div>`;}
+  else if(RECIPES[it.t]){const R=RECIPES[it.t],G=GOODS[R.good],js=jobState(it),need=Object.entries(R.need);
+    $('#prod-eye').textContent=it.t==='padaria'?'Comércio · padaria':'Comércio · sorveteria';
+    h+=`<div class="recipe">${need.map(([g,n])=>`${n} ${gIcon(g,'gi s')}`).join(' + ')} = 1 ${gIcon(R.good,'gi s')} <span class="note">(${need.map(([g,n])=>qn(n,g)).join(' + ')} = 1 ${G.un})</span></div>`;
+    h+=`<p class="prod-info">No celeiro: ${need.map(([g])=>qn(inv(g),g)).join(', ')}. ${G.nome} vale ${COIN}${G.base} na tabela.</p>`;
+    if(!js){const mx=Math.min(5,...need.map(([g,n])=>Math.floor(inv(g)/n)));
+      if(mx<1){const falta=need.filter(([g,n])=>inv(g)<n).map(([g,n])=>qn(n-inv(g),g));
+        h+=`<p class="note">Faltam ${falta.join(' e ')}. ${falta.length&&need.some(([g,n])=>g==='leite'&&inv(g)<n)?'Leite vem das vacas do curral. ':''}${need.some(([g,n])=>g==='ovo'&&inv(g)<n)?'Ovos vêm do galinheiro. ':''}${need.some(([g,n])=>g==='morango'&&inv(g)<n)?'Morango vem da horta. ':''}</p>`;}
+      else{PM.q=Math.max(1,Math.min(PM.q,mx));const q=PM.q,dur=Math.ceil(R.min*q/lv);
+        h+=`<div class="prod-acts"><span class="stepper"><button type="button" data-pa="q-" aria-label="Menos">−</button><output>${q}</output><button type="button" data-pa="q+" aria-label="Mais">+</button></span><span class="note">até ${mx}</span></div>`;
+        h+=`<p class="prod-info">Para ${q} ${q>1?G.uns:G.un}: ${need.map(([g,n])=>`${q} × ${n} = ${qn(q*n,g)}`).join(' e ')}. Fica pronto em ${q} × ${n1(R.min/lv)} = ${dur} min.</p>`;
+        h+=`<div class="prod-acts"><button type="button" class="btn go" data-pa="make">${R.verbo} ${q} ${q>1?G.uns:G.un}</button></div>`;}}
+    else if(!js.ready)h+=`<div class="grow">${gIcon(R.good)}<div><b>${R.verbo==='Assar'?'No forno':'Preparando'}: ${qn(js.q,R.good)}</b>${bar(it.job.t0,it.job.dur)}<small>Pronto em <span data-end="${it.job.t0+it.job.dur}">${fmtLeft(js.left)}</span>.</small></div></div>`;
+    else h+=`<div class="grow ready">${gIcon(R.good)}<div><b>Pronto!</b><small>${qn(js.q,R.good)} esperando você.</small></div></div><div class="prod-acts"><button type="button" class="btn go" data-pa="take">Retirar ${qn(js.q,R.good)}</button></div>`;}
+  $('#prod-body').innerHTML=h;}
+function addGood(id,n){P.inv=P.inv||{};P.inv[id]=(P.inv[id]||0)+n;P.prod=P.prod||{};P.prod[id]=(P.prod[id]||0)+n;}
+function prodAct(a){const it=P.world.items[PM.idx];if(!it)return;let msg='',got=[];
+  if(a.startsWith('plant-')){const id=a.slice(6),c=CROPS[id],cost=c.seed*it.w*it.h;if(it.crop||P.coins<cost||levelInfo(P.xp).lvl<c.lvl)return;
+    P.coins-=cost;it.crop={id,t0:Date.now()};sfx('build');msg=`${GOODS[id].nome} plantada! Fica pronta em ${c.min} min.`;}
+  else if(a==='harvest'){const cs=cropState(it);if(!cs||!cs.ready)return;addGood(cs.id,cs.qty);delete it.crop;P.colh=(P.colh||0)+1;sfx('coin');setTimeout(()=>sfx('star'),150);msg=`Colheu ${qn(cs.qty,cs.id)}! Venda no mercado.`;}
+  else if(a==='buy'){const A=ANIMALS[it.t];if(P.coins<A.buy||(it.an||[]).length>=capOf(it))return;P.coins-=A.buy;it.an=it.an||[];it.an.push({t0:Date.now(),last:0});sfx('cash');msg=`Chegou um ${A.filhote}! Vira ${A.bicho} em ${A.grow} min.`;}
+  else if(a==='collect'){const A=ANIMALS[it.t];let n=0;const now=Date.now();animalInfo(it).forEach(x=>{if(x.n){n+=x.n;x.a.last=now}});if(!n)return;addGood(A.good,n);sfx('coin');msg=`Coletou ${qn(n,A.good)}!`;}
+  else if(a==='sellan'){const A=ANIMALS[it.t],ai=animalInfo(it),x=ai.find(y=>y.adult);if(!x)return;if(x.n)addGood(A.good,x.n);it.an.splice(it.an.indexOf(x.a),1);addGood(A.bicho,1);sfx('coin');msg=`1 ${A.bicho} foi para o celeiro. Venda no mercado!`;}
+  else if(a==='q-'||a==='q+'){PM.q+=a==='q+'?1:-1;renderProd();return}
+  else if(a==='make'){const R=RECIPES[it.t];if(it.job)return;const q=PM.q,need=Object.entries(R.need);if(need.some(([g,n])=>inv(g)<n*q))return;
+    need.forEach(([g,n])=>P.inv[g]-=n*q);it.job={t0:Date.now(),q,dur:Math.ceil(R.min*q/(it.lv||1))*MIN};sfx('build');msg=`${R.verbo==='Assar'?'No forno':'Preparando'}! Fica pronto em ${Math.ceil(R.min*q/(it.lv||1))} min.`;}
+  else if(a==='take'){const js=jobState(it);if(!js||!js.ready)return;addGood(RECIPES[it.t].good,js.q);delete it.job;sfx('coin');setTimeout(()=>sfx('star'),150);msg=`Retirou ${qn(js.q,RECIPES[it.t].good)}! Venda no mercado.`;}
+  got=checkAch();saveProfile();renderProd();if(msg)toast(msg);announceAch(got,1800);
+  if(cur==='world'&&WS.view==='3d'&&W3.ok&&!REDUCED&&/harvest|collect|take/.test(a))W3.celebrate(PM.idx);}
+$('#prod-body').addEventListener('click',e=>{const b=e.target.closest('[data-pa]');if(!b||b.disabled)return;prodAct(b.dataset.pa);});
+$('#prod-close').onclick=closeProd;
+$('#prod-edit').onclick=()=>{const i=PM.idx;clearInterval(PM.timer);$('#prod-modal').hidden=true;WS.pick=i;renderWorld();};
+$('#prod-mk').onclick=()=>{clearInterval(PM.timer);$('#prod-modal').hidden=true;openMarket('world');};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#prod-modal').hidden)closeProd();});
+
+/* o mundo se atualiza sozinho quando algo fica pronto */
+let farmTimer=0,farmLast='';
+function farmWatch(){clearInterval(farmTimer);farmLast=P?farmSig(P):'';farmTimer=setInterval(()=>{if(cur!=='world'||!P){clearInterval(farmTimer);return}
+  const s=farmSig(P);if(s!==farmLast){const before=farmReady(P);farmLast=s;if($('#prod-modal').hidden&&$('#fix-modal').hidden&&!WS.sel)renderWorld();if(farmReady(P)>before){sfx('star');toast('Tem coisa pronta na fazenda!');}}},4000);}
+
+/* ---------- mercado ---------- */
+const MK={from:'home',sell:null};
+function mkPrices(){const r=rng('mercado'+dayKey()),ids=Object.keys(GOODS),hot=ids[Math.floor(r()*ids.length)],o={hot};
+  ids.forEach(id=>{const b=GOODS[id].base,m=id===hot?1.6:.9+r()*.5;o[id]={q:Math.max(1,Math.round(b*m)),s:Math.max(1,Math.floor(b*.8))};});return o;}
+const MKLIM=15;
+function mkDay(){if(!P.mk||P.mk.d!==dayKey())P.mk={d:dayKey(),sold:{}};return P.mk;}
+function openMarket(from){MK.from=from||'home';show('market');renderMarket();}
+function renderMarket(){if(!P)return;const pr=mkPrices(),md=mkDay(),ids=Object.keys(GOODS),hot=pr.hot,hg=GOODS[hot];
+  $('#mk-coins').innerHTML=`${COIN} ${P.coins} moedas`;updateWho();
+  $('#mk-hot').innerHTML=`${gIcon(hot,'gi big')}<div><p class="eyebrow">Procura do dia na quitanda</p><b>${hg.nome}: ${COIN}${pr[hot].q} ${hg.un==='caixa'||hg.un==='balde'||hg.un==='pote'?'a '+hg.un:'cada'}</b><small>O preço normal é ${hg.base}. Amanhã a procura muda.</small></div>`;
+  const have=ids.filter(id=>inv(id)>0);
+  $('#mk-inv').innerHTML=have.length?have.map(id=>`<div class="mk-item">${gIcon(id)}<b>${inv(id)}</b><span>${inv(id)===1?GOODS[id].un:GOODS[id].uns}${GOODS[id].un!==GOODS[id].nome.toLowerCase()?' de '+GOODS[id].nome.toLowerCase():''}</span></div>`).join('')
+    :`<p class="note">O celeiro está vazio. No Meu mundo, construa uma <b>horta</b> (nível 2) para plantar, um <b>galinheiro</b> (nível 3) ou um <b>curral</b> (nível 5) para criar animais, e depois uma <b>padaria</b> ou uma <b>sorveteria</b> para fazer produtos que valem mais.</p>`;
+  $('#mk-list').innerHTML=ids.map(id=>{const g=GOODS[id],n=inv(id),left=Math.max(0,MKLIM-(md.sold[id]||0)),up=pr[id].q>g.base,down=pr[id].q<g.base;
+    return `<div class="mk-row ${n?'':'none'}">${gIcon(id)}<div class="mk-name"><b>${g.nome}${id===hot?' <span class="hot">procura</span>':''}</b><small>Você tem ${n} · tabela ${COIN}${g.base}</small></div>
+      <div class="mk-sells"><div class="mk-btns"><button type="button" class="btn ${n&&left?'yellow':'ghost'} small" data-sell="q:${id}" ${n&&left?'':'disabled'}><span>Quitanda</span><span class="pr">${COIN}${pr[id].q}${up?' ▲':down?' ▼':''}</span></button><small>${left?`compra mais ${left} hoje`:'já comprou 15 hoje'}</small></div>
+      <div class="mk-btns"><button type="button" class="btn ${n?'ghost':'ghost'} small" data-sell="s:${id}" ${n?'':'disabled'}><span>Supermercado</span><span class="pr">${COIN}${pr[id].s}</span></button><small>sem limite</small></div></div></div>`}).join('');}
+$('#mk-list').addEventListener('click',e=>{const b=e.target.closest('[data-sell]');if(!b||b.disabled)return;const [shop,id]=b.dataset.sell.split(':');openSell(shop,id);});
+$('#mk-back').onclick=()=>{if(MK.from==='world'){backTo='home';openWorld()}else goHome()};
+$('#mk-world').onclick=()=>{backTo='home';openWorld();};
+$('#w-mk').onclick=()=>openMarket('world');
+$('#go-market').onclick=()=>beginLogin('market');
+
+/* venda: escolher a quantidade e calcular quanto vai receber */
+function openSell(shop,id){const pr=mkPrices(),md=mkDay();const max=shop==='q'?Math.min(inv(id),MKLIM-(md.sold[id]||0)):inv(id);if(max<1)return;
+  MK.sell={shop,id,p:shop==='q'?pr[id].q:pr[id].s,max,q:max,step:1};renderSell();$('#sell-modal').hidden=false;setTimeout(()=>$('#sell-go').focus(),60);}
+function sellOpts(q,p){const ans=q*p,c=new Set([ans]);for(const w of [ans+p,ans-p,q*(p+1),(q+1)*p,q+p,ans+10,ans-10,q*(p-1)])if(w>0&&c.size<4)c.add(w);
+  let k=2;while(c.size<4)c.add(ans+k++);return [...c].sort(()=>Math.random()-.5);}
+function renderSell(){const s=MK.sell,g=GOODS[s.id];$('#sell-eye').textContent=s.shop==='q'?'Vender na quitanda':'Vender no supermercado';
+  $('#sell-title').innerHTML=`${gIcon(s.id,'gi s')} ${esc(g.nome)}`;$('#sell-fb').hidden=true;
+  if(s.step===1){$('#sell-qty').hidden=false;$('#sell-qty').innerHTML=`<span class="lab">${['caixa','galinha','vaca'].includes(g.un)?'Quantas':'Quantos'} ${g.uns}?</span><span class="stepper"><button type="button" data-q="-" aria-label="Menos">−</button><output>${s.q}</output><button type="button" data-q="+" aria-label="Mais">+</button></span><button type="button" class="btn ghost small" data-q="max">Todos (${s.max})</button>`;
+    $('#sell-q').textContent=`Cada ${g.un} sai por ${s.p} moeda${s.p>1?'s':''}. Depois você calcula quanto vai receber: acertando a conta, ganha 10% a mais.`;
+    $('#sell-opts').innerHTML='';$('#sell-go').textContent='Vender';$('#sell-go').hidden=false;$('#sell-close').textContent='Cancelar';}
+  else{$('#sell-qty').hidden=true;$('#sell-q').textContent=`${s.q} ${s.q>1?g.uns:g.un} a ${s.p} moeda${s.p>1?'s':''} cada. Quanto você vai receber? ${s.q} × ${s.p} = ?`;
+    s.opts=s.opts||sellOpts(s.q,s.p);$('#sell-opts').innerHTML=s.opts.map((v,i)=>`<button type="button" class="opt" data-i="${i}">${v}</button>`).join('');$('#sell-go').hidden=true;$('#sell-close').textContent='Cancelar';}}
+$('#sell-qty').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b)return;const s=MK.sell;s.q=b.dataset.q==='max'?s.max:Math.max(1,Math.min(s.max,s.q+(b.dataset.q==='+'?1:-1)));renderSell();});
+$('#sell-go').onclick=()=>{const s=MK.sell;if(!s)return;if(s.step===1){s.step=2;s.opts=null;renderSell();setTimeout(()=>{const b=$('#sell-opts .opt');b&&b.focus()},40)}else{$('#sell-modal').hidden=true;}};
+$('#sell-close').onclick=()=>{$('#sell-modal').hidden=true;MK.sell=null;};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#sell-modal').hidden)$('#sell-close').click();});
+$('#sell-opts').addEventListener('click',e=>{const b=e.target.closest('.opt');const s=MK.sell;if(!b||b.disabled||!s||s.done)return;s.done=1;
+  const ans=s.q*s.p,ok=s.opts[+b.dataset.i]===ans,bonus=ok?Math.ceil(ans*.1):0,gain=ans+bonus,g=GOODS[s.id];
+  document.querySelectorAll('#sell-opts .opt').forEach((x,i)=>{x.disabled=true;if(s.opts[i]===ans)x.classList.add('right')});if(!ok)b.classList.add('wrong');
+  const l0=levelInfo(P.xp).lvl;P.inv[s.id]-=s.q;if(s.shop==='q'){const md=mkDay();md.sold[s.id]=(md.sold[s.id]||0)+s.q;}
+  P.coins+=gain;P.xp+=gain;P.vend=(P.vend||0)+s.q;P.mkg=(P.mkg||0)+gain;const got=checkAch();saveProfile();
+  const fb=$('#sell-fb');fb.hidden=false;
+  if(ok){sfx('ok');setTimeout(()=>sfx('cash'),350);fb.className='feedback ok';fb.innerHTML=`<strong>Certo! +${gain} moedas</strong><span class="steps">${s.q} × ${s.p} = ${ans}. Bônus de 10% pela conta certa: +${bonus}.</span>`;if(!REDUCED)confetti(50);}
+  else{sfx('no');setTimeout(()=>sfx('cash'),350);fb.className='feedback no';fb.innerHTML=`<strong>A conta dava ${ans}. Você recebeu ${gain} moedas</strong><span class="steps">${s.q} × ${s.p} = ${ans}. Sem o bônus de 10% (seria +${Math.ceil(ans*.1)}).</span>`;}
+  $('#sell-go').textContent='Continuar';$('#sell-go').hidden=false;$('#sell-close').textContent='Fechar';$('#sell-go').focus();renderMarket();
+  const l1=levelInfo(P.xp).lvl;if(l1>l0)setTimeout(()=>{$('#sell-modal').hidden=true;showLevel(l1)},1400);announceAch(got,l1>l0?3200:1600);});
+
+/* ---------- fazenda em 3D ---------- */
+Object.assign(W3.models,{
+  horta(g,fw,fd,lv,it){const T=THREE;this.box(fw-.1,.12,fd-.1,0x6B4626,0,0,0,g);const cs=it?cropState(it):{id:'cenoura',k:1};
+    for(let z=-fd/2+.35;z<fd/2;z+=.5){this.box(fw-.4,.08,.22,0x5A3A1E,0,.12,z,g);if(!cs)continue;const s=.3+.7*cs.k;
+      for(let x=-fw/2+.35;x<fw/2-.1;x+=.32){const p=new T.Group();p.position.set(x,.2,z);p.scale.setScalar(s);g.add(p);
+        if(cs.id==='alface'){this.mesh(new T.IcosahedronGeometry(.14,0),this.M(0x7BC950),0,.1,0,p);this.mesh(new T.IcosahedronGeometry(.08,0),this.M(0xA8E07A),.03,.2,0,p);}
+        else if(cs.id==='cenoura'){if(cs.k>=1)this.mesh(new T.ConeGeometry(.05,.16,6),this.M(0xFF8A3D),0,.06,0,p).rotation.x=Math.PI;this.mesh(new T.ConeGeometry(.09,.26,5),this.M(0x3FAE6A),0,.18,0,p);}
+        else if(cs.id==='tomate'){this.box(.03,.5,.03,0x8A5A2B,0,0,0,p);this.mesh(new T.IcosahedronGeometry(.12,0),this.M(0x3E9B5C),0,.3,0,p);if(cs.k>=.7)[[.08,.25,.06],[-.07,.36,-.05]].forEach(([a,b,c])=>this.mesh(new T.SphereGeometry(.05,8,6),this.M(0xE5484D),a,b,c,p));}
+        else{this.mesh(new T.IcosahedronGeometry(.12,0),this.M(0x3FAE6A),0,.06,0,p).scale.y=.6;if(cs.k>=.7)[[.08,.05,.05],[-.06,.05,-.07]].forEach(([a,b,c])=>this.mesh(new T.ConeGeometry(.04,.08,6),this.M(0xE5484D),a,b,c,p).rotation.x=Math.PI);}}}
+    if(lv>=2){const sc=new T.Group();sc.position.set(fw/2-.35,0,-fd/2+.3);g.add(sc);this.box(.05,1.1,.05,this.M(0x8A5A2B),0,0,0,sc);this.box(.7,.05,.05,this.M(0x8A5A2B),0,.8,0,sc);
+      this.box(.3,.4,.16,this.M(0x3A6FF7),0,.55,0,sc);this.mesh(new T.SphereGeometry(.13,8,6),this.M(0xF2D27A),0,1.18,0,sc);this.mesh(new T.ConeGeometry(.22,.18,10),this.M(0xC9A54A),0,1.32,0,sc);this.anim.push({o:sc,t:'sway',k:1});}
+    if(lv>=3){const gh=this.mesh(new T.CylinderGeometry(Math.min(fd,1.4)/2,Math.min(fd,1.4)/2,Math.min(fw-.3,1.6),14,1,true,0,Math.PI),this.M(0xCFEFFF,{transparent:true,opacity:.35,side:T.DoubleSide,roughness:.1}),-fw/2+.95,.12,0,g);gh.rotation.z=Math.PI/2;gh.castShadow=false;}},
+  galinheiro(g,fw,fd,lv,it){const T=THREE;this.box(fw-.1,.08,fd-.1,0xE9D3A0,0,0,0,g);
+    const wood=this.M(0xA0703C),pg=new T.BoxGeometry(.06,.35,.06);for(let x=-fw/2+.08;x<=fw/2;x+=.4)for(const z of [-fd/2+.08,fd/2-.08])this.mesh(pg,wood,x,.25,z,g);
+    for(let z=-fd/2+.48;z<fd/2-.1;z+=.4)for(const x of [-fw/2+.08,fw/2-.08])this.mesh(pg,wood,x,.25,z,g);
+    const cw=Math.min(1.1,fw*.5)*(lv>=2?1.15:1),cx=-fw/2+.15+cw/2,cz=-fd/2+.15+cw/2;
+    this.box(cw,.7,cw*.85,this.M(0xB5653A),cx,.08,cz,g);const sh=new T.Shape();sh.moveTo(-cw/2-.1,0);sh.lineTo(0,.45);sh.lineTo(cw/2+.1,0);sh.lineTo(-cw/2-.1,0);
+    const rg=new T.ExtrudeGeometry(sh,{depth:cw*.85+.15,bevelEnabled:false});rg.translate(0,0,-(cw*.85+.15)/2);this.mesh(rg,this.M(0xD9363E),cx,.78,cz,g);
+    this.box(.22,.26,.03,this.M(0x5C3A1E),cx,.12,cz+cw*.43,g);const ramp=this.box(.2,.03,.45,wood,cx,.12,cz+cw*.43+.22,g);ramp.rotation.x=-.35;
+    if(lv>=3){this.mesh(new T.CylinderGeometry(.22,.22,.9,12),this.M(0xB9C2D3,{metalness:.4,roughness:.4}),fw/2-.35,.55,-fd/2+.35,g);this.mesh(new T.ConeGeometry(.26,.25,12),this.M(0x8E99AD),fw/2-.35,1.12,-fd/2+.35,g);}
+    const ai=it?animalInfo(it):[{adult:1},{adult:1},{adult:0}],white=this.M(0xFFFFFF),red=this.M(0xE5484D),yel=this.M(0xFFD43B),beak=this.M(0xFFB020);
+    const pts=scatter(Math.min(ai.length,10),-fw/2+.35,-fd/2+.35+(fd>1.6?cw*.6:0),fw/2-.35,fd/2-.3);
+    ai.slice(0,10).forEach((x,k)=>{const c=new T.Group();c.position.set(pts[k][0],.08,pts[k][1]);c.rotation.y=k*2.1;g.add(c);
+      if(x.adult){this.mesh(new T.SphereGeometry(.14,8,6),white,0,.15,0,c).scale.set(1.2,1,.9);this.mesh(new T.SphereGeometry(.08,8,6),white,.13,.28,0,c);this.box(.03,.07,.08,red,.15,.34,0,c);
+        this.mesh(new T.ConeGeometry(.03,.07,4),beak,.22,.27,0,c).rotation.z=-Math.PI/2;this.box(.08,.1,.12,white,-.17,.17,0,c).rotation.z=.6;}
+      else this.mesh(new T.SphereGeometry(.07,8,6),yel,0,.07,0,c);
+      this.anim.push({o:c,t:'peck',k:k*1.3});});},
+  curral(g,fw,fd,lv,it){const T=THREE;this.box(fw-.1,.06,fd-.1,this.night?0x5E8A45:0xA8D07A,0,0,0,g);const wood=this.M(0x8A5A2B);
+    for(let x=-fw/2+.08;x<=fw/2;x+=.5)for(const z of [-fd/2+.08,fd/2-.08])this.box(.07,.5,.07,wood,x,.06,z,g);
+    for(let z=-fd/2+.58;z<fd/2-.1;z+=.5)for(const x of [-fw/2+.08,fw/2-.08])this.box(.07,.5,.07,wood,x,.06,z,g);
+    for(const y of [.25,.45]){for(const z of [-fd/2+.08,fd/2-.08])this.box(fw-.12,.05,.04,wood,0,y,z,g);for(const x of [-fw/2+.08,fw/2-.08])this.box(.04,.05,fd-.12,wood,x,y,0,g);}
+    const bw=Math.min(1.3,fw*.42)*(lv>=2?1.2:1),bx=fw/2-.2-bw/2,bz=-fd/2+.2+bw/2;this.box(bw,.8,bw,this.M(0xC0392B),bx,.06,bz,g);
+    const sh=new T.Shape();sh.moveTo(-bw/2-.08,0);sh.lineTo(0,.5);sh.lineTo(bw/2+.08,0);sh.lineTo(-bw/2-.08,0);const rg=new T.ExtrudeGeometry(sh,{depth:bw+.12,bevelEnabled:false});rg.translate(0,0,-(bw+.12)/2);this.mesh(rg,this.M(0x7B241C),bx,.86,bz,g);
+    const door=this.box(.36,.5,.03,this.M(0xFFFFFF),bx-bw/2-.01,.06,bz,g);door.rotation.y=Math.PI/2;
+    this.box(.7,.14,.25,wood,-fw/2+.6,.06,-fd/2+.35,g);this.box(.62,.04,.18,this.M(0xE9C46A),-fw/2+.6,.2,-fd/2+.35,g);
+    if(lv>=2)[[-fw/2+.4,fd/2-.4],[-fw/2+.85,fd/2-.4]].forEach(([x,z])=>{const hb=this.mesh(new T.CylinderGeometry(.18,.18,.3,10),this.M(0xE9C46A),x,.24,z,g);hb.rotation.z=Math.PI/2;});
+    if(lv>=3){this.mesh(new T.CylinderGeometry(.3,.3,1.6,12),this.M(0xEDE6D6),bx+bw/2-.2,.86,bz+bw/2+.25,g);this.mesh(new T.SphereGeometry(.3,12,8,0,Math.PI*2,0,Math.PI/2),this.M(0x8E99AD),bx+bw/2-.2,1.66,bz+bw/2+.25,g);}
+    const ai=it?animalInfo(it):[{adult:1},{adult:0}],wh=this.M(0xFFFFFF),bk=this.M(0x2A2D36),pk=this.M(0xF5A3B5),cf=this.M(0xE9C99A);
+    const pts=scatter(Math.min(ai.length,8),-fw/2+.55,-fd/2+.75,fw/2-.55,fd/2-.45);
+    ai.slice(0,8).forEach((x,k)=>{const c=new T.Group();c.position.set(pts[k][0],.06,pts[k][1]);g.add(c);const body=x.adult?wh:cf;c.scale.setScalar(x.adult?1:.6);
+      this.box(.55,.3,.28,body,0,.26,0,c);if(x.adult){this.box(.16,.12,.02,bk,-.05,.38,.145,c);this.box(.12,.14,.02,bk,.12,.3,-.145,c);}
+      for(const [lx,lz] of [[-.2,-.1],[-.2,.1],[.2,-.1],[.2,.1]])this.box(.06,.26,.06,body,lx,0,lz,c);
+      this.box(.2,.2,.2,body,.34,.42,0,c);this.box(.08,.1,.18,pk,.46,.38,0,c);this.box(.04,.08,.04,this.M(0xC9A27A),.34,.56,.08,c);this.box(.04,.08,.04,this.M(0xC9A27A),.34,.56,-.08,c);
+      this.anim.push({o:c,t:'graze',k:k*1.7,r:k*1.3});});},
+  padaria(g,fw,fd,lv,it){const T=THREE;const w=fw-.3,d=fd-.5,hh=1.1+(lv>=3?.9:0);this.box(w,hh,d,this.night?0xD8C3A0:0xF5E1C0,0,0,-.1,g);
+    this.box(w+.1,.12,d+.1,0x8A4B2A,0,hh,-.1,g);if(lv>=3)this.box(w+.08,.06,d+.08,this.M(0xFFFFFF),0,1.1,-.1,g);
+    const nst=Math.max(4,Math.round(w/.3));for(let k=0;k<nst;k++){const a=this.box(w/nst,.06,.5,this.M(k%2?0xFFFFFF:0xFF6B9A),-w/2+(k+.5)*w/nst,.85,d/2+.12,g);a.rotation.x=.35;}
+    this.box(.4,.65,.04,this.M(0x7A4B25),w/4,0,d/2-.08,g);this.box(w*.4,.4,.04,this.win(),-w/5,.3,d/2-.08,g);
+    const sign=new T.Group();sign.position.set(0,hh+.45,d/2-.15);g.add(sign);this.box(.9,.4,.06,this.M(0x8A4B2A),0,-.2,0,sign);const bread=this.mesh(new T.SphereGeometry(.18,10,8),this.M(0xE0A35A),0,0,.06,sign);bread.scale.set(1.6,.7,.6);
+    const ch=this.box(.18,.5,.18,this.M(0x9A3B2E),-w/2+.3,hh,-d/2+.1,g);
+    if(it&&it.job&&!jobState(it).ready&&!REDUCED){const sg=new T.Group();sg.position.set(-w/2+.3,hh-.5,-d/2+.1);g.add(sg);const sm=this.M(0xDDDDDD,{transparent:true,opacity:.7});
+      for(let k=0;k<3;k++){const pf=this.mesh(new T.SphereGeometry(.12,8,6),sm,0,1,0,sg);pf.castShadow=false;this.anim.push({o:pf,t:'smoke',k:k*.33,x:0});}}
+    if(lv>=2)[[w/2-.15],[-w/2+.15]].forEach(([x])=>{const z=d/2+.55;this.mesh(new T.CylinderGeometry(.18,.18,.04,10),this.M(0xFFFFFF),x*0.8,.4,z,g);this.box(.03,.4,.03,this.M(0x9AA3B2),x*0.8,0,z,g);this.mesh(new T.ConeGeometry(.35,.18,8),this.M(0xFF6B9A),x*0.8,.95,z,g);this.box(.02,.55,.02,this.M(0x9AA3B2),x*0.8,.4,z,g);});},
+  sorveteria(g,fw,fd,lv,it){const T=THREE;const w=fw-.4,d=fd-.5,hh=1+(lv>=3?.5:0);this.box(w,hh,d,this.night?0xD9A8BE:0xFFD6E8,0,0,-.1,g);
+    const nst=6;for(let k=0;k<nst;k++)this.box(w/nst+.01,.14,d+.2,this.M(k%2?0xFFFFFF:0x5CC9A7),-w/2+(k+.5)*w/nst,hh,-.1,g);
+    this.box(w*.7,.35,.04,this.win(),0,.45,d/2-.08,g);this.box(w*.8,.08,.2,this.M(0xFFFFFF),0,.4,d/2+.02,g);
+    const cone=new T.Group();cone.position.set(0,hh+.14,-.1);g.add(cone);const cn=this.mesh(new T.ConeGeometry(.22,.6,12),this.M(0xE9B872),0,.3,0,cone);cn.rotation.x=Math.PI;
+    this.mesh(new T.SphereGeometry(.26,12,10),this.M(0xFF9EC3),0,.68,0,cone);if(lv>=2)this.mesh(new T.SphereGeometry(.22,12,10),this.M(0x9BE3C8),0,.98,0,cone);this.mesh(new T.SphereGeometry(.07,8,6),this.M(0xE5484D),0,lv>=2?1.22:.96,0,cone);
+    this.anim.push({o:cone,t:'turn',k:0});
+    if(lv>=2){const z=d/2+.45;for(const x of [-.4,.4]){this.mesh(new T.CylinderGeometry(.15,.15,.04,10),this.M(0xFFFFFF),x,.36,z,g);this.box(.03,.36,.03,this.M(0x9AA3B2),x,0,z,g);}}
+    if(lv>=3){const neon=this.box(w*.6,.14,.04,this.M(0xFF6B9A,{emissive:0xFF6B9A,emissiveIntensity:this.night?1.2:.4}),0,hh-.3,d/2-.06,g);neon.castShadow=false;}},
+});
+/* marcador de "pronto" flutuando em cima da construção */
+W3.readyMark=function(g,it){if(!readyOf(it))return;const T=THREE;const b=new T.Box3().setFromObject(g);const top=b.max.y-g.position.y;const m=new T.Group();m.position.y=top+.5;g.add(m);
+  const coin=this.mesh(new T.CylinderGeometry(.26,.26,.07,20),this.M(0x22B357,{emissive:0x22B357,emissiveIntensity:.5}),0,0,0,m);coin.rotation.x=Math.PI/2;
+  this.mesh(new T.CylinderGeometry(.2,.2,.08,20),this.M(0xFFFFFF,{emissive:0xFFFFFF,emissiveIntensity:.3}),0,0,0,m).rotation.x=Math.PI/2;
+  this.anim.push({o:m,t:'ready',k:top+.5});};
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};

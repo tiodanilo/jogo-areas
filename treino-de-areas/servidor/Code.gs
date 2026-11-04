@@ -150,7 +150,7 @@ function salvar_(b) {
     try { atual = JSON.parse(r[C.dados] || '{}'); } catch (e) {}
     return { ok: false, erro: 'antigo', perfil: atual };
   }
-  if (novo.xp - xpAntes > 1500) return { ok: false, erro: 'suspeito' };
+  if (novo.xp - xpAntes > 3000) return { ok: false, erro: 'suspeito' };
   grava_(s, row, id, b, novo);
   return { ok: true };
 }
