@@ -21,7 +21,7 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 - O jogo acontece ao ar livre: céu, colinas e, na tela inicial, o avatar do aluno na frente das construções do mundo dele. No modo escuro vira noite.
 - Cada figura aparece como um terreno cercado na grama, com as medidas em plaquinhas. Do 4º ao 6º ano, quadrados e retângulos mostram os quadradinhos de 1 unidade.
 - Trilha de progresso da partida, moedas voando até o contador, avatar que comemora ou fica triste, festa com confete ao subir de nível e de 1 a 3 estrelas no fim.
-- Sons gerados no próprio navegador, com botão para desligar no topo.
+- Sons gerados no próprio navegador, com botão para desligar no topo: fanfarra no acerto, "plim" para cada moeda que chega ao contador e caixa registradora ao terminar de contar e ao comprar.
 - **Conquistas** (13), com moedas de prêmio: sequências, total de acertos, modo difícil, todas as figuras, metros quadrados construídos, tamanho do terreno e níveis.
 
 ## Avatar e níveis
@@ -29,6 +29,7 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 - **Loja** com 29 itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
 - **Níveis infinitos**: cada nível pede um pouco mais de XP. Títulos de Aprendiz a Lenda Geométrica e um troféu a cada 5 níveis.
 - **Menino ou menina**, escolhido ao criar a conta, com 3 penteados para cada um.
+- **Meu mundo em 3D**: uma ilha com o terreno cercado, as construções e o avatar, que o aluno gira e aproxima (arrastar, roda do mouse ou botões + − ⟳) e onde constrói tocando no terreno. O botão **Planta** mostra a vista de cima quadriculada. À noite (modo escuro) as janelas acendem. Usa [three.js](https://threejs.org) r128 pelo cdnjs, carregado só quando o mundo é aberto; sem WebGL, o jogo mostra a planta.
 - **Meu mundo**: um terreno quadriculado em que cada quadradinho vale 1 m². O aluno gasta moedas em construções (árvore 1 m², casa 2 × 2 = 4 m², piscina 3 × 2 = 6 m², quadra 4 × 3 = 12 m², castelo 4 × 4 = 16 m²…) e pode aumentar o terreno a 12 moedas por m².
 - **Quadro de honra de todos** que jogam no site, em "Todos" ou "Meu ano", com primeiro nome e inicial do sobrenome.
 
@@ -55,4 +56,4 @@ Dentro do Google Sites aparece o botão **Abrir em tela cheia**, porque alguns n
 
 ## Tecnologia
 
-Um único `index.html`, sem instalação. Usa Google Fonts (Baloo 2 e Nunito) e [jsPDF](https://github.com/parallax/jsPDF) 2.5.1 pelo cdnjs para gerar o PDF.
+Um único `index.html`, sem instalação. Usa Google Fonts (Baloo 2 e Nunito), [jsPDF](https://github.com/parallax/jsPDF) 2.5.1 pelo cdnjs para gerar o PDF e three.js r128 pelo cdnjs para o mundo 3D.
