@@ -16,6 +16,14 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 - **Resolução passo a passo** depois de cada resposta, certa ou errada.
 - **Sequência**: a partir de 3 acertos seguidos, moedas de bônus.
 
+## Visual de jogo
+
+- O jogo acontece ao ar livre: céu, colinas e, na tela inicial, o avatar do aluno na frente das construções do mundo dele. No modo escuro vira noite.
+- Cada figura aparece como um terreno cercado na grama, com as medidas em plaquinhas. Do 4º ao 6º ano, quadrados e retângulos mostram os quadradinhos de 1 unidade.
+- Trilha de progresso da partida, moedas voando até o contador, avatar que comemora ou fica triste, festa com confete ao subir de nível e de 1 a 3 estrelas no fim.
+- Sons gerados no próprio navegador, com botão para desligar no topo.
+- **Conquistas** (13), com moedas de prêmio: sequências, total de acertos, modo difícil, todas as figuras, metros quadrados construídos, tamanho do terreno e níveis.
+
 ## Avatar e níveis
 
 - **Loja** com 29 itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
