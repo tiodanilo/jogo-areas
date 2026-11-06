@@ -564,6 +564,31 @@ input:focus{border-color:var(--blue);outline:none}
 .solo-note{margin:4px 0 0;padding:10px 12px;border-radius:12px;background:var(--paper);border:2px solid var(--marker);font-weight:700;color:var(--ink-2);line-height:1.35}
 .solo-note b{color:var(--ink)}
 .solo-note.block{border-color:var(--bad)}
+.arc-area.arc-flat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:14px;background:var(--paper)}
+.duel-q{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(1.1rem,3.5vw,1.5rem);text-align:center;color:var(--ink)}
+.duel{display:flex;align-items:center;justify-content:center;gap:12px;width:100%}
+.duel-b{flex:1;max-width:260px;border:3px solid var(--line);border-radius:16px;background:var(--card);padding:6px;cursor:pointer;box-shadow:0 4px 0 var(--line)}
+.duel-b svg{width:100%;height:auto;display:block}
+.duel-b.right{border-color:var(--good)}.duel-b.wrong{border-color:var(--bad)}
+.duel-ou{font-family:var(--f-display);font-weight:800;color:var(--ink-2)}
+.duel-fb{margin:0;font-weight:800;color:var(--ink-2);min-height:1.3em;text-align:center}
+.conta-svg{width:min(100%,360px);height:auto}
+.conta-opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:min(100%,420px)}
+.conta-opts .opt{padding:10px 4px;font-size:1.15rem}
+.opt.right{border-color:var(--good);background:var(--good-soft)}.opt.wrong{border-color:var(--bad)}
+.slide{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:min(78%,300px);aspect-ratio:1}
+.tile-s{border:0;border-radius:12px;font-family:var(--f-display);font-weight:800;font-size:clamp(1.4rem,6vw,2.2rem);color:#fff;cursor:pointer;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18);text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.tile-s.empty{background:var(--line);box-shadow:none;cursor:default}
+.arc-feira{cursor:none;touch-action:none}
+.basket{position:absolute;bottom:6px;width:90px;margin-left:-45px;pointer-events:none}
+.basket svg{width:90px;height:50px;display:block}
+.basket.no{animation:shake .35s}
+.drop svg{width:40px;height:40px}
+.enc{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--card)}
+.enc.done{opacity:.6}
+@media (max-width:560px){.enc{grid-template-columns:auto minmax(0,1fr)}.enc > .btn,.enc > .note{grid-column:1/-1}}
+.pq{display:flex;flex-direction:column;gap:8px}
+.pq .fig{max-width:340px;align-self:center;width:100%}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -781,6 +806,7 @@ input:focus{border-color:var(--blue);outline:none}
       <div class="actions"><span class="pill" id="mk-coins"></span><button class="btn ghost small" type="button" id="mk-world">Meu mundo</button><button class="btn ghost small" type="button" id="mk-back">Voltar</button></div>
     </div>
     <div class="panel mk-hot" id="mk-hot"></div>
+    <div class="panel"><h2 class="h2">Encomendas do dia</h2><p class="note">Clientes que pagam mais que a tabela por um lote. Mudam todo dia.</p><div class="mk-list" id="mk-enc"></div></div>
     <div class="panel"><h2 class="h2">Celeiro</h2><div class="mk-inv" id="mk-inv"></div></div>
     <div class="panel"><h2 class="h2">Preços de hoje</h2>
       <div class="mk-shops"><div><b>Quitanda</b>Paga melhor e o preço muda todo dia. Compra até 15 de cada produto por dia.</div><div><b>Supermercado</b>Compra tudo, sem limite, mas paga só 80% do preço da tabela.</div></div>
@@ -1443,6 +1469,10 @@ const ACH=[
  {id:'sorv1',nome:'Sorveteiro',desc:'Faça um sorvete',r:30,ok:p=>((p.prod||{}).sorvete||0)>=1},
  {id:'feira',nome:'Feirante',desc:'Venda 100 produtos no mercado',r:50,ok:p=>(p.vend||0)>=100},
  {id:'mk1000',nome:'Empresário',desc:'Ganhe 1000 moedas no mercado',r:100,ok:p=>(p.mkg||0)>=1000},
+ {id:'piso10',nome:'Mestre de obras',desc:'Atenda 10 clientes na loja de pisos',r:40,ok:p=>(p.pisos||0)>=10},
+ {id:'enc5',nome:'Entregador',desc:'Entregue 5 encomendas',r:50,ok:p=>(p.encN||0)>=5},
+ {id:'pizza1',nome:'Pizzaiolo',desc:'Asse uma pizza',r:30,ok:p=>((p.prod||{}).pizza||0)>=1},
+ {id:'arc7',nome:'Rei do Fliperama',desc:'Jogue os 7 jogos do Fliperama',r:40,ok:p=>Object.keys(p.arc||{}).length>=7},
 ];
 const MEDAL='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 2h8l4 14h-8zM34 2h-8l-4 14h8z" fill="#2F6BFF"/><circle cx="24" cy="30" r="15" fill="#F2B705" stroke="#C99400" stroke-width="3"/><polygon points="24,21 26.6,27 33,27.4 28,31.4 29.6,37.6 24,34.2 18.4,37.6 20,31.4 15,27.4 21.4,27" fill="#FFF3B0"/></svg>';
 /* o prêmio entra como moedas e XP juntos, assim as moedas nunca passam do total já ganho */
@@ -1532,11 +1562,13 @@ const BUILD=[
  {id:'piscina',nome:'Piscina',w:3,h:2,price:200,lvl:3},
  {id:'galinheiro',nome:'Galinheiro',w:2,h:2,price:150,lvl:3},
  {id:'quadra',nome:'Quadra',w:4,h:3,price:380,lvl:4},
+ {id:'pisos',nome:'Loja de pisos',w:3,h:2,price:400,lvl:4},
  {id:'lago',nome:'Lago',w:3,h:3,price:300,lvl:5},
  {id:'curral',nome:'Curral',w:3,h:3,price:350,lvl:5},
  {id:'padaria',nome:'Padaria',w:3,h:2,price:500,lvl:6},
  {id:'escola',nome:'Escola',w:4,h:3,price:650,lvl:7},
  {id:'sorveteria',nome:'Sorveteria',w:2,h:2,price:600,lvl:8},
+ {id:'pizzaria',nome:'Pizzaria',w:3,h:2,price:700,lvl:9},
  {id:'castelo',nome:'Castelo',w:4,h:4,price:1200,lvl:10},
  {id:'base',nome:'Base de foguetes',w:3,h:3,price:1500,lvl:12},
 ];
@@ -1548,7 +1580,7 @@ const UPG={arvore:['Árvore','Árvore grande','Árvore com balanço'],flores:['C
   piscina:['Piscina','Piscina com escorregador','Clube com guarda-sóis'],quadra:['Quadra','Quadra com arquibancada','Estádio com refletores'],
   lago:['Lago','Lago com píer','Lago com chafariz'],escola:['Escola','Escola de 2 andares','Escola de 3 andares'],
   castelo:['Castelo','Castelo com bandeiras','Castelo real de 3 andares'],base:['Base de foguetes','Base com torre de controle','Base com lançamentos'],
-  galinheiro:['Galinheiro','Galinheiro grande','Granja com silo'],curral:['Curral','Curral com feno','Fazenda leiteira'],padaria:['Padaria','Padaria com mesinhas','Confeitaria de 2 andares'],sorveteria:['Sorveteria','Sorveteria com mesinhas','Sorveteria neon']};
+  galinheiro:['Galinheiro','Galinheiro grande','Granja com silo'],pisos:['Loja de pisos','Loja de pisos grande','Mega loja de pisos'],pizzaria:['Pizzaria','Pizzaria com mesinhas','Pizzaria de 2 andares'],curral:['Curral','Curral com feno','Fazenda leiteira'],padaria:['Padaria','Padaria com mesinhas','Confeitaria de 2 andares'],sorveteria:['Sorveteria','Sorveteria com mesinhas','Sorveteria neon']};
 const lvName=it=>(UPG[it.t]||[])[(it.lv||1)-1]||(BMAP[it.t]||{}).nome||it.t;
 const upCost=(bd,lv)=>bd.price*lv;                 /* do nível lv para lv+1 */
 const upReq=(bd,lv)=>bd.lvl+(lv===1?1:3);           /* nível do jogador exigido */
@@ -1585,7 +1617,7 @@ const WS={sel:null,rot:false,pick:null,move:null,view:'3d'};
 function selDims(){const b=BMAP[WS.sel];return WS.rot?[b.h,b.w]:[b.w,b.h];}
 function occupied(wd,skip=-1){const g=new Set();wd.items.forEach((it,i)=>{if(i===skip)return;for(let a=0;a<it.w;a++)for(let c=0;c<it.h;c++)g.add((it.x+a)+','+(it.y+c));});(wd.probs||[]).forEach(q=>g.add(q.x+','+q.y));return g;}
 /* ---------- cuidar da cidade: mato (erros), lixo e estragos (dias sem jogar) ---------- */
-const DANO={arvore:'Árvore doente',flores:'Flores murchas',casa:'Goteira no telhado',horta:'Praga na horta',piscina:'Água suja na piscina',quadra:'Rede rasgada',lago:'Lago sujo',escola:'Janela quebrada',castelo:'Muro rachado',base:'Pane no foguete',galinheiro:'Raposa no galinheiro',curral:'Cerca quebrada',padaria:'Forno quebrado',sorveteria:'Freezer desligado'};
+const DANO={arvore:'Árvore doente',flores:'Flores murchas',casa:'Goteira no telhado',horta:'Praga na horta',piscina:'Água suja na piscina',quadra:'Rede rasgada',lago:'Lago sujo',escola:'Janela quebrada',castelo:'Muro rachado',base:'Pane no foguete',galinheiro:'Raposa no galinheiro',curral:'Cerca quebrada',padaria:'Forno quebrado',sorveteria:'Freezer desligado',pisos:'Vitrine quebrada',pizzaria:'Forno a lenha apagado'};
 const PROBNOME={mato:'Mato',lixo:'Lixo'};
 function freeTiles(wd){const o=occupied(wd),out=[];for(let y=0;y<wd.h;y++)for(let x=0;x<wd.w;x++)if(!o.has(x+','+y))out.push([x,y]);return out;}
 function addProb(k){const wd=P.world;wd.probs=wd.probs||[];if(wd.probs.length>=8)return false;const fr=freeTiles(wd);if(!fr.length)return false;const [x,y]=pick(fr);wd.probs.push({k,x,y});return true;}
@@ -2190,12 +2222,12 @@ function renderProd(){const it=P.world.items[PM.idx];if(!it)return;PM.sig=prodSi
     if(adults.length)h+=`<button type="button" class="btn ghost" data-pa="sellan">Levar 1 ${A.bicho} ao mercado</button>`;
     h+=`</div>`;}
   else if(RECIPES[it.t]){const R=RECIPES[it.t],G=GOODS[R.good],js=jobState(it),need=Object.entries(R.need);
-    $('#prod-eye').textContent=it.t==='padaria'?'Comércio · padaria':'Comércio · sorveteria';
+    $('#prod-eye').textContent='Comércio · '+({padaria:'padaria',sorveteria:'sorveteria',pizzaria:'pizzaria'}[it.t]||'');
     h+=`<div class="recipe">${need.map(([g,n])=>`${n} ${gIcon(g,'gi s')}`).join(' + ')} = 1 ${gIcon(R.good,'gi s')} <span class="note">(${need.map(([g,n])=>qn(n,g)).join(' + ')} = 1 ${G.un})</span></div>`;
     h+=`<p class="prod-info">No celeiro: ${need.map(([g])=>qn(inv(g),g)).join(', ')}. ${G.nome} vale ${COIN}${G.base} na tabela.</p>`;
     if(!js){const mx=Math.min(5,...need.map(([g,n])=>Math.floor(inv(g)/n)));
       if(mx<1){const falta=need.filter(([g,n])=>inv(g)<n).map(([g,n])=>qn(n-inv(g),g));
-        h+=`<p class="note">Faltam ${falta.join(' e ')}. ${falta.length&&need.some(([g,n])=>g==='leite'&&inv(g)<n)?'Leite vem das vacas do curral. ':''}${need.some(([g,n])=>g==='ovo'&&inv(g)<n)?'Ovos vêm do galinheiro. ':''}${need.some(([g,n])=>g==='morango'&&inv(g)<n)?'Morango vem da horta. ':''}</p>`;}
+        h+=`<p class="note">Faltam ${falta.join(' e ')}. ${falta.length&&need.some(([g,n])=>g==='leite'&&inv(g)<n)?'Leite vem das vacas do curral. ':''}${need.some(([g,n])=>g==='ovo'&&inv(g)<n)?'Ovos vêm do galinheiro. ':''}${need.some(([g,n])=>g==='morango'&&inv(g)<n)?'Morango vem da horta. ':''}${need.some(([g,n])=>g==='tomate'&&inv(g)<n)?'Tomate vem da horta. ':''}</p>`;}
       else{PM.q=Math.max(1,Math.min(PM.q,mx));const q=PM.q,dur=Math.ceil(R.min*q/lv);
         h+=`<div class="prod-acts"><span class="stepper"><button type="button" data-pa="q-" aria-label="Menos">−</button><output>${q}</output><button type="button" data-pa="q+" aria-label="Mais">+</button></span><span class="note">até ${mx}</span></div>`;
         h+=`<p class="prod-info">Para ${q} ${q>1?G.uns:G.un}: ${need.map(([g,n])=>`${q} × ${n} = ${qn(q*n,g)}`).join(' e ')}. Fica pronto em ${q} × ${n1(R.min/lv)} = ${dur} min.</p>`;
@@ -2386,6 +2418,91 @@ $('#code-out').onclick=()=>openCode('out');
 $('#code-in').onclick=()=>openCode('in');
 function renderCodeLinks(){const box=$('#code-links');if(!box)return;box.hidden=!!API;$('#code-out').hidden=!findProfile(S.nome);}
 
+/* ---------- mais comércio: loja de pisos (clientes pedem a área), pizzaria e encomendas do dia ---------- */
+GOODS.pizza={nome:'Pizza',un:'pizza',uns:'pizzas',base:35};
+RECIPES.pizzaria={good:'pizza',verbo:'Assar',need:{tomate:2,leite:1},min:8};
+PRODUCERS.add('pisos');PRODUCERS.add('pizzaria');
+GART.pizza='<circle cx="20" cy="20" r="16" fill="#E9B872"/><circle cx="20" cy="20" r="13" fill="#FFD43B"/><circle cx="20" cy="20" r="13" fill="none" stroke="#E5484D" stroke-width="2" stroke-dasharray="2 5"/><g fill="#E5484D"><circle cx="15" cy="15" r="3"/><circle cx="25" cy="17" r="3"/><circle cx="18" cy="26" r="3"/><circle cx="27" cy="26" r="2.5"/></g><g fill="#3FAE6A"><circle cx="21" cy="12" r="1.5"/><circle cx="12" cy="22" r="1.5"/></g><path d="M20 20 L36 20" stroke="#C48A3E" stroke-width="1.5"/>';
+GART.piso='<rect x="5" y="5" width="30" height="30" rx="3" fill="#E4EDFF" stroke="#2F6BFF" stroke-width="2"/><rect x="5" y="5" width="15" height="15" fill="#2F6BFF"/><rect x="20" y="20" width="15" height="15" fill="#2F6BFF"/><path d="M5 20h30M20 5v30" stroke="#1C47C9" stroke-width="1.5"/>';
+const CLI_PER=8;/* minutos para chegar um cliente novo na loja de pisos (÷ nível) */
+const PISO_PAY={quadrado:8,retangulo:8,triangulo:12,paralelogramo:12,trapezio:15,losango:15,composta:16,circulo:18};
+const CLIENTES=['Dona Marta','Seu João','A diretora da escola','Dona Rosa','Seu Paulo','O dono da padaria','A vizinha Lia','O treinador do time','Vovó Cida','O prefeito'];
+const LUGARES=['na cozinha','no quintal','na varanda','no salão de festas','no banheiro','na garagem','no quarto','na calçada'];
+function cliCount(it){const per=CLI_PER*MIN/(it.lv||1),c=it.cli||{n:3,t:0};return Math.min(3,c.n+Math.floor((Date.now()-c.t)/per));}
+function cliTake(it){const per=CLI_PER*MIN/(it.lv||1),c=it.cli||{n:3,t:0},add=Math.floor((Date.now()-c.t)/per),n=Math.min(3,c.n+add);if(n<1)return false;
+  it.cli={n:n-1,t:n>=3?Date.now():c.t+add*per};return true;}
+function cliNext(it){const per=CLI_PER*MIN/(it.lv||1),c=it.cli||{n:3,t:0};return per-((Date.now()-c.t)%per);}
+function pisoQ(lv){const ano=P.ano||S.ano,ids=SHAPES.filter(s=>s.minAno<=ano).map(s=>s.id),sid=pick(ids),s=SH[sid],g=s.gen(ano,'m');
+  const q={sid,nome:s.nome,formula:s.formula,u:'m',...g,cli:pick(CLIENTES),lugar:pick(LUGARES)};q.opts=buildOpts(q);q.pay=Math.round(PISO_PAY[sid]*(1+.25*((lv||1)-1)));return q;}
+/* encomendas do dia: o cliente paga mais que a tabela por um lote de produtos */
+const ENC_CLI=['A escola','O restaurante da Dona Rosa','A festa junina','O hotel da praia','A cantina','O mercadinho do bairro','O aniversário da Luiza','O time de futebol','A feira de ciências'];
+function encDay(){const d=dayKey();if(!P.enc||P.enc.d!==d)P.enc={d,done:[]};const r=rng('enc'+d+P.id),pool=Object.keys(GOODS).filter(g=>!['galinha','vaca'].includes(g)),used=new Set();
+  return [0,1,2].map(i=>{let g;do{g=pool[Math.floor(r()*pool.length)]}while(used.has(g)&&used.size<pool.length);used.add(g);const base=GOODS[g].base,q=Math.max(3,Math.min(30,Math.round((50+r()*110)/base))),k=1.25+Math.round(r()*5)*.05;
+    return {i,g,q,pay:Math.round(q*base*k),pct:Math.round((k-1)*100),cli:ENC_CLI[(Math.floor(r()*3)+i*3)%ENC_CLI.length],done:P.enc.done.includes(i)};});}
+function renderEnc(){const box=$('#mk-enc');if(!box||!P)return;const es=encDay();
+  box.innerHTML=es.map(e=>{const G=GOODS[e.g],tab=e.q*G.base,n=inv(e.g),ok=n>=e.q&&!e.done;
+    return `<div class="enc ${e.done?'done':''}">${gIcon(e.g)}<div class="mk-name"><b>${esc(e.cli)}: ${qn(e.q,e.g)}</b><small>Na tabela: ${e.q} × ${G.base} = ${tab}. A encomenda paga <b>${e.pay}</b> (${e.pct}% a mais).</small><small>Você tem ${n}.</small></div>
+      ${e.done?'<span class="note">Entregue ✓</span>':`<button type="button" class="btn ${ok?'go':'ghost'} small" data-enc="${e.i}" ${ok?'':'disabled'}>${ok?`Entregar · ${COIN}${e.pay}`:`Faltam ${e.q-n}`}</button>`}</div>`}).join('');}
+$('#mk-enc').addEventListener('click',e=>{const b=e.target.closest('[data-enc]');if(!b||b.disabled)return;const es=encDay(),en=es[+b.dataset.enc];if(!en||en.done||inv(en.g)<en.q)return;
+  const l0=levelInfo(P.xp).lvl;P.inv[en.g]-=en.q;P.enc.done.push(en.i);P.coins+=en.pay;P.xp+=en.pay;P.encN=(P.encN||0)+1;P.mkg=(P.mkg||0)+en.pay;const got=checkAch();saveProfile();
+  sfx('cash');if(!REDUCED)confetti(60);toast(`Encomenda entregue para ${en.cli.replace(/^(A|O) /,m=>m.toLowerCase())}! +${en.pay} moedas.`);renderMarket();announceAch(got,1600);
+  const l1=levelInfo(P.xp).lvl;if(l1>l0)setTimeout(()=>showLevel(l1),1200);});
+/* loja de pisos na janela da construção */
+const renderProd0=renderProd;
+renderProd=function(){const it=P.world.items[PM.idx];if(!it||it.t!=='pisos')return renderProd0();PM.sig=prodSig(it);const lv=it.lv||1,n=cliCount(it);let h='';
+  $('#prod-title').textContent=lvName(it);$('#prod-eye').textContent='Comércio · loja de pisos';
+  h+=`<p class="prod-info">Os clientes pedem piso para um lugar. Calcule a área para saber quantos m² vender. Clientes esperando: <b>${n} de 3</b>. Chega um novo a cada ${n1(CLI_PER/lv)} min.</p>`;
+  const q=PM.cq;
+  if(q){h+=`<div class="pq"><p class="prod-info"><b>${esc(q.cli)}</b> quer piso ${q.lugar}. O lugar tem a forma desta figura. Quantos m² de piso vai precisar? <span class="note">Paga ${COIN}${q.pay}</span></p>${primsSVG(q.prims)}`;
+    if(!PM.fb)h+=`<div class="opts">${q.opts.map((v,i)=>`<button type="button" class="opt" data-pa="pa-${i}">${f(v)} m²</button>`).join('')}</div>`;
+    else h+=PM.fb;h+='</div>';}
+  if(!q||PM.fb)h+=`<div class="prod-acts">${n?`<button type="button" class="btn go" data-pa="cli">${q?'Próximo cliente':'Atender cliente'}</button>`:`<span class="note">Nenhum cliente agora. O próximo chega em <span data-end="${Date.now()+cliNext(it)}">${fmtLeft(cliNext(it))}</span>.</span>`}</div>`;
+  $('#prod-body').innerHTML=h;};
+const prodAct0=prodAct;
+prodAct=function(a){const it=P.world.items[PM.idx];if(!it||it.t!=='pisos')return prodAct0(a);
+  if(a==='cli'){if(!cliTake(it))return;PM.cq=pisoQ(it.lv);PM.fb=null;saveProfile();renderProd();setTimeout(()=>{const b=$('#prod-body .opt');b&&b.focus()},40);return}
+  if(a.startsWith('pa-')&&PM.cq&&!PM.fb){const q=PM.cq,v=q.opts[+a.slice(3)],ok=f(v)===f(q.ans);
+    if(ok){const l0=levelInfo(P.xp).lvl;P.coins+=q.pay;P.xp+=q.pay;P.pisos=(P.pisos||0)+1;sfx('ok');setTimeout(()=>sfx('cash'),300);
+      PM.fb=`<div class="feedback ok"><strong>Certo! ${f(q.ans)} m² de piso. +${q.pay} moedas</strong><span class="steps">${q.steps}</span></div>`;
+      const got=checkAch();saveProfile();announceAch(got,1500);const l1=levelInfo(P.xp).lvl;if(l1>l0)setTimeout(()=>{closeProd();showLevel(l1)},1500);}
+    else{sfx('no');PM.fb=`<div class="feedback no"><strong>Não era ${f(v)} m². O cliente foi embora.</strong><span class="steps">${q.steps}</span></div>`;saveProfile();}
+    renderProd();const b=$('#prod-body [data-pa="cli"]')||$('#prod-close');b&&b.focus();}};
+const openProd0=openProd;openProd=function(i){PM.cq=null;PM.fb=null;openProd0(i);};
+const readyOf0=readyOf;readyOf=function(it){if(it.t==='pisos')return !it.dano&&cliCount(it)>0?1:0;return readyOf0(it);};
+const farmSig0=farmSig;farmSig=function(p){return farmSig0(p)+'#'+p.world.items.map(it=>it.t==='pisos'?cliCount(it):'').join('');};
+const readyBadge0=readyBadge;readyBadge=function(it,X,Y,IW){if(it.t!=='pisos')return readyBadge0(it,X,Y,IW);if(!readyOf(it))return '';
+  return `<g class="rdy" pointer-events="none"><circle cx="${X+IW/2}" cy="${Y+17}" r="15" fill="#FFFFFF" stroke="#22B357" stroke-width="3"/><svg x="${X+IW/2-11}" y="${Y+6}" width="22" height="22" viewBox="0 0 40 40">${GART.piso}</svg></g>`;};
+Object.assign(BD,{
+ pisos:(x,y,W,H)=>{const wy=y+H*.32;let s=`<rect x="${n1(x+3)}" y="${n1(wy)}" width="${n1(W-6)}" height="${n1(H*.68-2)}" fill="#DCE6F5" stroke="#8EA3C2" stroke-width="1.5"/><rect x="${x}" y="${n1(y+4)}" width="${W}" height="${n1(H*.3)}" rx="4" fill="#2F6BFF"/>`;
+   for(let i=0;i<4;i++)for(let j=0;j<2;j++)s+=`<rect x="${n1(x+W/2-20+i*10)}" y="${n1(y+8+j*7)}" width="10" height="7" fill="${(i+j)%2?'#FFFFFF':'#FFD43B'}"/>`;
+   for(let i=0;i<5;i++)for(let j=0;j<2;j++)s+=`<rect x="${n1(x+10+i*9)}" y="${n1(wy+12+j*9)}" width="9" height="9" fill="${(i+j)%2?'#B9C2D3':'#FFFFFF'}" stroke="#8EA3C2" stroke-width=".5"/>`;
+   return s+`<rect x="${n1(x+W-26)}" y="${n1(y+H-24)}" width="14" height="22" fill="#1C47C9"/>`;},
+ pizzaria:(x,y,W,H)=>{const wy=y+H*.3;let s=`<rect x="${n1(x+3)}" y="${n1(wy)}" width="${n1(W-6)}" height="${n1(H*.7-2)}" fill="#FFF1D6" stroke="#C9A27A" stroke-width="1.5"/><rect x="${x}" y="${n1(y+4)}" width="${W}" height="${n1(H*.3)}" rx="4" fill="#2E7D32"/>`;
+   const nst=Math.max(4,Math.floor(W/14));for(let i=0;i<nst;i++)s+=`<path d="M${n1(x+i*W/nst)} ${n1(wy-2)} h${n1(W/nst)} v8 a${n1(W/nst/2)} 5 0 0 1 ${n1(-W/nst)} 0z" fill="${i%2?'#FFFFFF':'#E5484D'}"/>`;
+   const cx=x+W/2,cy=y+4+H*.15;s+=`<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(H*.13)}" fill="#E9B872"/><circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(H*.1)}" fill="#FFD43B"/><circle cx="${n1(cx-3)}" cy="${n1(cy-2)}" r="2" fill="#E5484D"/><circle cx="${n1(cx+3)}" cy="${n1(cy+2)}" r="2" fill="#E5484D"/>`;
+   return s+`<path d="M${n1(x+10)} ${n1(wy+H*.5)} a${n1(W*.16)} ${n1(H*.22)} 0 0 1 ${n1(W*.32)} 0z" fill="#B5653A"/><rect x="${n1(x+10+W*.12)}" y="${n1(wy+H*.4)}" width="${n1(W*.08)}" height="${n1(H*.1)}" fill="#FF8A3D"/><rect x="${n1(x+W-26)}" y="${n1(y+H-24)}" width="14" height="22" fill="#7A4B25"/>`;},
+});
+Object.assign(W3.models,{
+  pisos(g,fw,fd,lv){const T=THREE;const w=fw-.3,d=fd-.6,hh=1+(lv>=3?.8:0);this.box(w,hh,d,this.night?0xB8C4D8:0xDCE6F5,0,0,-.15,g);this.box(w+.1,.12,d+.1,0x2F6BFF,0,hh,-.15,g);
+    this.box(w*.45,.45,.04,this.win(),-w/5,.3,d/2-.13,g);this.box(.4,.65,.04,this.M(0x1C47C9),w/3,0,d/2-.13,g);
+    for(let i=0;i<4;i++)for(let j=0;j<2;j++)this.box(.22,.2,.04,this.M((i+j)%2?0xFFFFFF:0xFFD43B),-.33+i*.22,hh+.15+j*.2,d/2-.12,g);
+    for(let i=0;i<Math.round(fw/.4);i++)for(let j=0;j<2;j++)this.box(.38,.02,.24,this.M((i+j)%2?0xB9C2D3:0xFFFFFF),-fw/2+.25+i*.4,0,d/2+.1+j*.25,g);
+    const st=new T.Group();st.position.set(w/2-.15,0,d/2+.3);g.add(st);for(let k=0;k<(lv>=2?6:3);k++)this.box(.36,.05,.36,this.M(k%2?0xFFD43B:0x2F6BFF),0,k*.055,0,st);
+    if(lv>=3){const ar=this.box(w*.6,.14,.04,this.M(0x2F6BFF,{emissive:0x2F6BFF,emissiveIntensity:this.night?1:.3}),0,hh-.35,d/2-.11,g);ar.castShadow=false;}},
+  pizzaria(g,fw,fd,lv,it){const T=THREE;const w=fw-.3,d=fd-.5,hh=1.1+(lv>=3?.8:0);this.box(w,hh,d,this.night?0xD9C9A8:0xFFF1D6,0,0,-.1,g);this.box(w+.1,.12,d+.1,0x2E7D32,0,hh,-.1,g);
+    const nst=Math.max(4,Math.round(w/.3));for(let k=0;k<nst;k++){const a=this.box(w/nst,.06,.5,this.M(k%2?0xFFFFFF:0xE5484D),-w/2+(k+.5)*w/nst,.85,d/2+.12,g);a.rotation.x=.35;}
+    this.box(.4,.65,.04,this.M(0x7A4B25),w/4,0,d/2-.08,g);this.box(w*.35,.4,.04,this.win(),-w/5,.3,d/2-.08,g);
+    const ov=this.mesh(new T.SphereGeometry(.42,14,10,0,Math.PI*2,0,Math.PI/2),this.M(0xB5653A),-w/2+.45,hh+.12,-d/2+.45,g);ov.scale.y=.8;this.box(.14,.4,.14,this.M(0x8A4B2A),-w/2+.45,hh+.4,-d/2+.45,g);
+    const sg=new T.Group();sg.position.set(0,hh+.55,d/2-.2);g.add(sg);const pz=this.mesh(new T.CylinderGeometry(.38,.38,.06,20),this.M(0xFFD43B),0,0,0,sg);pz.rotation.x=Math.PI/2;
+    const cr=this.mesh(new T.TorusGeometry(.38,.05,6,20),this.M(0xE9B872),0,0,0,sg);for(const [a,b] of [[.15,.1],[-.12,.15],[0,-.17],[-.2,-.05],[.2,-.12]])this.mesh(new T.CylinderGeometry(.06,.06,.03,10),this.M(0xE5484D),a,b,.04,sg).rotation.x=Math.PI/2;
+    this.anim.push({o:sg,t:'turn',k:0});
+    if(it&&it.job&&!jobState(it).ready&&!REDUCED){const sm=new T.Group();sm.position.set(-w/2+.45,hh-.2,-d/2+.45);g.add(sm);const mt=this.M(0xDDDDDD,{transparent:true,opacity:.7});
+      for(let k=0;k<3;k++){const pf=this.mesh(new T.SphereGeometry(.12,8,6),mt,0,1,0,sm);pf.castShadow=false;this.anim.push({o:pf,t:'smoke',k:k*.33,x:0});}}
+    if(lv>=2)for(const x of [-w/3,w/3]){const z=d/2+.6;this.mesh(new T.CylinderGeometry(.18,.18,.04,10),this.M(0xFFFFFF),x,.4,z,g);this.box(.03,.4,.03,this.M(0x9AA3B2),x,0,z,g);this.mesh(new T.ConeGeometry(.35,.18,8),this.M(0x2E7D32),x,.95,z,g);this.box(.02,.55,.02,this.M(0x9AA3B2),x,.4,z,g);}},
+});
+
+const renderMarket0=renderMarket;renderMarket=function(){renderMarket0();renderEnc();};
+
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};
 function rectQ(w,h,fl,nome){const [W,H]=fit(w,h,180,118);const x=(300-W)/2,y=(150-H)/2+6;const a=w*h,ans=a*fl;
@@ -2428,6 +2545,14 @@ const ARC=[
   art:'<svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#BFE6FF"/>'+[[35,42,'#E5484D','12'],[80,30,'#2F6BFF','7'],[125,46,'#22B357','14']].map(([x,y,c,n])=>`<ellipse cx="${x}" cy="${y}" rx="17" ry="21" fill="${c}"/><text x="${x}" y="${y+6}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="sans-serif">${n}</text><path d="M${x} ${y+21} q4 10 -2 22" stroke="#56667B" fill="none"/>`).join('')+'</svg>'},
  {id:'memoria',nome:'Memória das áreas',desc:'Ache os pares: cada terreno combina com a sua área. Menos jogadas, mais moedas.',max:30,
   art:'<svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#E4EDFF"/>'+[0,1,2,3].map(i=>`<rect x="${12+i*36}" y="18" width="30" height="54" rx="6" fill="${i===1?'#FFFFFF':'#2F6BFF'}" stroke="${i===1?'#2F6BFF':'none'}" stroke-width="2"/>`).join('')+'<rect x="53" y="34" width="20" height="14" fill="#FFE7A3" stroke="#B8790F" stroke-width="1.5"/><text x="63" y="62" text-anchor="middle" font-size="8" font-weight="800" fill="#1B2A3A" font-family="sans-serif">4×3</text></svg>'},
+ {id:'maior',nome:'Qual é maior?',desc:'Dois terrenos: toque no de maior área. Pense rápido, errar tira 2 segundos.',max:30,t:30,prize:g=>Math.min(30,g.score*2),
+  art:'<svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#9AD889"/><rect x="14" y="22" width="56" height="40" fill="#FFE7A3" stroke="#B8790F" stroke-width="2"/><rect x="96" y="14" width="44" height="56" fill="#FFE7A3" stroke="#B8790F" stroke-width="2"/><text x="80" y="50" text-anchor="middle" font-size="22" font-weight="800" fill="#1B2A3A" font-family="sans-serif">?</text></svg>'},
+ {id:'conta',nome:'Conte os quadradinhos',desc:'Quantos quadradinhos de 1 m² tem a figura? Cada acerto vale 3 moedas.',max:30,t:30,prize:g=>Math.min(30,g.score*3),
+  art:'<svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#9AD889"/>'+[[50,20],[68,20],[68,38],[86,38],[86,56],[104,38]].map(([x,y])=>`<rect x="${x}" y="${y}" width="18" height="18" fill="#FFE7A3" stroke="#B8790F" stroke-width="2"/>`).join('')+'</svg>'},
+ {id:'puzzle',nome:'Quebra-cabeça',desc:'Jogo de lógica: deslize as peças até ficar de 1 a 8. Menos jogadas, mais moedas.',max:30,t:0,prize:(g,q)=>q?0:Math.max(8,Math.min(30,30-Math.floor(Math.max(0,g.moves-40)/4))),pts:(g,q)=>q?0:g.score,
+  art:'<svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#E4EDFF"/>'+[1,2,3,4,5,6,7,8].map((v,i)=>`<rect x="${47+(i%3)*22}" y="${12+Math.floor(i/3)*22}" width="20" height="20" rx="4" fill="${['#E5484D','#F97316','#F2B705','#22B357','#14B8A6','#2F6BFF','#9B5BFF','#FF6B9A'][i]}"/><text x="${57+(i%3)*22}" y="${27+Math.floor(i/3)*22}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="sans-serif">${v}</text>`).join('')+'</svg>'},
+ {id:'cesta',nome:'Cesta da feira',desc:'Mova a cesta e pegue as verduras. Morango vale 3. Fuja das pedras: −3 segundos.',max:25,t:25,prize:g=>Math.min(25,g.score),
+  art:'<svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#BFE6FF"/><rect y="76" width="160" height="14" fill="#8DCF7B"/><path d="M55 60h50l-6 20H61z" fill="#C48A3E" stroke="#8A5A2B" stroke-width="2"/><circle cx="40" cy="22" r="9" fill="#E5484D"/><circle cx="110" cy="34" r="10" fill="#7BC950"/><path d="M80 12 l8 16 l-14 0z" fill="#FF8A3D"/></svg>'},
 ];
 const AR={g:null,timer:0,raf:0};
 function openArcade(){show('arcade');renderArcade();}
@@ -2439,27 +2564,81 @@ $('#arc-list').addEventListener('click',e=>{const b=e.target.closest('[data-arc]
 $('#arc-back').onclick=()=>{stopArc();if(backTo==='result'){show('result')}else goHome()};
 $('#go-arcade').onclick=()=>beginLogin('arcade');
 $('#res-arcade').onclick=()=>{backTo='result';openArcade()};
-function stopArc(){clearInterval(AR.timer);cancelAnimationFrame(AR.raf);AR.g=null;}
+function stopArc(){clearInterval(AR.timer);cancelAnimationFrame(AR.raf);if(AR.ac){AR.ac.abort();AR.ac=null}const a=$('#arc-area');if(a){a.onclick=null;a.className='arc-area'}AR.g=null;}
 function startArc(id){if((P.fichas||0)<1)return;P.fichas--;saveProfile();sfx('coin');const fi=P.fichas;$('#arc-fichas').innerHTML=`${TICKET} ${fi} ficha${fi===1?'':'s'}`;const g=ARC.find(x=>x.id===id);
   $('#arc-list').hidden=true;const st=$('#arc-stage');st.hidden=false;$('#arc-end').hidden=true;$('#arc-area').hidden=false;$('#arc-target').hidden=true;
-  $('#arc-title').textContent=g.nome;$('#arc-area').innerHTML='';AR.g={id,score:0,t:id==='memoria'?0:id==='chuva'?20:30,moves:0,items:[]};arcHud();
+  $('#arc-title').textContent=g.nome;$('#arc-area').innerHTML='';AR.g={id,score:0,t:g.t!=null?g.t:id==='memoria'?0:id==='chuva'?20:30,moves:0,items:[]};arcHud();
   st.scrollIntoView({block:'start',behavior:REDUCED?'auto':'smooth'});
-  if(id==='chuva')chuva();else if(id==='baloes')baloes();else memoria();
-  if(id!=='memoria')AR.timer=setInterval(()=>{if(!AR.g)return;AR.g.t--;arcHud();if(AR.g.t<=0)endArc();},1000);}
-function arcHud(){const g=AR.g;if(!g)return;$('#arc-time').textContent=g.id==='memoria'?`Jogadas: ${g.moves}`:`Tempo: ${Math.max(0,g.t)} s`;$('#arc-score').innerHTML=`Pontos: ${g.score}`;}
+  ({chuva,baloes,memoria,maior,conta,puzzle,cesta})[id]();
+  if(AR.g.t>0)AR.timer=setInterval(()=>{if(!AR.g)return;AR.g.t--;arcHud();if(AR.g.t<=0)endArc();},1000);}
+function arcHud(){const g=AR.g;if(!g)return;$('#arc-time').textContent=(g.id==='memoria'||g.id==='puzzle')?`Jogadas: ${g.moves}`:`Tempo: ${Math.max(0,g.t)} s`;$('#arc-score').innerHTML=`Pontos: ${g.score}`;}
 function plus(area,x,y,txt){const e=document.createElement('span');e.className='plus';e.textContent=txt;e.style.left=x+'px';e.style.top=y+'px';area.appendChild(e);setTimeout(()=>e.remove(),700);}
 $('#arc-quit').onclick=()=>{if(AR.g)endArc(true);};
 function endArc(quit){const g=AR.g;if(!g)return;stopArc();const def=ARC.find(x=>x.id===g.id);
-  const prize=g.id==='memoria'?(quit?0:Math.max(8,Math.min(30,30-2*(g.moves-6)))):g.id==='baloes'?Math.min(30,g.score*3):Math.min(25,g.score);
-  P.arc=P.arc||{};const pts=g.id==='memoria'?(quit?0:Math.max(0,30-2*(g.moves-6))):g.score;const rec=pts>(P.arc[g.id]||0);if(rec)P.arc[g.id]=pts;
+  const prize=def.prize?def.prize(g,quit):g.id==='memoria'?(quit?0:Math.max(8,Math.min(30,30-2*(g.moves-6)))):g.id==='baloes'?Math.min(30,g.score*3):Math.min(25,g.score);
+  P.arc=P.arc||{};const pts=def.pts?def.pts(g,quit):g.id==='memoria'?(quit?0:Math.max(0,30-2*(g.moves-6))):g.score;const rec=pts>(P.arc[g.id]||0);if(rec)P.arc[g.id]=pts;
   P.coins+=prize;P.xp+=prize;P.arcN=(P.arcN||0)+1;const got=checkAch();saveProfile();
   $('#arc-area').hidden=true;$('#arc-target').hidden=true;const end=$('#arc-end');end.hidden=false;
-  end.innerHTML=`<p class="eyebrow">${quit?'Partida encerrada':'Fim de jogo'}</p><h2>${g.id==='memoria'?(quit?'Até a próxima!':`Achou tudo em ${g.moves} jogadas!`):`${g.score} pontos!`}</h2>
+  end.innerHTML=`<p class="eyebrow">${quit?'Partida encerrada':'Fim de jogo'}</p><h2>${g.id==='memoria'?(quit?'Até a próxima!':`Achou tudo em ${g.moves} jogadas!`):g.id==='puzzle'?(quit?'Até a próxima!':`Resolveu em ${g.moves} jogadas!`):`${g.score} pontos!`}</h2>
     <p class="lvl-line">${prize?`Você ganhou ${COIN} ${prize} moedas`:'Sem moedas desta vez'}${rec&&pts?' · novo recorde!':''}</p>
     <div class="actions"><button type="button" class="btn go" data-again="${g.id}" ${(P.fichas||0)>0?'':'disabled'}>Jogar de novo · 1 ficha (${P.fichas||0})</button><button type="button" class="btn ghost" data-list="1">Outros jogos</button><button type="button" class="btn yellow" data-areas="1">Jogar áreas e ganhar fichas</button></div>`;
   if(prize){sfx('cash');if(rec&&!REDUCED)confetti(90);}announceAch(got,800);updateWho();}
 $('#arc-end').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.again)startArc(b.dataset.again);else if(b.dataset.list)renderArcade();else{show('setup');renderSetup();}});
+
+/* ---------- mais passatempos ---------- */
+function flatArea(){const a=$('#arc-area');a.classList.add('arc-flat');return a;}
+/* qual é maior? comparar áreas rápido */
+function maior(){const area=flatArea(),g=AR.g,ano=P.ano||S.ano;
+  const round=()=>{let a,b,best=null;for(let k=0;k<40;k++){a=miniProb(ano);b=miniProb(ano);if(a.area===b.area)continue;const d=Math.abs(a.area-b.area);if(!best||d<best.d)best={a,b,d};if(d<=Math.max(3,a.area*.2))break;}
+    if(!best){best={a:{...a},b:{...a,a:a.a+1,area:a.tri?(a.a+1)*a.b/2:(a.a+1)*a.b,txt:''}}}g.pair=[best.a,best.b];
+    area.innerHTML=`<p class="duel-q">Toque no terreno com a <b>maior</b> área</p><div class="duel">${g.pair.map((p,i)=>`<button type="button" class="duel-b" data-k="${i}" aria-label="Terreno ${i+1}: ${p.txt}">${miniFig(p)}</button>`).join('<span class="duel-ou">ou</span>')}</div><p class="duel-fb" id="duel-fb" aria-live="polite"></p>`;};
+  area.onclick=e=>{const b=e.target.closest('.duel-b');if(!b||!AR.g||g.lock)return;const k=+b.dataset.k,[p,q]=g.pair,win=p.area>q.area?0:1,fb=$('#duel-fb');g.lock=1;
+    if(k===win){g.score++;sfx('ok');b.classList.add('right');fb.textContent=`Isso! ${p.area} m² contra ${q.area} m².`;}
+    else{g.t=Math.max(1,g.t-2);sfx('no');b.classList.add('wrong');fb.textContent=`Ops: ${p.area} m² contra ${q.area} m². −2 s`;}
+    arcHud();setTimeout(()=>{g.lock=0;if(AR.g===g)round()},650);};
+  round();}
+/* conte os quadradinhos */
+function conta(){const area=flatArea(),g=AR.g,ano=P.ano||S.ano,CW=8,CH=6;
+  const round=()=>{const n=rnd(4,ano<=5?10:15),cells=new Set(['3,2']);let guard=0;
+    while(cells.size<n&&guard++<500){const [x,y]=pick([...cells]).split(',').map(Number),[dx,dy]=pick([[1,0],[-1,0],[0,1],[0,-1]]),nx=x+dx,ny=y+dy;if(nx>=0&&ny>=0&&nx<CW&&ny<CH)cells.add(nx+','+ny);}
+    const N=cells.size,s=26;let svg=`<svg viewBox="0 0 ${CW*s+8} ${CH*s+8}" class="conta-svg" role="img" aria-label="Figura no quadriculado"><rect width="${CW*s+8}" height="${CH*s+8}" rx="8" fill="#9AD889"/>`;
+    for(let y=0;y<CH;y++)for(let x=0;x<CW;x++){const on=cells.has(x+','+y);svg+=`<rect x="${4+x*s}" y="${4+y*s}" width="${s}" height="${s}" fill="${on?'#FFE7A3':'none'}" stroke="${on?'#B8790F':'rgba(255,255,255,.55)'}" stroke-width="${on?2:1}"/>`;}
+    svg+='</svg>';const opts=new Set([N]);for(const w of shuffle([N+1,N-1,N+2,N-2,N+3]))if(w>0&&opts.size<4)opts.add(w);g.ans=N;
+    area.innerHTML=`<p class="duel-q">Quantos quadradinhos de 1 m² tem a figura?</p>${svg}<div class="conta-opts">${shuffle([...opts]).map(v=>`<button type="button" class="opt" data-v="${v}">${v} m²</button>`).join('')}</div>`;};
+  area.onclick=e=>{const b=e.target.closest('.opt');if(!b||!AR.g||g.lock)return;g.lock=1;
+    if(+b.dataset.v===g.ans){g.score++;sfx('ok');b.classList.add('right');}else{g.t=Math.max(1,g.t-2);sfx('no');b.classList.add('wrong');area.querySelectorAll('.opt').forEach(o=>{if(+o.dataset.v===g.ans)o.classList.add('right')});}
+    arcHud();setTimeout(()=>{g.lock=0;if(AR.g===g)round()},+b.dataset.v===g.ans?350:900);};
+  round();}
+/* quebra-cabeça deslizante 3 × 3 */
+function puzzle(){const area=flatArea(),g=AR.g;let b=[1,2,3,4,5,6,7,8,0],last=-1;
+  const nb=i=>[i-3,i+3,i%3?i-1:-1,i%3<2?i+1:-1].filter(j=>j>=0&&j<9);
+  for(let k=0;k<36;k++){const z=b.indexOf(0),opts=nb(z).filter(j=>j!==last),j=pick(opts);[b[z],b[j]]=[b[j],b[z]];last=z;}
+  if(b.join()==='1,2,3,4,5,6,7,8,0'){const z=b.indexOf(0),j=nb(z)[0];[b[z],b[j]]=[b[j],b[z]];}
+  const COL=['#E5484D','#F97316','#F2B705','#22B357','#14B8A6','#2F6BFF','#9B5BFF','#FF6B9A'];
+  const draw=()=>{area.innerHTML=`<p class="duel-q">Deslize as peças até ficar de 1 a 8 em ordem</p><div class="slide" role="group" aria-label="Quebra-cabeça">${b.map((v,i)=>v?`<button type="button" class="tile-s" data-i="${i}" style="background:${COL[v-1]}" aria-label="Peça ${v}">${v}</button>`:'<span class="tile-s empty"></span>').join('')}</div><p class="duel-fb">Ordem certa: 1 2 3 / 4 5 6 / 7 8 e o espaço vazio no fim.</p>`;};
+  area.onclick=e=>{const t=e.target.closest('.tile-s[data-i]');if(!t||!AR.g)return;const i=+t.dataset.i,z=b.indexOf(0);if(!nb(z).includes(i))return;
+    [b[z],b[i]]=[b[i],b[z]];g.moves++;sfx('coin');draw();arcHud();const nt=area.querySelector(`.tile-s[data-i="${z}"]`);nt&&nt.focus();
+    if(b.join()==='1,2,3,4,5,6,7,8,0'){g.score=Math.max(0,60-g.moves);sfx('level');setTimeout(()=>endArc(),500);}};
+  draw();}
+/* cesta da feira: pegar frutas e verduras */
+function cesta(){const area=$('#arc-area'),g=AR.g;let last=performance.now(),acc=0;AR.ac=new AbortController();const sig={signal:AR.ac.signal};
+  area.classList.add('arc-feira');const bk=document.createElement('div');bk.className='basket';bk.innerHTML='<svg viewBox="0 0 90 50"><path d="M4 12h82l-9 34H13z" fill="#C48A3E" stroke="#8A5A2B" stroke-width="3"/><path d="M8 22h74M10 32h70M20 12l4 34M45 12v34M70 12l-4 34" stroke="#8A5A2B" stroke-width="2"/></svg>';area.appendChild(bk);
+  g.bx=area.clientWidth/2;const place=()=>{bk.style.left=g.bx+'px';};place();
+  area.addEventListener('pointermove',e=>{const r=area.getBoundingClientRect();g.bx=Math.max(45,Math.min(r.width-45,e.clientX-r.left));place();},sig);
+  area.addEventListener('pointerdown',e=>{const r=area.getBoundingClientRect();g.bx=Math.max(45,Math.min(r.width-45,e.clientX-r.left));place();},sig);
+  document.addEventListener('keydown',e=>{if(!AR.g||AR.g!==g)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();g.bx=Math.max(45,Math.min(area.clientWidth-45,g.bx+(e.key==='ArrowLeft'?-40:40)));place();}},sig);
+  const KINDS=[['alface',1],['cenoura',1],['tomate',1],['morango',3],['pedra',0]];
+  const spawn=()=>{const r=Math.random(),k=r<.18?'pedra':r<.3?'morango':pick(['alface','cenoura','tomate']);const el=document.createElement('div');el.className='fall drop';
+    el.innerHTML=k==='pedra'?'<svg viewBox="0 0 40 40"><path d="M6 28 Q4 14 18 10 Q34 8 35 24 Q36 34 20 34 Q8 35 6 28Z" fill="#8E99AD" stroke="#56667B" stroke-width="2"/></svg>':`<svg viewBox="0 0 40 40">${GART[k]}</svg>`;
+    const W=area.clientWidth,it={el,k,x:30+Math.random()*(W-60),y:-30,vy:(110+Math.random()*70)*(1+(25-g.t)*.035)};el.style.left=it.x+'px';el.style.top=it.y+'px';area.appendChild(el);g.items.push(it);};
+  const step=t=>{if(!AR.g||AR.g!==g)return;const dt=Math.min(.05,(t-last)/1000);last=t;acc+=dt;if(acc>.55){acc=0;spawn();}
+    const H=area.clientHeight;for(const it of g.items){if(it.dead)continue;it.y+=it.vy*dt;it.el.style.top=it.y+'px';
+      if(it.y>H-58&&it.y<H-20&&Math.abs(it.x-g.bx)<48){it.dead=1;it.el.remove();if(it.k==='pedra'){g.t=Math.max(1,g.t-3);plus(area,it.x,H-90,'−3 s');sfx('no');bk.classList.remove('no');void bk.offsetWidth;bk.classList.add('no');}
+        else{const v=it.k==='morango'?3:1;g.score+=v;plus(area,it.x,H-90,'+'+v);sfx('coin');}arcHud();}
+      else if(it.y>H+30){it.dead=1;it.el.remove();}}
+    g.items=g.items.filter(i=>!i.dead);AR.raf=requestAnimationFrame(step);};
+  AR.raf=requestAnimationFrame(step);}
 
 /* chuva de moedas: clique rápido */
 function chuva(){const area=$('#arc-area'),g=AR.g;let last=performance.now(),acc=0;
