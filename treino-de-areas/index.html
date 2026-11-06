@@ -554,6 +554,9 @@ input:focus{border-color:var(--blue);outline:none}
 .mk-shops b{display:block;color:var(--ink);font-family:var(--f-display);font-size:1.1rem}
 #sell-qty{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .sell-card #sell-opts .opt{font-size:1.5rem}
+.solo-note{margin:4px 0 0;padding:10px 12px;border-radius:12px;background:var(--paper);border:2px solid var(--marker);font-weight:700;color:var(--ink-2);line-height:1.35}
+.solo-note b{color:var(--ink)}
+.solo-note.block{border-color:var(--bad)}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -649,6 +652,7 @@ input:focus{border-color:var(--blue);outline:none}
         </div>
       </div>
       <div class="field"><span class="lab">Perguntas</span><div class="chips" id="qtd"></div></div>
+      <p class="solo-note" id="solo-note" hidden></p>
       <p class="err" id="err2" role="alert"></p>
       <div class="actions"><button class="btn ghost" type="button" id="back1">Voltar</button><button class="btn go big" type="button" id="play">Jogar</button></div>
     </div>
@@ -873,7 +877,10 @@ window.addEventListener('storage',e=>{if(e.key===LS){mergeStored();try{refreshVi
 
 /* ---------- números por ano ---------- */
 const MAXN={4:9,5:12,6:15,7:20,8:24,9:30};
+/* rodízio de figuras: quem repete uma figura sozinha joga com vírgula (DEC) */
+let DEC=false;
 function num(ano,lo=2,hi){const max=hi??MAXN[ano];let n=rnd(lo,max);
+  if(DEC)return ano>=7?R2(n+rnd(1,9)/10):n+.5;
   if(ano>=8&&Math.random()<.3) n+=.5; else if(ano>=9&&Math.random()<.2) n=R2(n+rnd(1,9)/10);
   return n;}
 function fit(a,b,mw,mh,min=34){const k=Math.min(mw/a,mh/b);return [Math.max(min,a*k),Math.max(min,b*k)];}
@@ -930,7 +937,7 @@ const SHAPES=[
  {id:'circulo',nome:'Círculo',minAno:8,q:'Calcule a área do círculo.',formula:'A = π × r × r',
   icon:'<circle cx="12" cy="12" r="8.5"/>',
   ctx:[['Uma pizza','cm'],['Uma praça redonda','m'],['Um relógio de parede','cm']],
-  gen(ano,u){const r=rnd(2,ano>=9?20:12);const diam=ano>=9&&Math.random()<.35;const A=3.14*r*r;
+  gen(ano,u){const r=rnd(2,ano>=9?20:12)+(DEC?.5:0);const diam=ano>=9&&Math.random()<.35;const A=3.14*r*r;
    const steps=(diam?`d = ${f(2*r)}, então r = ${f(r)}. `:'')+`A = 3,14 × r × r = 3,14 × ${f(r)} × ${f(r)} = ${f(A)} ${u}²`;
    const prims=[{t:'circle',cx:150,cy:90,r:72},{t:'dot',cx:150,cy:90}];
    if(diam) prims.push({t:'line',x1:78,y1:90,x2:222,y2:90},{t:'label',x:150,y:80,s:'d = '+L(2*r,u),a:'middle'});
@@ -1208,7 +1215,7 @@ function statsHTML(p,showCoins=true,compact=false){const li=levelInfo(p.xp);cons
 
 /* ---------- navegação ---------- */
 const SCREENS=['home','login','setup','rank','game','result','shop','world','arcade','market','pdf'];let cur='home',backTo='home';
-function show(n){if(n!=='arcade'&&typeof AR!=='undefined')stopArc();SCREENS.forEach(s=>$('#sc-'+s).hidden=s!==n);cur=n;try{window.scrollTo(0,0)}catch(e){}
+function show(n){if(n!=='arcade'&&typeof AR!=='undefined')stopArc();if(n!=='game')DEC=false;SCREENS.forEach(s=>$('#sc-'+s).hidden=s!==n);cur=n;try{window.scrollTo(0,0)}catch(e){}
   /* dentro do Google Sites, leva a página até o topo do jogo */
   try{document.querySelector('.topbar').scrollIntoView({block:'start'})}catch(e){}
   updateWho();}
@@ -1229,14 +1236,20 @@ function renderHomeProfile(){const p=findProfile(S.nome);const shown=p||normaliz
   $('#home-av').innerHTML=heroSVG(shown);
   $('#home-stats').innerHTML=!S.nome.trim()?'<h3>Olá!</h3><div class="lvl-line">Escreva seu nome e escolha seu ano.</div>'
     :p?statsHTML(shown,true,true)+`<div class="lvl-line">Mundo: ${worldStage(p).nome}${p.world.items.length?` · ${happy(p)}% feliz`:''}${farmReady(p)?` · <b>${farmReady(p)} pronto${farmReady(p)>1?'s':''} na fazenda</b>`:''}</div>`:`<h3>${esc(S.nome.trim())}</h3><div class="lvl-line">Toque em Continuar para entrar ou criar sua conta.</div>`;}
-function renderSetup(){$('#shapes').innerHTML=shapeChips(S.shapes);
+/* Regra do rodízio: 1ª partida só com uma figura = normal; 2ª seguida = números com vírgula; 3ª seguida = bloqueada */
+function soloState(){const ids=[...S.shapes];if(ids.length!==1||!P)return {k:0};const so=P.solo||{};const n=so.id===ids[0]?so.n||0:0;
+  return {k:n>=2?2:n>=1?1:0,id:ids[0],nome:SH[ids[0]].nome.toLowerCase(),n};}
+function renderSolo(){const st=soloState(),el=$('#solo-note');if(!el)return;el.hidden=!st.k;el.className='solo-note'+(st.k===2?' block':'');
+  el.innerHTML=st.k===1?`<b>Rodízio de figuras:</b> você já jogou a última partida só com o ${st.nome}. Se repetir, as medidas vêm com vírgula. Marque outra figura para jogar com números inteiros.`
+    :st.k===2?`<b>Rodízio de figuras:</b> você jogou ${st.n} partidas seguidas só com o ${st.nome}. Agora marque pelo menos mais uma figura.`:'';}
+function renderSetup(){$('#shapes').innerHTML=shapeChips(S.shapes);renderSolo();
   $('#qtd').innerHTML=[5,10,15,20].map(n=>chip(n,S.qtd===n,`data-v="${n}"`)).join('');
   document.querySelectorAll('#modo button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.modo));$('#err2').textContent='';}
 function goHome(){show('home');renderHome();}
 $('#in-nome').addEventListener('input',e=>{S.nome=e.target.value;renderHomeProfile();$('#err').textContent='';});
 $('#in-nome').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#next1').click()}});
 $('#anos').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.ano=+b.dataset.v;S.shapes=defaultShapes(S.ano);renderHome();});
-$('#shapes').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id;S.shapes.has(id)?S.shapes.delete(id):S.shapes.add(id);b.setAttribute('aria-pressed',S.shapes.has(id));$('#err2').textContent='';});
+$('#shapes').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id;S.shapes.has(id)?S.shapes.delete(id):S.shapes.add(id);b.setAttribute('aria-pressed',S.shapes.has(id));$('#err2').textContent='';renderSolo();});
 $('#qtd').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.qtd=+b.dataset.v;renderSetup();});
 $('#modo').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.modo=b.dataset.v;document.querySelectorAll('#modo button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
 
@@ -1278,7 +1291,7 @@ async function beginLogin(after){const nome=S.nome.trim();
   btn.disabled=false;btn.textContent=old;show('login');renderLogin();}
 $('#next1').onclick=()=>beginLogin('setup');
 $('#back1').onclick=goHome;
-$('#play').onclick=()=>{if(!S.shapes.size){$('#err2').textContent='Escolha pelo menos uma figura.';return}startGame();};
+$('#play').onclick=()=>{if(!S.shapes.size){$('#err2').textContent='Escolha pelo menos uma figura.';return}if(soloState().k===2){$('#err2').textContent=`Marque pelo menos mais uma figura além do ${soloState().nome}.`;return}startGame();};
 $('#lg-back').onclick=goHome;
 $('#lg-go').onclick=async()=>{const er=$('#err-lg');er.textContent='';const id=pid(S.nome,S.ano),nome=S.nome.trim();
   if(LG.mode==='local'){P=db.profiles[id]||newProfile();P.id=id;saveProfile();return goAfter();}
@@ -1325,7 +1338,7 @@ $('#go-pdf').onclick=()=>{PD.ano=S.ano;PD.shapes=new Set(S.shapes.size?S.shapes:
 
 /* ---------- jogo ---------- */
 let G=null;
-function startGame(){if(!P){goHome();return}G={qs:makeSet([...S.shapes],S.ano,S.qtd),i:0,ok:0,streak:0,best:0,earned:0,modo:S.modo,done:false,res:[],wrong:[],revAdded:false,fast:0};show('game');renderQ();}
+function startGame(){if(!P){goHome();return}const so=soloState();DEC=so.k===1;G={dec:DEC,qs:makeSet([...S.shapes],S.ano,S.qtd),i:0,ok:0,streak:0,best:0,earned:0,modo:S.modo,done:false,res:[],wrong:[],revAdded:false,fast:0};show('game');renderQ();}
 function renderHud(coinsShown,mood){const li=levelInfo(P.xp);$('#hud-av').innerHTML=avatarSVG(P,{},{mood});$('#hud-name').textContent=P.name;
   $('#hud-xp').style.width=Math.round(li.into/li.need*100)+'%';$('#hud-lvl').textContent=`Nível ${li.lvl} · ${titleOf(li.lvl)} · ${li.need-li.into} XP para subir`;
   $('#hud-q').textContent=`Questão ${Math.min(G.i+1,G.qs.length)} de ${G.qs.length}`;
@@ -1333,7 +1346,7 @@ function renderHud(coinsShown,mood){const li=levelInfo(P.xp);$('#hud-av').innerH
   $('#hud-coins').innerHTML=`${COIN} ${coinsShown??P.coins}`;
   $('#trail').innerHTML=G.qs.map((_,i)=>`<i class="${G.res[i]===true?'ok':G.res[i]===false?'no':i===G.i?'now':''}"></i>`).join('');}
 function renderQ(){const q=G.qs[G.i];G.done=false;G.t0=performance.now();renderHud();
-  $('#q-fig').innerHTML=primsSVG(q.prims);$('#q-tag').textContent=(q.rev?'Revanche · ':'')+q.nome;$('#q-text').textContent=q.txt;
+  $('#q-fig').innerHTML=primsSVG(q.prims);$('#q-tag').textContent=(q.rev?'Revanche · ':'')+(G.dec?'Com vírgula · ':'')+q.nome;$('#q-text').textContent=q.txt;
   $('#q-formula').hidden=true;$('#q-formula').textContent=q.formula;$('#q-hint').hidden=false;
   $('#q-fb').hidden=true;$('#q-next').hidden=true;$('#q-next').textContent=G.i===G.qs.length-1?'Ver resultado':'Próxima';
   const a=$('#q-answer');
@@ -1435,7 +1448,8 @@ $('#q-next').onclick=()=>{if(G.i<G.qs.length-1){G.i++;renderQ();return}
 $('#q-quit').onclick=()=>{if(G.i===0&&!G.done){show('setup');renderSetup();return}finish(true)};
 document.addEventListener('keydown',e=>{if(cur==='game'&&G&&G.done&&e.key==='Enter'&&document.activeElement!==$('#q-next')){e.preventDefault();$('#q-next').click()}
   if(cur==='game'&&G&&!G.done&&G.modo==='facil'&&/^[1-4]$/.test(e.key)){const b=document.querySelectorAll('.opt')[+e.key-1];b&&b.click()}});
-function finish(early=false){const answered=G.i+(G.done?1:0);const n=G.qs.length;
+function finish(early=false){const answered=G.i+(G.done?1:0);const n=G.qs.length;DEC=false;
+  if(answered){const ids=[...new Set(G.qs.filter(q=>!q.rev).map(q=>q.sid))];if(ids.length===1){const so=P.solo||{};P.solo={id:ids[0],n:so.id===ids[0]?(so.n||0)+1:1};}else P.solo={id:'',n:0};}
   P.rounds=(P.rounds||[]).slice(-49);P.rounds.push({d:Date.now(),ok:G.ok,n:answered,modo:G.modo,ano:S.ano,coins:G.earned});P.best=Math.max(P.best||0,G.best);saveProfile();scheduleCloud(true);
   const pct=answered?G.ok/answered:0;const stars=!answered?0:pct>=.9?3:pct>=.7?2:pct>=.4?1:0;
   const STAR='<polygon points="24,3 30,17 45,18 33.5,28 37,43 24,35 11,43 14.5,28 3,18 18,17"/>';
@@ -1451,7 +1465,7 @@ function finish(early=false){const answered=G.i+(G.done?1:0);const n=G.qs.length
   const fich=stars>=3?2:stars>=1?1:0;if(fich){P.fichas=(P.fichas||0)+fich;saveProfile();$('#res-saved').insertAdjacentHTML('beforebegin',`<p class="saved ticketline">${TICKET} +${fich} ficha${fich>1?'s':''} para o Fliperama (você tem ${P.fichas})</p>`);}
   $('#res-arcade').textContent=`Fliperama (${P.fichas||0} ficha${(P.fichas||0)===1?'':'s'})`;
   for(let i=0;i<stars;i++)setTimeout(()=>sfx('star'),300+i*250);if(stars===3)setTimeout(()=>confetti(160),900);}
-$('#res-again').onclick=startGame;$('#res-home').onclick=goHome;$('#res-shop').onclick=()=>{backTo='result';openShop()};$('#res-world').onclick=()=>{backTo='result';openWorld()};
+$('#res-again').onclick=()=>{const st=soloState();if(st.k===2){show('setup');renderSetup();$('#err2').textContent=`Marque pelo menos mais uma figura além do ${st.nome}.`;return}if(st.k===1)toast(`Rodízio de figuras: de novo só o ${st.nome}? Agora as medidas vêm com vírgula!`);startGame();};$('#res-home').onclick=goHome;$('#res-shop').onclick=()=>{backTo='result';openShop()};$('#res-world').onclick=()=>{backTo='result';openWorld()};
 
 /* ---------- loja ---------- */
 let tab='shirt';const SHOP={try:null};

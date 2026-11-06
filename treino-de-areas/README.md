@@ -15,6 +15,7 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 - **Problemas do dia a dia**: pizza, pipa, bandeirinha de festa junina, terreno, canteiro.
 - **Resolução passo a passo** depois de cada resposta, certa ou errada.
 - **Sequência**: a partir de 3 acertos seguidos, moedas de bônus.
+- **Rodízio de figuras**: quem joga uma partida só com uma figura pode repetir uma vez, mas aí as medidas vêm com vírgula (,5 até o 6º ano; décimos do 7º em diante). Na terceira partida seguida com a mesma figura sozinha, o jogo pede para marcar pelo menos mais uma. A regra zera quando o aluno joga com duas ou mais figuras.
 
 ## Visual de jogo
 
