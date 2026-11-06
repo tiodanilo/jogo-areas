@@ -554,6 +554,13 @@ input:focus{border-color:var(--blue);outline:none}
 .mk-shops b{display:block;color:var(--ink);font-family:var(--f-display);font-size:1.1rem}
 #sell-qty{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .sell-card #sell-opts .opt{font-size:1.5rem}
+.wmap .it.moving{opacity:.35}
+.code-links{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}
+.linkbtn{background:none;border:0;padding:6px 2px;font:inherit;font-weight:800;color:var(--blue,#2F5BEA);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.code-txt{width:100%;box-sizing:border-box;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;line-height:1.35;border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--paper);color:var(--ink);resize:vertical;word-break:break-all}
+.code-steps{margin:0;padding-left:1.3em;font-weight:700;color:var(--ink-2);line-height:1.4;display:flex;flex-direction:column;gap:4px}
+.code-msg{margin:0;font-weight:800;min-height:1.2em}
+.code-msg.ok{color:var(--good)}.code-msg.no{color:var(--bad)}
 .solo-note{margin:4px 0 0;padding:10px 12px;border-radius:12px;background:var(--paper);border:2px solid var(--marker);font-weight:700;color:var(--ink-2);line-height:1.35}
 .solo-note b{color:var(--ink)}
 .solo-note.block{border-color:var(--bad)}
@@ -629,6 +636,7 @@ input:focus{border-color:var(--blue);outline:none}
       <div class="field"><span class="lab">Seu ano</span><div class="chips" id="anos"></div></div>
       <p class="err" id="err" role="alert"></p>
       <div class="actions"><button class="btn go big" type="button" id="next1">Continuar</button></div>
+      <div class="code-links" id="code-links"><button class="linkbtn" type="button" id="code-in">Tenho um código de outro computador</button><button class="linkbtn" type="button" id="code-out" hidden>Levar meu progresso para outro computador</button></div>
     </div>
     <nav class="home-links" aria-label="Outras opções">
       <button class="tilebtn" type="button" id="go-arcade"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 14h36v6a4 4 0 0 0 0 8v6H6v-6a4 4 0 0 0 0-8z" fill="#FF6B9A" stroke="#C2185B" stroke-width="2.5"/><path d="M18 14v20" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/><polygon points="30,18 32,23 37,23 33,26 35,31 30,28 25,31 27,26 23,23 28,23" fill="#FFD43B"/></svg>Fliperama</button>
@@ -837,6 +845,10 @@ input:focus{border-color:var(--blue);outline:none}
   <div class="modal-card fix-card"><p class="eyebrow" id="fix-eye">Resolva a conta para consertar</p><h2 id="fix-title"></h2><div class="fig-wrap" id="fix-fig"></div><p class="fix-q" id="fix-q"></p>
     <div class="opts" id="fix-opts"></div><div class="feedback" id="fix-fb" hidden></div>
     <div class="actions"><button class="btn ghost" type="button" id="fix-close">Depois</button><button class="btn go" type="button" id="fix-next" hidden>Outra conta</button></div></div>
+</div>
+<div class="modal" id="code-modal" hidden role="dialog" aria-modal="true" aria-labelledby="code-title">
+  <div class="modal-card prod-card"><p class="eyebrow">Jogar em outro computador</p><h2 id="code-title"></h2><div class="prod-body" id="code-body"></div><p class="code-msg" id="code-msg" role="status"></p>
+    <div class="actions"><button class="btn ghost" type="button" id="code-close">Fechar</button><button class="btn go" type="button" id="code-go"></button></div></div>
 </div>
 <div class="modal" id="prod-modal" hidden role="dialog" aria-modal="true" aria-labelledby="prod-title">
   <div class="modal-card prod-card"><p class="eyebrow" id="prod-eye"></p><h2 id="prod-title"></h2><div class="prod-body" id="prod-body"></div>
@@ -1232,7 +1244,7 @@ function renderHome(){
   $('#anos').innerHTML=[4,5,6,7,8,9].map(a=>chip(`${a}º ano`,S.ano===a,`data-v="${a}"`)).join('');
   renderHomeProfile();
 }
-function renderHomeProfile(){const p=findProfile(S.nome);const shown=p||normalize({name:S.nome.trim()});
+function renderHomeProfile(){const p=findProfile(S.nome);try{renderCodeLinks()}catch(e){}const shown=p||normalize({name:S.nome.trim()});
   $('#home-av').innerHTML=heroSVG(shown);
   $('#home-stats').innerHTML=!S.nome.trim()?'<h3>Olá!</h3><div class="lvl-line">Escreva seu nome e escolha seu ano.</div>'
     :p?statsHTML(shown,true,true)+`<div class="lvl-line">Mundo: ${worldStage(p).nome}${p.world.items.length?` · ${happy(p)}% feliz`:''}${farmReady(p)?` · <b>${farmReady(p)} pronto${farmReady(p)>1?'s':''} na fazenda</b>`:''}</div>`:`<h3>${esc(S.nome.trim())}</h3><div class="lvl-line">Toque em Continuar para entrar ou criar sua conta.</div>`;}
@@ -1569,7 +1581,7 @@ const BD={
    return s+`<path d="M${n1(x+W/2-12)} ${n1(y+H)} v-18 a12 12 0 0 1 24 0 v18 Z" fill="#5C3A1E"/>`},
  base:(x,y,W,H)=>`<circle cx="${n1(x+W/2)}" cy="${n1(y+H/2)}" r="${n1(Math.min(W,H)/2)}" fill="#8E99AD"/><circle cx="${n1(x+W/2)}" cy="${n1(y+H/2)}" r="${n1(Math.min(W,H)/2-8)}" fill="none" stroke="#FFD43B" stroke-width="3" stroke-dasharray="8 6"/><path d="M${n1(x+W/2)} ${n1(y+10)} q14 18 10 46 h-20 q-4 -28 10 -46Z" fill="#EEF1F7" stroke="#B9C2D3" stroke-width="1.5"/><circle cx="${n1(x+W/2)}" cy="${n1(y+36)}" r="5" fill="#7FC8F8"/><polygon points="${n1(x+W/2-10)},${n1(y+56)} ${n1(x+W/2-18)},${n1(y+68)} ${n1(x+W/2-6)},${n1(y+60)}" fill="#D9363E"/><polygon points="${n1(x+W/2+10)},${n1(y+56)} ${n1(x+W/2+18)},${n1(y+68)} ${n1(x+W/2+6)},${n1(y+60)}" fill="#D9363E"/>`,
 };
-const WS={sel:null,rot:false,pick:null,view:'3d'};
+const WS={sel:null,rot:false,pick:null,move:null,view:'3d'};
 function selDims(){const b=BMAP[WS.sel];return WS.rot?[b.h,b.w]:[b.w,b.h];}
 function occupied(wd,skip=-1){const g=new Set();wd.items.forEach((it,i)=>{if(i===skip)return;for(let a=0;a<it.w;a++)for(let c=0;c<it.h;c++)g.add((it.x+a)+','+(it.y+c));});(wd.probs||[]).forEach(q=>g.add(q.x+','+q.y));return g;}
 /* ---------- cuidar da cidade: mato (erros), lixo e estragos (dias sem jogar) ---------- */
@@ -1585,7 +1597,7 @@ function neglect(){if(!P)return [];const now=Date.now(),last=P.visto||now;P.vist
     if(cand.length&&Math.random()<.55){const it=pick(cand);it.dano=1;ev.push(DANO[it.t]||'Construção quebrada');}
     else if(addProb('lixo'))ev.push('Lixo no terreno');}
   return ev;}
-function fits(wd,x,y,w,h){if(x<0||y<0||x+w>wd.w||y+h>wd.h)return false;const o=occupied(wd);for(let a=0;a<w;a++)for(let c=0;c<h;c++)if(o.has((x+a)+','+(y+c)))return false;return true;}
+function fits(wd,x,y,w,h){if(x<0||y<0||x+w>wd.w||y+h>wd.h)return false;const o=occupied(wd,WS.move??-1);for(let a=0;a<w;a++)for(let c=0;c<h;c++)if(o.has((x+a)+','+(y+c)))return false;return true;}
 function worldSVG(p){const wd=p.world,W=wd.w*TS,H=wd.h*TS,VW=WLEFT+W+WPAD,VH=H+WPAD*2;const occ=occupied(wd);
   let s=`<svg viewBox="0 0 ${VW} ${VH}" style="min-width:${VW}px;max-width:${VW*2}px" class="wmap" role="img" aria-label="Terreno de ${wd.w} por ${wd.h} metros">`;
   s+=`<rect width="${VW}" height="${VH}" rx="14" fill="#CFEAC6"/><rect x="0" y="${WPAD+H/2-16}" width="${WLEFT+2}" height="32" fill="#E6D2A2"/>`;
@@ -1598,7 +1610,7 @@ function worldSVG(p){const wd=p.world,W=wd.w*TS,H=wd.h*TS,VW=WLEFT+W+WPAD,VH=H+W
   wd.items.forEach((it,i)=>{const X=WLEFT+it.x*TS,Y=WPAD+it.y*TS,IW=it.w*TS,IH=it.h*TS;const art=(BD[it.t]||BD.arvore)(X+3,Y+3,IW-6,IH-6,it);
     const badge=(it.lv||1)>1?`<g pointer-events="none"><circle cx="${X+IW-9}" cy="${Y+9}" r="8.5" fill="#FFD43B" stroke="#B8790F" stroke-width="2"/><text x="${X+IW-9}" y="${Y+13}" text-anchor="middle" font-size="11" font-weight="800" fill="#3A2C00" font-family="sans-serif">${it.lv}</text></g>`:'';
     const broke=it.dano?`<rect x="${X+3}" y="${Y+3}" width="${IW-6}" height="${IH-6}" rx="6" fill="rgba(70,70,80,.45)"/><g pointer-events="none"><circle cx="${X+11}" cy="${Y+11}" r="9" fill="#D9363E" stroke="#fff" stroke-width="2"/><text x="${X+11}" y="${Y+16}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" font-family="sans-serif">!</text></g>`:'';
-    s+=`<g class="it" data-i="${i}">${it.t==='arvore'?`<g class="sway">${art}</g>`:art}${badge}${broke}${readyBadge(it,X,Y,IW)}<rect x="${X+1}" y="${Y+1}" width="${IW-2}" height="${IH-2}" rx="5" fill="transparent" stroke="${WS.pick===i?'#FFD43B':'transparent'}" stroke-width="3.5"/></g>`;});
+    s+=`<g class="it${WS.move===i?' moving':''}" data-i="${i}">${it.t==='arvore'?`<g class="sway">${art}</g>`:art}${badge}${broke}${readyBadge(it,X,Y,IW)}<rect x="${X+1}" y="${Y+1}" width="${IW-2}" height="${IH-2}" rx="5" fill="transparent" stroke="${WS.pick===i?'#FFD43B':'transparent'}" stroke-width="3.5"/></g>`;});
   (wd.probs||[]).forEach((q,i)=>{const X=WLEFT+q.x*TS,Y=WPAD+q.y*TS;
     s+=`<g class="pb" data-p="${i}" style="cursor:pointer"><rect x="${X}" y="${Y}" width="${TS}" height="${TS}" fill="transparent"/>`+(q.k==='mato'
       ?[[10,30],[20,26],[30,31],[15,18],[26,16]].map(([a,b])=>`<path d="M${X+a} ${Y+b} l-4 -10 M${X+a} ${Y+b} l0 -13 M${X+a} ${Y+b} l5 -10" stroke="#2F6B2F" stroke-width="2.6" stroke-linecap="round"/>`).join('')
@@ -1616,7 +1628,7 @@ function worldSVG(p){const wd=p.world,W=wd.w*TS,H=wd.h*TS,VW=WLEFT+W+WPAD,VH=H+W
 function cellAt(e){const svg=$('#w-map .wmap');if(!svg)return null;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
   const m=svg.getScreenCTM();if(!m)return null;const q=pt.matrixTransform(m.inverse());
   const x=Math.floor((q.x-WLEFT)/TS),y=Math.floor((q.y-WPAD)/TS);if(x<0||y<0||x>=P.world.w||y>=P.world.h)return null;return {x,y};}
-function openWorld(){WS.sel=null;WS.pick=null;WS.rot=false;show('world');renderWorld();farmWatch();}
+function openWorld(){WS.sel=null;WS.pick=null;WS.move=null;WS.rot=false;show('world');renderWorld();farmWatch();}
 function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,area=wd.w*wd.h,b=built(P),lvl=levelInfo(P.xp).lvl;
   $('#w-title').textContent=`O mundo de ${P.name.split(/\s+/)[0]}`;
   const pts=Math.max(worldPts(P),wd.pmax||0),st=stageOf(pts);
@@ -1630,10 +1642,10 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
   document.querySelectorAll('#w-view button').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.v===WS.view);if(b.dataset.v==='3d')b.hidden=W3.failed;});
   if(WS.view==='3d')show3D();else{$('#w-3d').hidden=true;$('#w-map').hidden=false;}
   const sel=WS.sel?BMAP[WS.sel]:null;
-  $('#w-hint').innerHTML=sel?(()=>{const [w,h]=selDims();return `Toque no terreno para colocar: <b>${sel.nome}</b> (${w} × ${h} = ${w*h} m²).`})()
+  $('#w-hint').innerHTML=sel?(()=>{const [w,h]=selDims();return WS.move!=null?`Toque no terreno onde a construção vai ficar: <b>${sel.nome}</b> (${w} × ${h} = ${w*h} m²). Mudar de lugar é grátis.`:`Toque no terreno para colocar: <b>${sel.nome}</b> (${w} × ${h} = ${w*h} m²).`})()
     :(WS.view==='3d'?'Arraste para girar. ':'')+((wd.probs||[]).length||wd.items.some(i=>i.dano)?'<b>Toque no mato, no lixo ou na construção com ! para consertar.</b> ':'')+(wd.items.some(isProd)?'<b>Toque na horta, nos animais ou na loja para produzir.</b> ':'')+(wd.items.length?'Toque numa construção para ver a área dela, ou escolha outra ao lado.':'Escolha uma construção ao lado e toque no terreno para colocar.');
   let box='';
-  if(sel){const [w,h]=selDims();box=`<div class="selbox"><span>${sel.nome}: ${w} × ${h} = ${w*h} m²</span><span class="actions">${sel.w!==sel.h?'<button class="btn ghost small" type="button" data-w="rot">Girar</button>':''}<button class="btn ghost small" type="button" data-w="cancel">Cancelar</button></span></div>`;}
+  if(sel){const [w,h]=selDims();box=`<div class="selbox"><span>${WS.move!=null?'Mudando de lugar · ':''}${sel.nome}: ${w} × ${h} = ${w*h} m²</span><span class="actions">${sel.w!==sel.h?'<button class="btn ghost small" type="button" data-w="rot">Girar</button>':''}<button class="btn ghost small" type="button" data-w="cancel">Cancelar</button></span></div>`;}
   else if(WS.pick!==null&&wd.items[WS.pick]){const it=wd.items[WS.pick],bd=BMAP[it.t]||{nome:it.t,price:0,lvl:1},lv=it.lv||1,back=Math.floor(spent(bd,lv)/2),fl=floorsOf(it),a=it.w*it.h;
     let up='';
     if(lv<LVMAX){const c=upCost(bd,lv),req=upReq(bd,lv),nx=UPG[it.t][lv];
@@ -1641,9 +1653,9 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
         :`<button class="btn ${P.coins>=c?'yellow':'ghost'} small" type="button" data-w="up" ${P.coins>=c?'':'disabled'}>Melhorar para ${esc(nx)} · ${COIN}${c}</button>`;}
     else up='<span class="note">Nível máximo!</span>';
     box=`<div class="selbox"><span>${esc(lvName(it))}<span class="lvtag">nível ${lv}/${LVMAX}</span><small>Piso: ${it.w} × ${it.h} = ${a} m²${fl>1?` · ${fl} andares: ${a} × ${fl} = ${a*fl} m² de área construída`:''} · vale ${a*lv} pontos</small></span>
-      <span class="actions">${isProd(it)&&!it.dano?'<button class="btn go small" type="button" data-w="open">Abrir</button>':''}${up}<button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
+      <span class="actions">${isProd(it)&&!it.dano?'<button class="btn go small" type="button" data-w="open">Abrir</button>':''}${up}<button class="btn ghost small" type="button" data-w="move">Mudar de lugar</button><button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
   $('#w-sel').innerHTML=box;
-  $('#w-build').innerHTML=BUILD.map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id;
+  $('#w-build').innerHTML=BUILD.map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id&&WS.move==null;
     const btn=locked?`<span class="m2">Libera no nível ${bd.lvl}</span>`:P.coins>=bd.price?`<button type="button" class="btn ${on?'primary':'yellow'}" data-b="${bd.id}">${on?'Escolhida':`${COIN}${bd.price}`}</button>`:`<button type="button" class="btn ghost" disabled>${COIN}${bd.price}</button>`;
     return `<div class="bcard ${on?'sel':''} ${locked?'locked':''}"><svg viewBox="0 0 ${bd.w*TS} ${bd.h*TS}" aria-hidden="true">${BD[bd.id](3,3,bd.w*TS-6,bd.h*TS-6)}</svg><h4>${bd.nome}</h4><span class="m2">${bd.w} × ${bd.h} = ${bd.w*bd.h} m²</span>${btn}</div>`}).join('');
   const cCost=wd.h*M2PRICE,rCost=wd.w*M2PRICE;
@@ -1651,10 +1663,11 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
     <button type="button" class="btn ${P.coins>=cCost&&wd.w<MAXW?'ghost':'ghost'}" data-land="col" ${wd.w>=MAXW||P.coins<cCost?'disabled':''}><span>+1 coluna: ${wd.w+1} × ${wd.h} = ${(wd.w+1)*wd.h} m² <small>(+${wd.h} m²)</small></span><span class="coins">${COIN}${cCost}</span></button>
     <button type="button" class="btn ghost" data-land="row" ${wd.h>=MAXH||P.coins<rCost?'disabled':''}><span>+1 linha: ${wd.w} × ${wd.h+1} = ${wd.w*(wd.h+1)} m² <small>(+${wd.w} m²)</small></span><span class="coins">${COIN}${rCost}</span></button>
     <p class="note">Cada m² novo custa ${M2PRICE} moedas.</p></div>`;}
-$('#w-build').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;WS.sel=WS.sel===b.dataset.b?null:b.dataset.b;WS.rot=false;WS.pick=null;renderWorld();});
+$('#w-build').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;WS.sel=WS.sel===b.dataset.b&&WS.move==null?null:b.dataset.b;WS.move=null;WS.rot=false;WS.pick=null;renderWorld();});
 $('#w-sel').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;const a=b.dataset.w;
   if(a==='open'&&WS.pick!==null){openProd(WS.pick);return}
-  if(a==='rot')WS.rot=!WS.rot;else if(a==='cancel')WS.sel=null;else if(a==='close')WS.pick=null;
+  if(a==='move'&&WS.pick!==null){const it=P.world.items[WS.pick],bd=BMAP[it.t];if(!bd)return;WS.move=WS.pick;WS.sel=it.t;WS.rot=it.w!==bd.w;WS.pick=null;renderWorld();return}
+  if(a==='rot')WS.rot=!WS.rot;else if(a==='cancel'){WS.sel=null;WS.move=null}else if(a==='close')WS.pick=null;
   else if(a==='up'&&WS.pick!==null){const it=P.world.items[WS.pick],bd=BMAP[it.t],lv=it.lv||1;if(!bd||lv>=LVMAX)return;const c=upCost(bd,lv);
     if(P.coins<c||levelInfo(P.xp).lvl<upReq(bd,lv))return;const st0=worldStage(P).i;
     P.coins-=c;it.lv=lv+1;const got=checkAch();saveProfile();sfx('build');sfx('cash');
@@ -1670,6 +1683,10 @@ function worldTap(c,pickIdx,probIdx){
   if(!WS.sel&&probIdx!=null){openFix('prob',probIdx);return}
   if(!WS.sel&&pickIdx!=null&&P.world.items[pickIdx]&&P.world.items[pickIdx].dano){openFix('dano',pickIdx);return}
   if(!WS.sel&&pickIdx!=null&&isProd(P.world.items[pickIdx])){WS.pick=null;openProd(pickIdx);return}
+  if(WS.sel&&WS.move!=null){if(!c)return;const it=P.world.items[WS.move],[w,h]=selDims();
+    if(!it){WS.sel=WS.move=null;renderWorld();return}
+    if(!fits(P.world,c.x,c.y,w,h)){toast(`Não cabe aí: ${lvName(it)} precisa de ${w} × ${h} = ${w*h} m² livres.`);return}
+    Object.assign(it,{x:c.x,y:c.y,w,h});const i=WS.move;WS.sel=WS.move=null;WS.pick=i;saveProfile();sfx('build');toast(`${lvName(it)} mudou de lugar!`);renderWorld();return}
   if(WS.sel){if(!c)return;const bd=BMAP[WS.sel],[w,h]=selDims();const st0=worldStage(P).i;
     if(!fits(P.world,c.x,c.y,w,h)){toast(`Não cabe aí: ${bd.nome} precisa de ${w} × ${h} = ${w*h} m² livres.`);return}
     if(P.coins<bd.price){toast('Moedas insuficientes.');return}
@@ -1833,7 +1850,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
       this.anim.push({o:g,t:'cloud',k:.25+rand()*.3});}
     /* construções */
     wd.items.forEach((it,idx)=>{const g=new T.Group();g.position.set(it.x+it.w/2-W/2,.12,it.y+it.h/2-H/2);g.userData.idx=idx;this.items.add(g);
-      (this.models[it.t]||this.models.arvore).call(this,g,it.w,it.h,it.lv||1,it);g.userData.base=g.position.y;this.readyMark(g,it);
+      (this.models[it.t]||this.models.arvore).call(this,g,it.w,it.h,it.lv||1,it);g.userData.base=g.position.y;this.readyMark(g,it);if(WS.move===idx)g.traverse(o=>{if(o.material){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.35;o.castShadow=false}});
       if(it.dano){const sm=this.M(0x8A8F99,{transparent:true,opacity:.7});for(let k=0;k<3;k++){const pf=this.mesh(new T.SphereGeometry(.22,8,6),sm,0,1.2,0,g);pf.castShadow=false;this.anim.push({o:pf,t:'smoke',k:k*.33,x:(k-1)*.25});}
         const wn=new T.Group();g.add(wn);this.mesh(new T.OctahedronGeometry(.28,0),this.M(0xD9363E,{emissive:0xD9363E,emissiveIntensity:.5}),0,0,0,wn).scale.y=1.4;
         this.box(.07,.24,.08,this.M(0xFFFFFF),0,-.06,.2,wn);this.anim.push({o:wn,t:'warn',k:2.3+(it.lv||1)*.5});}
@@ -2328,6 +2345,46 @@ W3.readyMark=function(g,it){if(!readyOf(it))return;const T=THREE;const b=new T.B
   const coin=this.mesh(new T.CylinderGeometry(.26,.26,.07,20),this.M(0x22B357,{emissive:0x22B357,emissiveIntensity:.5}),0,0,0,m);coin.rotation.x=Math.PI/2;
   this.mesh(new T.CylinderGeometry(.2,.2,.08,20),this.M(0xFFFFFF,{emissive:0xFFFFFF,emissiveIntensity:.3}),0,0,0,m).rotation.x=Math.PI/2;
   this.anim.push({o:m,t:'ready',k:top+.5});};
+
+/* ---------- código para levar o progresso a outro computador (funciona sem servidor) ---------- */
+const CODE_SALT='tiodanilo-areas';
+function hash6(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(36).padStart(7,'0').slice(-6).toUpperCase();}
+const b64u={enc:u8=>{let s='';u8.forEach(b=>s+=String.fromCharCode(b));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},
+  dec:t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const s=atob(t),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}};
+async function zip(u8,dir){const CS=dir?window.CompressionStream:window.DecompressionStream;if(!CS)return null;
+  const st=new Blob([u8]).stream().pipeThrough(new CS('deflate-raw'));return new Uint8Array(await new Response(st).arrayBuffer());}
+async function makeCode(p){const o=clone(p);o.rounds=(o.rounds||[]).slice(-5);delete o.pw;const raw=new TextEncoder().encode(JSON.stringify(o));
+  const z=await zip(raw,true).catch(()=>null);const v=z?'TD1':'TD0',body=b64u.enc(z||raw);return `${v}.${body}.${hash6(v+body+CODE_SALT)}`;}
+async function readCode(code){const t=String(code||'').replace(/\s+/g,'');const m=t.match(/^(TD[01])\.([A-Za-z0-9_-]+)\.([0-9A-Z]{6})$/);if(!m)throw new Error('formato');
+  if(hash6(m[1]+m[2]+CODE_SALT)!==m[3])throw new Error('conferencia');let u=b64u.dec(m[2]);if(m[1]==='TD1'){u=await zip(u,false);if(!u)throw new Error('navegador');}
+  const p=normalize(JSON.parse(new TextDecoder().decode(u)));if(!p.name||!(p.ano>=4&&p.ano<=9))throw new Error('formato');p.id=pid(p.name,p.ano);return p;}
+const CM={mode:'',p:null};
+function openCode(mode){CM.mode=mode;CM.p=null;const body=$('#code-body');$('#code-msg').textContent='';$('#code-msg').className='code-msg';
+  if(mode==='out'){const p=findProfile(S.nome)||P;if(!p)return;$('#code-title').textContent='Levar para outro computador';
+    body.innerHTML=`<p class="prod-info">Código de <b>${esc(p.name)}</b> · ${p.ano}º ano · nível ${levelInfo(p.xp).lvl} · ${p.coins} moedas</p>
+      <textarea id="code-txt" class="code-txt" readonly rows="5" aria-label="Seu código">Gerando…</textarea>
+      <ol class="code-steps"><li>Copie o código e envie para você mesmo: e-mail, WhatsApp ou Google Sala de Aula.</li><li>No outro computador, abra o jogo, toque em <b>Tenho um código</b> e cole.</li><li>Ao voltar para este computador, gere um código novo lá: o código guarda o progresso de agora.</li></ol>`;
+    $('#code-go').textContent='Copiar código';$('#code-go').hidden=false;
+    makeCode(p).then(c=>{CM.code=c;$('#code-txt').value=c;});}
+  else{$('#code-title').textContent='Tenho um código';
+    body.innerHTML=`<p class="prod-info">Cole aqui o código que você gerou no outro computador.</p><textarea id="code-txt" class="code-txt" rows="5" aria-label="Código" placeholder="TD1.…"></textarea>`;
+    $('#code-go').textContent='Carregar progresso';$('#code-go').hidden=false;}
+  $('#code-modal').hidden=false;setTimeout(()=>{const t=$('#code-txt');mode==='in'?t.focus():$('#code-go').focus()},60);}
+function codeMsg(t,ok){const m=$('#code-msg');m.textContent=t;m.className='code-msg '+(ok?'ok':'no');}
+$('#code-go').onclick=async()=>{const t=$('#code-txt');
+  if(CM.mode==='out'){if(!CM.code)return;try{await navigator.clipboard.writeText(CM.code);codeMsg('Copiado! Agora cole numa mensagem para você mesmo.',1)}catch(e){t.focus();t.select();codeMsg('Selecionei o código: aperte Ctrl+C para copiar.',1)}return}
+  let p;try{p=await readCode(t.value)}catch(e){codeMsg(e.message==='conferencia'?'Esse código foi alterado ou está incompleto. Copie de novo, inteiro.':e.message==='navegador'?'Este navegador é antigo demais para abrir o código. Tente o Chrome ou o Edge atualizados.':'Código inválido. Ele começa com TD1. e deve ser colado inteiro.',0);return}
+  const cur0=db.profiles[p.id];
+  if(cur0&&(cur0.xp||0)>p.xp){codeMsg(`Este computador já tem um progresso mais novo de ${p.name} (nível ${levelInfo(cur0.xp).lvl}). O código é de um progresso mais antigo e não foi carregado.`,0);return}
+  db.profiles[p.id]=p;try{const d=JSON.parse(localStorage.getItem(LS)||'{"profiles":{}}');d.profiles=d.profiles||{};d.profiles[p.id]=p;localStorage.setItem(LS,JSON.stringify(d))}catch(e){}saveDB();
+  if(P&&P.id===p.id)P=p;S.nome=p.name;S.ano=p.ano;S.shapes=defaultShapes(S.ano);$('#in-nome').value=p.name;
+  codeMsg(`Pronto! Progresso de ${p.name} carregado: nível ${levelInfo(p.xp).lvl}, ${p.coins} moedas. Toque em Continuar.`,1);sfx('cash');renderHome();
+  $('#code-go').hidden=true;$('#code-close').focus();};
+$('#code-close').onclick=()=>{$('#code-modal').hidden=true;};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#code-modal').hidden)$('#code-close').click();});
+$('#code-out').onclick=()=>openCode('out');
+$('#code-in').onclick=()=>openCode('in');
+function renderCodeLinks(){const box=$('#code-links');if(!box)return;box.hidden=!!API;$('#code-out').hidden=!findProfile(S.nome);}
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};
