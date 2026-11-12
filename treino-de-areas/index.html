@@ -1508,6 +1508,8 @@ const ACH=[
  {id:'pop50',nome:'Cidade grande',desc:'Tenha 50 moradores',r:60,ok:p=>cityStats(p).pop>=50},
  {id:'luz',nome:'Energia limpa',desc:'Construa uma usina solar',r:20,ok:p=>p.world.items.some(i=>i.t==='usina')},
  {id:'tax100',nome:'Prefeito',desc:'Colete 100 moedas de impostos',r:40,ok:p=>(p.taxN||0)>=100},
+ {id:'astro1',nome:'Astronauta',desc:'Complete uma missão espacial',r:50,ok:p=>(p.missoes||0)>=1},
+ {id:'marte1',nome:'Explorador de Marte',desc:'Traga um cristal de Marte',r:80,ok:p=>((p.prod||{}).marte||0)>=1},
  {id:'piso10',nome:'Mestre de obras',desc:'Atenda 10 clientes na loja de pisos',r:40,ok:p=>(p.pisos||0)>=10},
  {id:'enc5',nome:'Entregador',desc:'Entregue 5 encomendas',r:50,ok:p=>(p.encN||0)>=5},
  {id:'pizza1',nome:'Pizzaiolo',desc:'Asse uma pizza',r:30,ok:p=>((p.prod||{}).pizza||0)>=1},
@@ -2316,7 +2318,7 @@ function renderMarket(){if(!P)return;const pr=mkPrices(),md=mkDay(),ids=Object.k
   $('#mk-coins').innerHTML=`${COIN} ${P.coins} moedas`;updateWho();
   $('#mk-hot').innerHTML=`${gIcon(hot,'gi big')}<div><p class="eyebrow">Procura do dia na quitanda</p><b>${hg.nome}: ${COIN}${pr[hot].q} ${hg.un==='caixa'||hg.un==='balde'||hg.un==='pote'?'a '+hg.un:'cada'}</b><small>O preço normal é ${hg.base}. Amanhã a procura muda.</small></div>`;
   const have=ids.filter(id=>inv(id)>0);
-  $('#mk-inv').innerHTML=have.length?have.map(id=>`<div class="mk-item">${gIcon(id)}<b>${inv(id)}</b><span>${inv(id)===1?GOODS[id].un:GOODS[id].uns}${GOODS[id].un!==GOODS[id].nome.toLowerCase()?' de '+GOODS[id].nome.toLowerCase():''}</span></div>`).join('')
+  $('#mk-inv').innerHTML=have.length?have.map(id=>`<div class="mk-item">${gIcon(id)}<b>${inv(id)}</b><span>${inv(id)===1?GOODS[id].un:GOODS[id].uns}${!GOODS[id].un.toLowerCase().includes(GOODS[id].nome.toLowerCase().split(' ')[0])?' de '+GOODS[id].nome.toLowerCase():''}</span></div>`).join('')
     :`<p class="note">O celeiro está vazio. No Meu mundo, construa uma <b>horta</b> (nível 2) para plantar, um <b>galinheiro</b> (nível 3) ou um <b>curral</b> (nível 5) para criar animais, e depois uma <b>padaria</b> ou uma <b>sorveteria</b> para fazer produtos que valem mais.</p>`;
   $('#mk-list').innerHTML=ids.map(id=>{const g=GOODS[id],n=inv(id),left=Math.max(0,MKLIM-(md.sold[id]||0)),up=pr[id].q>g.base,down=pr[id].q<g.base;
     return `<div class="mk-row ${n?'':'none'}">${gIcon(id)}<div class="mk-name"><b>${g.nome}${id===hot?' <span class="hot">procura</span>':''}</b><small>Você tem ${n} · tabela ${COIN}${g.base}</small></div>
@@ -2481,7 +2483,7 @@ function pisoQ(lv){const ano=P.ano||S.ano,ids=SHAPES.filter(s=>s.minAno<=ano).ma
   const q={sid,nome:s.nome,formula:s.formula,u:'m',...g,cli:pick(CLIENTES),lugar:pick(LUGARES)};q.opts=buildOpts(q);q.pay=Math.round(PISO_PAY[sid]*(1+.25*((lv||1)-1)));return q;}
 /* encomendas do dia: o cliente paga mais que a tabela por um lote de produtos */
 const ENC_CLI=['A escola','O restaurante da Dona Rosa','A festa junina','O hotel da praia','A cantina','O mercadinho do bairro','O aniversário da Luiza','O time de futebol','A feira de ciências'];
-function encDay(){const d=dayKey();if(!P.enc||P.enc.d!==d)P.enc={d,done:[]};const r=rng('enc'+d+P.id),pool=Object.keys(GOODS).filter(g=>!['galinha','vaca'].includes(g)),used=new Set();
+function encDay(){const d=dayKey();if(!P.enc||P.enc.d!==d)P.enc={d,done:[]};const r=rng('enc'+d+P.id),pool=Object.keys(GOODS).filter(g=>!['galinha','vaca','lua','marte','europa','meteoro'].includes(g)),used=new Set();
   return [0,1,2].map(i=>{let g;do{g=pool[Math.floor(r()*pool.length)]}while(used.has(g)&&used.size<pool.length);used.add(g);const base=GOODS[g].base,q=Math.max(3,Math.min(30,Math.round((50+r()*110)/base))),k=1.25+Math.round(r()*5)*.05;
     return {i,g,q,pay:Math.round(q*base*k),pct:Math.round((k-1)*100),cli:ENC_CLI[(Math.floor(r()*3)+i*3)%ENC_CLI.length],done:P.enc.done.includes(i)};});}
 function renderEnc(){const box=$('#mk-enc');if(!box||!P)return;const es=encDay();
@@ -2640,6 +2642,62 @@ Object.assign(W3.models,{
     this.mesh(new T.CylinderGeometry(.6,.6,.7,16),this.M(0x4FB3E8,{roughness:.3}),0,h+.35,0,g);this.mesh(new T.ConeGeometry(.66,.3,16),this.M(0x2F6BFF),0,h+.85,0,g);
     if(lv>=3){this.mesh(new T.CylinderGeometry(.4,.4,.25,16),this.M(0x7FC8F8,{transparent:true,opacity:.8}),fw/2-.45,.15,fd/2-.45,g);}},
 });
+
+/* ---------- base de foguetes: missões espaciais que trazem tesouros para vender ---------- */
+Object.assign(GOODS,{lua:{nome:'Pedra lunar',un:'pedra lunar',uns:'pedras lunares',base:30},marte:{nome:'Cristal de Marte',un:'cristal de Marte',uns:'cristais de Marte',base:80},
+  europa:{nome:'Gelo de Europa',un:'bloco de gelo de Europa',uns:'blocos de gelo de Europa',base:200},meteoro:{nome:'Meteorito dourado',un:'meteorito dourado',uns:'meteoritos dourados',base:150}});
+Object.assign(GART,{
+  lua:'<path d="M6 26 Q4 12 18 8 Q34 6 35 22 Q36 34 20 34 Q8 35 6 26Z" fill="#C9CDD6" stroke="#8E99AD" stroke-width="2"/><circle cx="15" cy="18" r="3.5" fill="#A6ADBA"/><circle cx="25" cy="25" r="4.5" fill="#A6ADBA"/><circle cx="24" cy="14" r="2" fill="#A6ADBA"/>',
+  marte:'<polygon points="20,3 30,14 26,36 14,36 10,14" fill="#E5484D" stroke="#9B1C24" stroke-width="2"/><polygon points="20,3 24,14 20,36 16,14" fill="#FF8A8D"/><path d="M10 14h20" stroke="#9B1C24" stroke-width="1.5"/>',
+  europa:'<rect x="6" y="9" width="28" height="24" rx="4" fill="#BFE6FF" stroke="#4FB3E8" stroke-width="2"/><path d="M10 15 l8 6 l-3 7 M24 12 l4 9 l6 2" stroke="#4FB3E8" stroke-width="1.6" fill="none"/><rect x="9" y="12" width="7" height="4" rx="2" fill="#FFFFFF" opacity=".8"/>',
+  meteoro:'<path d="M4 6 L18 16" stroke="#FF8A3D" stroke-width="4" stroke-linecap="round"/><path d="M8 3 L20 12" stroke="#FFD43B" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="24" r="11" fill="#F2B705" stroke="#B8790F" stroke-width="2"/><circle cx="21" cy="21" r="3" fill="#B8790F"/><circle cx="29" cy="28" r="2.5" fill="#B8790F"/>',
+  foguete:'<path d="M20 3 Q29 12 28 26 L12 26 Q11 12 20 3Z" fill="#EEF1F7" stroke="#8E99AD" stroke-width="1.5"/><path d="M20 3 Q25 8 26.5 14 L13.5 14 Q15 8 20 3Z" fill="#D9363E"/><circle cx="20" cy="19" r="3.5" fill="#7FC8F8" stroke="#2F6BFF" stroke-width="1.2"/><path d="M12 22 l-5 8 l6 -2z M28 22 l5 8 l-6 -2z" fill="#D9363E"/><path d="M16 27 l4 9 l4 -9z" fill="#FF8A3D"/>'});
+/* destino: tempo (min), combustível (moedas), carga base, precisa do nível da base */
+const MISSOES=[
+  {id:'lua',nome:'Lua',min:10,custo:40,carga:3,good:'lua',lv:1,cor:'#C9CDD6',txt:'pertinho: 384 mil km'},
+  {id:'marte',nome:'Marte',min:30,custo:100,carga:3,good:'marte',lv:1,cor:'#E5484D',txt:'o planeta vermelho'},
+  {id:'europa',nome:'Europa, lua de Júpiter',min:60,custo:200,carga:2,good:'europa',lv:2,cor:'#4FB3E8',txt:'precisa da base nível 2'}];
+const PECAS={quadrado:'a escotilha',retangulo:'o painel solar',triangulo:'a aleta',paralelogramo:'a antena',trapezio:'a asa',losango:'o emblema da missão',circulo:'a janela',composta:'a porta da cápsula'};
+PRODUCERS.add('base');
+const misState=it=>{const m=it.mis;if(!m)return null;const el=Date.now()-m.t0;return {...m,k:Math.min(1,el/m.dur),left:Math.max(0,m.dur-el),back:el>=m.dur};};
+function launchQ(){const ano=P.ano||S.ano,ids=SHAPES.filter(s=>s.minAno<=ano).map(s=>s.id),sid=pick(ids),s=SH[sid],g=s.gen(ano,'m');
+  const q={sid,nome:s.nome,formula:s.formula,u:'m',...g};q.opts=buildOpts(q);return q;}
+const renderProdR=renderProd;
+renderProd=function(){const it=P.world.items[PM.idx];if(!it||it.t!=='base')return renderProdR();PM.sig=prodSig(it);const lv=it.lv||1,ms=misState(it);let h='';
+  $('#prod-title').textContent=lvName(it);$('#prod-eye').textContent='Missões espaciais';
+  if(ms&&!ms.back){const M=MISSOES.find(x=>x.id===ms.id);h+=`<div class="grow">${gIcon('foguete')}<div><b>A caminho: ${M.nome}</b>${bar(it.mis.t0,it.mis.dur)}<small>Volta em <span data-end="${it.mis.t0+it.mis.dur}">${fmtLeft(ms.left)}</span> trazendo ${qn(ms.carga,M.good)}${ms.raro?' e uma surpresa':''}.</small></div></div><p class="note">Enquanto o foguete viaja, jogue uma partida de áreas!</p>`;}
+  else if(ms&&ms.back){const M=MISSOES.find(x=>x.id===ms.id);h+=`<div class="grow ready">${gIcon(M.good)}<div><b>O foguete voltou de ${M.nome}!</b><small>Trouxe ${qn(ms.carga,M.good)}${ms.raro?' e um <b>meteorito dourado</b>!':''} Venda no mercado.</small></div></div><div class="prod-acts"><button type="button" class="btn go" data-pa="unload">Descarregar</button></div>`;}
+  else if(PM.lq){const {q,M}=PM.lq;h+=`<div class="pq"><p class="prod-info"><b>Checagem antes de ir para ${M.nome}:</b> ${PECAS[q.sid]} do foguete tem a forma desta figura. Qual é a área? <span class="note">Acertando, o foguete traz 1 tesouro a mais.</span></p>${primsSVG(q.prims)}`;
+    h+=PM.lfb?PM.lfb:`<div class="opts">${q.opts.map((v,i)=>`<button type="button" class="opt" data-pa="lq-${i}">${f(v)} m²</button>`).join('')}</div>`;h+='</div>';}
+  else{h+=`<p class="prod-info">Escolha o destino. O combustível custa moedas e o foguete volta com tesouros que valem muito no mercado${lv>1?` (base nível ${lv}: +${lv-1} na carga)`:''}. Às vezes ele acha um meteorito dourado!</p><div class="crop-list">`+
+      MISSOES.map(M=>{const lock=lv<M.lv,carga=M.carga+lv-1,ok=P.coins>=M.custo;
+        return `<div class="crop ${lock?'locked':''}">${gIcon(M.good)}<div><b>${M.nome}</b><small>${M.txt} · ${M.min} min de viagem</small><small>Traz ${qn(carga,M.good)} · tabela ${COIN}${GOODS[M.good].base} cada = ${carga} × ${GOODS[M.good].base} = ${carga*GOODS[M.good].base}</small></div>`+
+          (lock?`<span class="note">Base nível ${M.lv}</span>`:`<button type="button" class="btn ${ok?'yellow':'ghost'} small" data-pa="go-${M.id}" ${ok?'':'disabled'}>Lançar · ${COIN}${M.custo}</button>`)+`</div>`}).join('')+'</div>';}
+  $('#prod-body').innerHTML=h;};
+const prodActR=prodAct;
+prodAct=function(a){const it=P.world.items[PM.idx];if(!it||it.t!=='base')return prodActR(a);
+  if(a.startsWith('go-')){if(it.mis)return;const M=MISSOES.find(x=>x.id===a.slice(3));if(!M||(it.lv||1)<M.lv||P.coins<M.custo)return;PM.lq={q:launchQ(),M};PM.lfb=null;renderProd();setTimeout(()=>{const b=$('#prod-body .opt');b&&b.focus()},40);return}
+  if(a.startsWith('lq-')&&PM.lq&&!PM.lfb){const {q,M}=PM.lq,v=q.opts[+a.slice(3)],ok=f(v)===f(q.ans);if(P.coins<M.custo){PM.lq=null;renderProd();return}
+    const carga=M.carga+(it.lv||1)-1+(ok?1:0);P.coins-=M.custo;it.mis={id:M.id,t0:Date.now(),dur:M.min*MIN,carga,raro:Math.random()<.2};
+    PM.lfb=ok?`<div class="feedback ok"><strong>Checagem certa! ${f(q.ans)} m². Lançamento com carga extra!</strong><span class="steps">${q.steps}</span></div>`:`<div class="feedback no"><strong>A área era ${f(q.ans)} m². O foguete foi, mas sem a carga extra.</strong><span class="steps">${q.steps}</span></div>`;
+    sfx(ok?'ok':'no');setTimeout(()=>sfx('level'),400);saveProfile();const html=PM.lfb;PM.lq=null;renderProd();$('#prod-body').insertAdjacentHTML('afterbegin',html);
+    toast(`3, 2, 1… foguete a caminho de ${M.nome}! Volta em ${M.min} min.`);if(cur==='world'&&WS.view==='3d'&&W3.ok&&!REDUCED)W3.fly(PM.idx);return}
+  if(a==='unload'){const ms=misState(it);if(!ms||!ms.back)return;const M=MISSOES.find(x=>x.id===ms.id);addGood(M.good,ms.carga);if(ms.raro)addGood('meteoro',1);delete it.mis;P.missoes=(P.missoes||0)+1;
+    sfx('coin');setTimeout(()=>sfx('star'),150);const got=checkAch();saveProfile();renderProd();toast(`Descarregou ${qn(ms.carga,M.good)}${ms.raro?' e um meteorito dourado':''}! Venda no mercado.`);announceAch(got,1600);
+    if(cur==='world'&&WS.view==='3d'&&W3.ok&&!REDUCED)W3.celebrate(PM.idx);}};
+const openProdR=openProd;openProd=function(i){PM.lq=null;PM.lfb=null;openProdR(i);};
+const readyOfR=readyOf;readyOf=function(it){if(it.t==='base'){const m=misState(it);return !it.dano&&m&&m.back?1:0}return readyOfR(it);};
+const farmSigR=farmSig;farmSig=function(p){return farmSigR(p)+'#'+p.world.items.map(it=>{if(it.t!=='base')return '';const m=misState(it);return m?(m.back?'B':'F'):'-'}).join('');};
+const readyBadgeR=readyBadge;readyBadge=function(it,X,Y,IW){if(it.t!=='base')return readyBadgeR(it,X,Y,IW);if(!readyOf(it))return '';
+  return `<g class="rdy" pointer-events="none"><circle cx="${X+IW/2}" cy="${Y+17}" r="15" fill="#FFFFFF" stroke="#22B357" stroke-width="3"/><svg x="${X+IW/2-11}" y="${Y+6}" width="22" height="22" viewBox="0 0 40 40">${GART[MISSOES.find(m=>m.id===it.mis.id).good]}</svg></g>`;};
+/* em viagem, o foguete some da base; na planta aparece só a plataforma */
+const baseModel0=W3.models.base;W3.models.base=function(g,fw,fd,lv,it){baseModel0.call(this,g,fw,fd,lv);const m=it&&misState(it);
+  if(m&&!m.back){const rk=g.children.find(c=>c.type==='Group');if(rk)rk.visible=false;this.anim=this.anim.filter(a=>a.o!==rk);}};
+W3.fly=function(idx){const g=this.items.children.find(c=>c.userData.idx===idx);if(!g)return;const rk=g.children.find(c=>c.type==='Group');if(!rk)return;
+  this.anim=this.anim.filter(a=>a.o!==rk);rk.visible=true;const fl=rk.children.find(c=>c.geometry&&c.geometry.type==='ConeGeometry'&&c.material.emissiveIntensity===1);if(fl)fl.visible=true;
+  const t0=performance.now(),y0=rk.position.y;const step=t=>{const k=(t-t0)/1800;rk.position.y=y0+k*k*14;rk.rotation.y+=.05;this.draw();if(k<1)requestAnimationFrame(step);else rk.visible=false;};requestAnimationFrame(step);};
+const BD_BASE0=BD.base;BD.base=(x,y,W,H,it)=>{const m=it&&misState(it);let s=BD_BASE0(x,y,W,H);
+  if(m&&!m.back)s+=`<rect x="${x+W/2-26}" y="${y+H-20}" width="52" height="16" rx="8" fill="#1B2A3A"/><text x="${x+W/2}" y="${y+H-8}" text-anchor="middle" font-size="10" font-weight="800" fill="#FFD43B" font-family="sans-serif">EM VIAGEM</text>`;return s;};
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};

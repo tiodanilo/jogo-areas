@@ -71,6 +71,10 @@ Outro jeito de ganhar moedas, em tempo real (de 3 a 30 minutos): o aluno produz 
 - Na ilha 3D e na planta, as plantas crescem, os bichos aparecem e um marcador verde avisa quando há algo pronto. O mundo se atualiza sozinho.
 - Conquistas novas: primeira colheita, granjeiro, confeiteiro, sorveteiro, feirante e empresário.
 
+## Missões espaciais
+
+A **base de foguetes** (nível 12) manda o foguete buscar tesouros para vender no Mercado: Lua (10 min, 40 moedas de combustível, 3 pedras lunares de 30), Marte (30 min, 100 moedas, 3 cristais de 80) e Europa, lua de Júpiter (base nível 2; 60 min, 200 moedas, 2 blocos de gelo de 200). Cada nível da base soma 1 na carga. Antes do lançamento vem a "checagem": a área de uma peça do foguete (asa, janela, painel solar…); acertando, o foguete traz 1 tesouro a mais. Em 20% das viagens ele volta com um meteorito dourado (150). No 3D o foguete decola e some da base até voltar.
+
 ## Avatar e níveis
 
 - **Loja** com 49 itens em raridades (comum, raro, épico, lendário), oferta do dia com 40% de desconto, provador antes de comprar, efeitos animados (brilho, estrelas, fogo), asas e 5 conjuntos com prêmio. Itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
