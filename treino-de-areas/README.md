@@ -48,13 +48,14 @@ Passatempos que custam 1 ficha. O aluno ganha fichas terminando partidas de áre
 
 ## Cidade viva
 
-- **Moradores**: cada m² construído de casa abriga 1 morador (casa 2 × 2 = 4 m² × 3 andares = 12 moradores).
+- **Moradores**: cada 2 m² construídos de casa abrigam 1 morador (casa 2 × 2 × 3 andares = 12 m² ÷ 2 = 6 moradores).
 - **Energia e água**: moradores e construções gastam energia e água (piscina gasta 8 de água, escola 6 de energia…). A cidade vizinha empresta 10 de cada. A **usina solar** gera 4 por m² de painel × nível; a **caixa d'água**, 5 por m² × nível; o lago, +6 de água. Falta de energia ou de água tira 15% da felicidade.
 - **Lazer**: com moradores e nada de lazer (piscina, quadra, lago, flores ou 3 árvores), −10% de felicidade.
 - **Problemas na cidade**: a cada hora e meia pode aparecer um buraco na rua, um cano vazando (−5 de água) ou um poste apagado (−5 de energia). Tocar neles abre uma conta de área para consertar.
 - **Variedade**: nenhum tipo de construção (moradia, lazer, fazenda, comércio) pode passar de 50% da área construída, depois de 16 m². O painel mostra a porcentagem de cada tipo; serviços (escola, usina, caixa d'água, base) não entram no limite.
 - **Impostos**: 1 moeda por morador a cada hora, vezes a felicidade (20 moradores × 85% = 17 moedas), guardando até 3 horas.
 - **Terreno** pode crescer até 30 × 22 = 660 m².
+- **Menos rolagem**: as construções ficam em abas por tipo (moradia, lazer, fazenda, comércio, serviços); o painel da cidade, a compra de terreno e as conquistas abrem e fecham com um toque.
 
 ## Fazenda e mercado
 

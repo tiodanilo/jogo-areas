@@ -607,6 +607,19 @@ input:focus{border-color:var(--blue);outline:none}
 .bcard{position:relative}
 .bcard .cat{position:absolute;top:6px;left:6px;color:#fff;font-size:.65rem;font-weight:800;border-radius:999px;padding:1px 7px;text-transform:uppercase;letter-spacing:.04em}
 .bcard.capped{opacity:.7}
+.btabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.btabs button{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 11px;font:inherit;font-weight:800;font-size:.85rem;cursor:pointer}
+.btabs button small{opacity:.7}
+.btabs button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+details.fold{margin-top:14px}
+details.fold > summary{cursor:pointer;font-weight:800;font-family:var(--f-display);font-size:1.15rem;list-style:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::before{content:'▸';display:inline-block;transition:transform .15s;color:var(--ink-2)}
+details.fold[open] > summary::before{transform:rotate(90deg)}
+details.fold > summary small{font-family:var(--f-body,inherit);font-size:.85rem;font-weight:700;color:var(--ink-2)}
+details.fold > summary .h2{margin:0}
+details.panel.fold{margin-top:0}
+details.fold.big[open] > summary{margin-bottom:10px}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -786,7 +799,7 @@ input:focus{border-color:var(--blue);outline:none}
       <div class="happy" id="w-happy"></div>
       <div class="actions"><span class="pill" id="w-coins"></span><button class="btn yellow small" type="button" id="w-mk">Mercado</button><button class="btn ghost small" type="button" id="w-back">Voltar</button></div>
     </div>
-    <div class="panel w-city" id="w-city"></div>
+    <details class="panel fold big" id="w-citybox" open><summary><span class="h2">Painel da cidade</span> <small id="w-citysum"></small></summary><div class="w-city" id="w-city"></div></details>
     <div class="world-grid">
       <div class="panel w-mapbox">
         <div class="w-bar"><p class="w-hint" id="w-hint"></p><div class="seg2" id="w-view" role="group" aria-label="Visão do mundo"><button type="button" data-v="3d" aria-pressed="true">3D</button><button type="button" data-v="2d" aria-pressed="false">Planta</button></div></div>
@@ -795,13 +808,13 @@ input:focus{border-color:var(--blue);outline:none}
       </div>
       <div class="panel w-side">
         <div class="stage" id="w-stage"></div>
-        <h2 class="h2">Comprar mais terreno</h2>
-        <div id="w-land"></div>
-        <h2 class="h2" style="margin-top:18px">Construir</h2>
+        <h2 class="h2">Construir</h2>
+        <div class="btabs" id="w-btabs" role="group" aria-label="Tipo de construção"></div>
         <div class="w-build" id="w-build"></div>
+        <details class="fold" id="w-landbox"><summary>Comprar mais terreno</summary><div id="w-land"></div></details>
       </div>
     </div>
-    <div class="panel"><h2 class="h2">Conquistas</h2><p class="note" style="margin-bottom:12px">Cada conquista dá moedas de prêmio.</p><div class="ach-grid" id="ach"></div></div>
+    <details class="panel fold big" id="w-achbox"><summary><span class="h2">Conquistas</span> <small id="ach-count"></small></summary><p class="note" style="margin:8px 0 12px">Cada conquista dá moedas de prêmio.</p><div class="ach-grid" id="ach"></div></details>
   </section>
 
   <!-- FLIPERAMA -->
@@ -1715,14 +1728,17 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
     box=`<div class="selbox"><span>${esc(lvName(it))}<span class="lvtag">nível ${lv}/${LVMAX}</span><small>Piso: ${it.w} × ${it.h} = ${a} m²${fl>1?` · ${fl} andares: ${a} × ${fl} = ${a*fl} m² de área construída`:''} · vale ${a*lv} pontos</small></span>
       <span class="actions">${isProd(it)&&!it.dano?'<button class="btn go small" type="button" data-w="open">Abrir</button>':''}${up}<button class="btn ghost small" type="button" data-w="move">Mudar de lugar</button><button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
   $('#w-sel').innerHTML=box;
-  $('#w-build').innerHTML=BUILD.map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id&&WS.move==null;
+  const TABS=['moradia','lazer','fazenda','comercio','servicos'];if(!WS.tab)WS.tab='moradia';if(WS.sel&&CAT[WS.sel]&&WS.move==null)WS.tab=CAT[WS.sel];
+  $('#w-btabs').innerHTML=TABS.map(c=>`<button type="button" data-tab="${c}" aria-pressed="${WS.tab===c}" style="--c:${CATC[c]}">${CATN[c][0].toUpperCase()+CATN[c].slice(1)} <small>${BUILD.filter(b=>CAT[b.id]===c).length}</small></button>`).join('');
+  $('#w-build').innerHTML=BUILD.filter(bd=>CAT[bd.id]===WS.tab).map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id&&WS.move==null;
     const btn=locked?`<span class="m2">Libera no nível ${bd.lvl}</span>`:P.coins>=bd.price?`<button type="button" class="btn ${on?'primary':'yellow'}" data-b="${bd.id}">${on?'Escolhida':`${COIN}${bd.price}`}</button>`:`<button type="button" class="btn ghost" disabled>${COIN}${bd.price}</button>`;
-    return `<div class="bcard ${on?'sel':''} ${locked?'locked':''}"><svg viewBox="0 0 ${bd.w*TS} ${bd.h*TS}" aria-hidden="true">${BD[bd.id](3,3,bd.w*TS-6,bd.h*TS-6)}</svg><h4>${bd.nome}</h4><span class="m2">${bd.w} × ${bd.h} = ${bd.w*bd.h} m²</span>${btn}</div>`}).join('');
+    return `<div class="bcard ${on?'sel':''} ${locked?'locked':''}" data-id="${bd.id}"><svg viewBox="0 0 ${bd.w*TS} ${bd.h*TS}" aria-hidden="true">${BD[bd.id](3,3,bd.w*TS-6,bd.h*TS-6)}</svg><h4>${bd.nome}</h4><span class="m2">${bd.w} × ${bd.h} = ${bd.w*bd.h} m²</span>${btn}</div>`}).join('');
   const cCost=wd.h*M2PRICE,rCost=wd.w*M2PRICE;
   $('#w-land').innerHTML=`<div class="land">
     <button type="button" class="btn ${P.coins>=cCost&&wd.w<MAXW?'ghost':'ghost'}" data-land="col" ${wd.w>=MAXW||P.coins<cCost?'disabled':''}><span>+1 coluna: ${wd.w+1} × ${wd.h} = ${(wd.w+1)*wd.h} m² <small>(+${wd.h} m²)</small></span><span class="coins">${COIN}${cCost}</span></button>
     <button type="button" class="btn ghost" data-land="row" ${wd.h>=MAXH||P.coins<rCost?'disabled':''}><span>+1 linha: ${wd.w} × ${wd.h+1} = ${wd.w*(wd.h+1)} m² <small>(+${wd.w} m²)</small></span><span class="coins">${COIN}${rCost}</span></button>
     <p class="note">Cada m² novo custa ${M2PRICE} moedas. Tamanho máximo: ${MAXW} × ${MAXH} = ${MAXW*MAXH} m².</p></div>`;}
+$('#w-btabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;WS.tab=b.dataset.tab;if(WS.sel&&WS.move==null)WS.sel=null;renderWorld();});
 $('#w-build').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;WS.sel=WS.sel===b.dataset.b&&WS.move==null?null:b.dataset.b;WS.move=null;WS.rot=false;WS.pick=null;renderWorld();});
 $('#w-sel').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;const a=b.dataset.w;
   if(a==='open'&&WS.pick!==null){openProd(WS.pick);return}
@@ -2542,7 +2558,7 @@ const CAT_MAX=.5,CAT_MIN_TOTAL=16;/* nenhum tipo (menos serviços) pode passar d
 const ENER={piscina:2,quadra:3,escola:6,base:10,padaria:4,sorveteria:5,pizzaria:4,pisos:3,galinheiro:1,curral:2,agua:2};
 const AGUA={piscina:8,horta:3,curral:4,galinheiro:2,escola:4,padaria:2,sorveteria:2,pizzaria:2,quadra:1,base:2,flores:1};
 const REDE={e:10,a:10};/* a cidade vizinha empresta um pouco de energia e água */
-const moradores=it=>CAT[it.t]==='moradia'?it.w*it.h*floorsOf(it):0;
+const moradores=it=>CAT[it.t]==='moradia'?Math.floor(it.w*it.h*floorsOf(it)/2):0;/* 1 morador a cada 2 m² construídos */
 function cityStats(p){const items=p.world.items,pr=p.world.probs||[];let pop=0,ue=0,ua=0,pe=REDE.e,pa=REDE.a;const area={moradia:0,lazer:0,fazenda:0,comercio:0,servicos:0};
   items.forEach(it=>{const m=moradores(it);pop+=m;ue+=m+(ENER[it.t]||0);ua+=m+(AGUA[it.t]||0);if(CAT[it.t])area[CAT[it.t]]+=it.w*it.h;
     if(!it.dano){if(it.t==='usina')pe+=it.w*it.h*4*(it.lv||1);if(it.t==='agua')pa+=it.w*it.h*5*(it.lv||1);if(it.t==='lago')pa+=6;}});
@@ -2569,17 +2585,18 @@ function renderCity(){const el=$('#w-city');if(!el||!P)return;const st=cityStats
   const houses=items.filter(i=>CAT[i.t]==='moradia');const bar=(u,p)=>`<div class="cbar ${u>p?'bad':''}"><i style="width:${Math.min(100,p?u/p*100:100)}%"></i></div>`;
   const usinas=items.filter(i=>i.t==='usina'&&!i.dano),aguas=items.filter(i=>i.t==='agua'&&!i.dano);
   const cats=Object.keys(st.area).filter(c=>st.area[c]>0);
-  el.innerHTML=`<div class="ccard"><b>👪 ${st.pop} moradores</b><small>${houses.length?houses.map(i=>`${lvName(i)}: ${i.w} × ${i.h} = ${i.w*i.h} m²${floorsOf(i)>1?` × ${floorsOf(i)} andares`:''} = ${moradores(i)}`).slice(0,3).join('<br>')+(houses.length>3?'<br>…':''):'Construa casas para ter moradores. Cada m² construído de casa abriga 1 morador.'}</small>
+  el.innerHTML=`<div class="ccard"><b>👪 ${st.pop} moradores</b><small>${houses.length?houses.map(i=>`${lvName(i)}: ${i.w} × ${i.h}${floorsOf(i)>1?` × ${floorsOf(i)} andares`:''} = ${i.w*i.h*floorsOf(i)} m² ÷ 2 = ${moradores(i)}`).slice(0,3).join('<br>')+(houses.length>3?'<br>…':''):'Construa casas para ter moradores. Cada 2 m² construídos de casa abrigam 1 morador.'}</small>
       ${st.pop?`<div class="tax"><small>Impostos: ${st.pop} moradores × ${ts.h}% de felicidade = ${ts.per} moedas por hora (guarda até 3 h)</small>${ts.total?`<button type="button" class="btn go small" id="c-tax">Coletar ${COIN}${ts.total}</button>`:`<small>Próximos impostos em ${fmtLeft(ts.next)}.</small>`}</div>`:''}</div>
     <div class="ccard"><b>⚡ Energia: usa ${st.ue} de ${st.pe}</b>${bar(st.ue,st.pe)}<small>${st.faltaE?`<span class="warn">Falta energia! Construa ou melhore uma usina solar.</span>`:'Tudo aceso.'} Rede vizinha: ${REDE.e}.${usinas.length?' '+usinas.map(u=>`Usina: ${u.w} × ${u.h} = ${u.w*u.h} m² de painel × 4${(u.lv||1)>1?` × ${u.lv}`:''} = ${u.w*u.h*4*(u.lv||1)}`).join('; '):''}</small></div>
     <div class="ccard"><b>💧 Água: usa ${st.ua} de ${st.pa}</b>${bar(st.ua,st.pa)}<small>${st.faltaA?`<span class="warn">Falta água! Construa ou melhore uma caixa d'água.</span>`:'Torneiras funcionando.'} Rede vizinha: ${REDE.a}.${aguas.length?' '+aguas.map(u=>`Caixa: ${u.w} × ${u.h} = ${u.w*u.h} m² × 5${(u.lv||1)>1?` × ${u.lv}`:''} = ${u.w*u.h*5*(u.lv||1)}`).join('; '):''}${items.some(i=>i.t==='lago')?' Lago: +6.':''}</small></div>
     <div class="ccard"><b>🏙️ Variedade da cidade</b>${st.tot?`<div class="cstack">${cats.map(c=>`<i style="width:${st.area[c]/st.tot*100}%;background:${CATC[c]}" title="${CATN[c]}"></i>`).join('')}</div><small>${cats.map(c=>`<span class="dot" style="background:${CATC[c]}"></span>${CATN[c]} ${st.area[c]} de ${st.tot} m² = ${Math.round(st.area[c]/st.tot*100)}%`).join('<br>')}</small>`:'<small>Nada construído ainda.</small>'}<small>Regra: nenhum tipo pode passar de 50% da área construída (serviços não contam no limite).</small></div>`;
-  const b=$('#c-tax');if(b)b.onclick=collectTax;}
+  const b=$('#c-tax');if(b)b.onclick=collectTax;
+  const sm=$('#w-citysum');if(sm)sm.innerHTML=`👪 ${st.pop} · ⚡ ${st.ue}/${st.pe}${st.faltaE?' ⚠️':''} · 💧 ${st.ua}/${st.pa}${st.faltaA?' ⚠️':''}${ts.total?` · <b>impostos prontos</b>`:''}`;
+  const ac=$('#ach-count');if(ac)ac.textContent=`${ACH.filter(a=>P.ach&&P.ach[a.id]).length} de ${ACH.length}`;}
 /* liga a cidade nas telas que já existem */
 const renderWorld0=renderWorld;renderWorld=function(){cityEvents();renderWorld0();renderCity();if(P&&!P.cityIntro&&P.world.items.length){P.cityIntro=1;saveProfile();setTimeout(()=>toast('Novidade: sua cidade agora tem moradores, energia e água! Veja o painel da cidade e construa uma usina solar e uma caixa d\'água.'),600);}
-  document.querySelectorAll('#w-build .bcard').forEach((card,i)=>{const bd=BUILD[i];if(!bd||card.classList.contains('locked'))return;const cb=catBlock(bd.id,bd.w*bd.h);
-    if(cb){const btn=card.querySelector('button');if(btn){btn.disabled=true;btn.className='btn ghost';btn.textContent='Limite de 50%';}card.classList.add('capped');card.title=`Ficaria com ${cb.pct}% de ${CATN[cb.c]}`;}
-    const cat=document.createElement('span');cat.className='cat';cat.style.background=CATC[CAT[bd.id]]||'#888';cat.textContent=CATN[CAT[bd.id]]||'';card.prepend(cat);});};
+  document.querySelectorAll('#w-build .bcard').forEach(card=>{const bd=BMAP[card.dataset.id];if(!bd||card.classList.contains('locked'))return;const cb=catBlock(bd.id,bd.w*bd.h);
+    if(cb){const btn=card.querySelector('button');if(btn){btn.disabled=true;btn.className='btn ghost';btn.textContent='Limite de 50%';}card.classList.add('capped');card.title=`Ficaria com ${cb.pct}% de ${CATN[cb.c]}`;}});};
 const worldTap0=worldTap;worldTap=function(c,pickIdx,probIdx){if(WS.sel&&WS.move==null&&c){const bd=BMAP[WS.sel],[w,h]=selDims(),cb=catBlock(WS.sel,w*h);
     if(cb){toast(`Sua cidade ficaria com ${cb.mine} de ${cb.tot} m² de ${CATN[cb.c]} = ${cb.pct}%. O limite é 50%: construa outro tipo antes.`);return}}
   return worldTap0(c,pickIdx,probIdx);};
