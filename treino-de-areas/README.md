@@ -46,6 +46,16 @@ Passatempos que custam 1 ficha. O aluno ganha fichas terminando partidas de áre
 - **Quebra-cabeça** (lógica): peças de 1 a 8 que deslizam; menos jogadas, mais moedas (até 30).
 - **Cesta da feira** (25 s): mover a cesta para pegar verduras e fugir das pedras. Até 25 moedas.
 
+## Cidade viva
+
+- **Moradores**: cada m² construído de casa abriga 1 morador (casa 2 × 2 = 4 m² × 3 andares = 12 moradores).
+- **Energia e água**: moradores e construções gastam energia e água (piscina gasta 8 de água, escola 6 de energia…). A cidade vizinha empresta 10 de cada. A **usina solar** gera 4 por m² de painel × nível; a **caixa d'água**, 5 por m² × nível; o lago, +6 de água. Falta de energia ou de água tira 15% da felicidade.
+- **Lazer**: com moradores e nada de lazer (piscina, quadra, lago, flores ou 3 árvores), −10% de felicidade.
+- **Problemas na cidade**: a cada hora e meia pode aparecer um buraco na rua, um cano vazando (−5 de água) ou um poste apagado (−5 de energia). Tocar neles abre uma conta de área para consertar.
+- **Variedade**: nenhum tipo de construção (moradia, lazer, fazenda, comércio) pode passar de 50% da área construída, depois de 16 m². O painel mostra a porcentagem de cada tipo; serviços (escola, usina, caixa d'água, base) não entram no limite.
+- **Impostos**: 1 moeda por morador a cada hora, vezes a felicidade (20 moradores × 85% = 17 moedas), guardando até 3 horas.
+- **Terreno** pode crescer até 30 × 22 = 660 m².
+
 ## Fazenda e mercado
 
 Outro jeito de ganhar moedas, em tempo real (de 3 a 30 minutos): o aluno produz no Meu mundo e vende no Mercado.

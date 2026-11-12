@@ -592,6 +592,21 @@ input:focus{border-color:var(--blue);outline:none}
 @media (max-width:560px){.enc{grid-template-columns:auto minmax(0,1fr)}.enc > .btn,.enc > .note{grid-column:1/-1}}
 .pq{display:flex;flex-direction:column;gap:8px}
 .pq .fig{max-width:340px;align-self:center;width:100%}
+.w-city{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.ccard{background:var(--paper);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.ccard b{font-family:var(--f-display);font-size:1.1rem;font-variant-numeric:tabular-nums}
+.ccard small{font-weight:700;color:var(--ink-2);line-height:1.35;font-variant-numeric:tabular-nums}
+.ccard .warn,.happy .warn{color:var(--bad);font-weight:800}
+.cbar{height:12px;border-radius:999px;background:var(--line);overflow:hidden}
+.cbar i{display:block;height:100%;background:var(--good);border-radius:999px}
+.cbar.bad i{background:var(--bad)}
+.cstack{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--line)}
+.cstack i{display:block;height:100%}
+.ccard .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.tax{display:flex;flex-direction:column;gap:6px;align-items:flex-start;margin-top:2px}
+.bcard{position:relative}
+.bcard .cat{position:absolute;top:6px;left:6px;color:#fff;font-size:.65rem;font-weight:800;border-radius:999px;padding:1px 7px;text-transform:uppercase;letter-spacing:.04em}
+.bcard.capped{opacity:.7}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -771,6 +786,7 @@ input:focus{border-color:var(--blue);outline:none}
       <div class="happy" id="w-happy"></div>
       <div class="actions"><span class="pill" id="w-coins"></span><button class="btn yellow small" type="button" id="w-mk">Mercado</button><button class="btn ghost small" type="button" id="w-back">Voltar</button></div>
     </div>
+    <div class="panel w-city" id="w-city"></div>
     <div class="world-grid">
       <div class="panel w-mapbox">
         <div class="w-bar"><p class="w-hint" id="w-hint"></p><div class="seg2" id="w-view" role="group" aria-label="Visão do mundo"><button type="button" data-v="3d" aria-pressed="true">3D</button><button type="button" data-v="2d" aria-pressed="false">Planta</button></div></div>
@@ -779,10 +795,10 @@ input:focus{border-color:var(--blue);outline:none}
       </div>
       <div class="panel w-side">
         <div class="stage" id="w-stage"></div>
-        <h2 class="h2">Construir</h2>
-        <div class="w-build" id="w-build"></div>
-        <h2 class="h2" style="margin-top:18px">Aumentar o terreno</h2>
+        <h2 class="h2">Comprar mais terreno</h2>
         <div id="w-land"></div>
+        <h2 class="h2" style="margin-top:18px">Construir</h2>
+        <div class="w-build" id="w-build"></div>
       </div>
     </div>
     <div class="panel"><h2 class="h2">Conquistas</h2><p class="note" style="margin-bottom:12px">Cada conquista dá moedas de prêmio.</p><div class="ach-grid" id="ach"></div></div>
@@ -1476,6 +1492,9 @@ const ACH=[
  {id:'sorv1',nome:'Sorveteiro',desc:'Faça um sorvete',r:30,ok:p=>((p.prod||{}).sorvete||0)>=1},
  {id:'feira',nome:'Feirante',desc:'Venda 100 produtos no mercado',r:50,ok:p=>(p.vend||0)>=100},
  {id:'mk1000',nome:'Empresário',desc:'Ganhe 1000 moedas no mercado',r:100,ok:p=>(p.mkg||0)>=1000},
+ {id:'pop50',nome:'Cidade grande',desc:'Tenha 50 moradores',r:60,ok:p=>cityStats(p).pop>=50},
+ {id:'luz',nome:'Energia limpa',desc:'Construa uma usina solar',r:20,ok:p=>p.world.items.some(i=>i.t==='usina')},
+ {id:'tax100',nome:'Prefeito',desc:'Colete 100 moedas de impostos',r:40,ok:p=>(p.taxN||0)>=100},
  {id:'piso10',nome:'Mestre de obras',desc:'Atenda 10 clientes na loja de pisos',r:40,ok:p=>(p.pisos||0)>=10},
  {id:'enc5',nome:'Entregador',desc:'Entregue 5 encomendas',r:50,ok:p=>(p.encN||0)>=5},
  {id:'pizza1',nome:'Pizzaiolo',desc:'Asse uma pizza',r:30,ok:p=>((p.prod||{}).pizza||0)>=1},
@@ -1566,6 +1585,8 @@ const BUILD=[
  {id:'flores',nome:'Canteiro de flores',w:2,h:1,price:25,lvl:1},
  {id:'casa',nome:'Casa',w:2,h:2,price:80,lvl:1},
  {id:'horta',nome:'Horta',w:3,h:2,price:120,lvl:2},
+ {id:'usina',nome:'Usina solar',w:2,h:2,price:120,lvl:2},
+ {id:'agua',nome:"Caixa d'água",w:2,h:2,price:100,lvl:2},
  {id:'piscina',nome:'Piscina',w:3,h:2,price:200,lvl:3},
  {id:'galinheiro',nome:'Galinheiro',w:2,h:2,price:150,lvl:3},
  {id:'quadra',nome:'Quadra',w:4,h:3,price:380,lvl:4},
@@ -1587,7 +1608,7 @@ const UPG={arvore:['Árvore','Árvore grande','Árvore com balanço'],flores:['C
   piscina:['Piscina','Piscina com escorregador','Clube com guarda-sóis'],quadra:['Quadra','Quadra com arquibancada','Estádio com refletores'],
   lago:['Lago','Lago com píer','Lago com chafariz'],escola:['Escola','Escola de 2 andares','Escola de 3 andares'],
   castelo:['Castelo','Castelo com bandeiras','Castelo real de 3 andares'],base:['Base de foguetes','Base com torre de controle','Base com lançamentos'],
-  galinheiro:['Galinheiro','Galinheiro grande','Granja com silo'],pisos:['Loja de pisos','Loja de pisos grande','Mega loja de pisos'],pizzaria:['Pizzaria','Pizzaria com mesinhas','Pizzaria de 2 andares'],curral:['Curral','Curral com feno','Fazenda leiteira'],padaria:['Padaria','Padaria com mesinhas','Confeitaria de 2 andares'],sorveteria:['Sorveteria','Sorveteria com mesinhas','Sorveteria neon']};
+  galinheiro:['Galinheiro','Galinheiro grande','Granja com silo'],usina:['Usina solar','Usina solar grande','Usina solar e eólica'],agua:["Caixa d'água","Caixa d'água alta",'Estação de tratamento'],pisos:['Loja de pisos','Loja de pisos grande','Mega loja de pisos'],pizzaria:['Pizzaria','Pizzaria com mesinhas','Pizzaria de 2 andares'],curral:['Curral','Curral com feno','Fazenda leiteira'],padaria:['Padaria','Padaria com mesinhas','Confeitaria de 2 andares'],sorveteria:['Sorveteria','Sorveteria com mesinhas','Sorveteria neon']};
 const lvName=it=>(UPG[it.t]||[])[(it.lv||1)-1]||(BMAP[it.t]||{}).nome||it.t;
 const upCost=(bd,lv)=>bd.price*lv;                 /* do nível lv para lv+1 */
 const upReq=(bd,lv)=>bd.lvl+(lv===1?1:3);           /* nível do jogador exigido */
@@ -1601,7 +1622,7 @@ function stageOf(pts){if(pts<160){let i=0;while(i<4&&pts>=STAGES[i+1][1])i++;ret
 const worldStage=p=>stageOf(Math.max(worldPts(p),(p.world&&p.world.pmax)||0));
 function trackStage(before){const now=worldPts(P);P.world.pmax=Math.max(P.world.pmax||0,now);const st=worldStage(P);
   if(st.i>before){const got=checkAch();saveProfile();setTimeout(()=>showStage(st),900);announceAch(got,3600);}}
-const M2PRICE=12,MAXW=16,MAXH=12,TS=40,WPAD=8,WLEFT=84;
+const M2PRICE=12,MAXW=30,MAXH=22,TS=40,WPAD=8,WLEFT=84;
 const n1=v=>Math.round(v*10)/10;
 const BD={
  arvore:(x,y,W,H)=>{const cx=x+W/2,cy=y+H/2,r=Math.min(W,H)*.44;return `<circle cx="${n1(cx+2)}" cy="${n1(cy+3)}" r="${n1(r)}" fill="#1F6B43" opacity=".35"/><circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="#2E8B57"/><circle cx="${n1(cx-r*.3)}" cy="${n1(cy-r*.3)}" r="${n1(r*.5)}" fill="#46B06E"/><circle cx="${n1(cx+r*.35)}" cy="${n1(cy+r*.3)}" r="2.6" fill="#E5484D"/>`},
@@ -1624,7 +1645,7 @@ const WS={sel:null,rot:false,pick:null,move:null,view:'3d'};
 function selDims(){const b=BMAP[WS.sel];return WS.rot?[b.h,b.w]:[b.w,b.h];}
 function occupied(wd,skip=-1){const g=new Set();wd.items.forEach((it,i)=>{if(i===skip)return;for(let a=0;a<it.w;a++)for(let c=0;c<it.h;c++)g.add((it.x+a)+','+(it.y+c));});(wd.probs||[]).forEach(q=>g.add(q.x+','+q.y));return g;}
 /* ---------- cuidar da cidade: mato (erros), lixo e estragos (dias sem jogar) ---------- */
-const DANO={arvore:'Árvore doente',flores:'Flores murchas',casa:'Goteira no telhado',horta:'Praga na horta',piscina:'Água suja na piscina',quadra:'Rede rasgada',lago:'Lago sujo',escola:'Janela quebrada',castelo:'Muro rachado',base:'Pane no foguete',galinheiro:'Raposa no galinheiro',curral:'Cerca quebrada',padaria:'Forno quebrado',sorveteria:'Freezer desligado',pisos:'Vitrine quebrada',pizzaria:'Forno a lenha apagado'};
+const DANO={arvore:'Árvore doente',flores:'Flores murchas',casa:'Goteira no telhado',horta:'Praga na horta',piscina:'Água suja na piscina',quadra:'Rede rasgada',lago:'Lago sujo',escola:'Janela quebrada',castelo:'Muro rachado',base:'Pane no foguete',galinheiro:'Raposa no galinheiro',curral:'Cerca quebrada',padaria:'Forno quebrado',sorveteria:'Freezer desligado',usina:'Painel solar quebrado',agua:'Bomba de água quebrada',pisos:'Vitrine quebrada',pizzaria:'Forno a lenha apagado'};
 const PROBNOME={mato:'Mato',lixo:'Lixo'};
 function freeTiles(wd){const o=occupied(wd),out=[];for(let y=0;y<wd.h;y++)for(let x=0;x<wd.w;x++)if(!o.has(x+','+y))out.push([x,y]);return out;}
 function addProb(k){const wd=P.world;wd.probs=wd.probs||[];if(wd.probs.length>=8)return false;const fr=freeTiles(wd);if(!fr.length)return false;const [x,y]=pick(fr);wd.probs.push({k,x,y});return true;}
@@ -1651,7 +1672,7 @@ function worldSVG(p){const wd=p.world,W=wd.w*TS,H=wd.h*TS,VW=WLEFT+W+WPAD,VH=H+W
     const broke=it.dano?`<rect x="${X+3}" y="${Y+3}" width="${IW-6}" height="${IH-6}" rx="6" fill="rgba(70,70,80,.45)"/><g pointer-events="none"><circle cx="${X+11}" cy="${Y+11}" r="9" fill="#D9363E" stroke="#fff" stroke-width="2"/><text x="${X+11}" y="${Y+16}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" font-family="sans-serif">!</text></g>`:'';
     s+=`<g class="it${WS.move===i?' moving':''}" data-i="${i}">${it.t==='arvore'?`<g class="sway">${art}</g>`:art}${badge}${broke}${readyBadge(it,X,Y,IW)}<rect x="${X+1}" y="${Y+1}" width="${IW-2}" height="${IH-2}" rx="5" fill="transparent" stroke="${WS.pick===i?'#FFD43B':'transparent'}" stroke-width="3.5"/></g>`;});
   (wd.probs||[]).forEach((q,i)=>{const X=WLEFT+q.x*TS,Y=WPAD+q.y*TS;
-    s+=`<g class="pb" data-p="${i}" style="cursor:pointer"><rect x="${X}" y="${Y}" width="${TS}" height="${TS}" fill="transparent"/>`+(q.k==='mato'
+    s+=`<g class="pb" data-p="${i}" style="cursor:pointer"><rect x="${X}" y="${Y}" width="${TS}" height="${TS}" fill="transparent"/>`+(PROB2D[q.k]?PROB2D[q.k](X,Y):q.k==='mato'
       ?[[10,30],[20,26],[30,31],[15,18],[26,16]].map(([a,b])=>`<path d="M${X+a} ${Y+b} l-4 -10 M${X+a} ${Y+b} l0 -13 M${X+a} ${Y+b} l5 -10" stroke="#2F6B2F" stroke-width="2.6" stroke-linecap="round"/>`).join('')
       :`<ellipse cx="${X+15}" cy="${Y+24}" rx="9" ry="11" fill="#2A2D36"/><ellipse cx="${X+27}" cy="${Y+27}" rx="8" ry="9" fill="#3A3F4B"/><path d="M${X+12} ${Y+13} l3 4 l3 -4" stroke="#2A2D36" stroke-width="2" fill="none"/><circle cx="${X+30}" cy="${Y+12}" r="1.6" fill="#222"/><circle cx="${X+34}" cy="${Y+9}" r="1.4" fill="#222"/>`)+`</g>`;});
   /* cerca de madeira com mourões em cada metro */
@@ -1701,7 +1722,7 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
   $('#w-land').innerHTML=`<div class="land">
     <button type="button" class="btn ${P.coins>=cCost&&wd.w<MAXW?'ghost':'ghost'}" data-land="col" ${wd.w>=MAXW||P.coins<cCost?'disabled':''}><span>+1 coluna: ${wd.w+1} × ${wd.h} = ${(wd.w+1)*wd.h} m² <small>(+${wd.h} m²)</small></span><span class="coins">${COIN}${cCost}</span></button>
     <button type="button" class="btn ghost" data-land="row" ${wd.h>=MAXH||P.coins<rCost?'disabled':''}><span>+1 linha: ${wd.w} × ${wd.h+1} = ${wd.w*(wd.h+1)} m² <small>(+${wd.w} m²)</small></span><span class="coins">${COIN}${rCost}</span></button>
-    <p class="note">Cada m² novo custa ${M2PRICE} moedas.</p></div>`;}
+    <p class="note">Cada m² novo custa ${M2PRICE} moedas. Tamanho máximo: ${MAXW} × ${MAXH} = ${MAXW*MAXH} m².</p></div>`;}
 $('#w-build').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;WS.sel=WS.sel===b.dataset.b&&WS.move==null?null:b.dataset.b;WS.move=null;WS.rot=false;WS.pick=null;renderWorld();});
 $('#w-sel').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;const a=b.dataset.w;
   if(a==='open'&&WS.pick!==null){openProd(WS.pick);return}
@@ -1899,7 +1920,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
     /* mato e lixo */
     this.probs=new T.Group();root.add(this.probs);
     (wd.probs||[]).forEach((q,i)=>{const g=new T.Group();g.position.set(q.x+.5-W/2,.12,q.y+.5-H/2);g.userData.prob=i;this.probs.add(g);
-      if(q.k==='mato'){for(let k=0;k<7;k++){const c=this.mesh(new T.ConeGeometry(.07,.45+(k%3)*.12,5),this.M(N?0x24502A:0x2F6B2F),(Math.cos(k*2.4)*.28),.22,(Math.sin(k*2.4)*.28),g);c.rotation.z=(k%2?.25:-.25);}this.anim.push({o:g,t:'sway',k:i});}
+      if(PROB3D[q.k])PROB3D[q.k].call(this,g,i);else if(q.k==='mato'){for(let k=0;k<7;k++){const c=this.mesh(new T.ConeGeometry(.07,.45+(k%3)*.12,5),this.M(N?0x24502A:0x2F6B2F),(Math.cos(k*2.4)*.28),.22,(Math.sin(k*2.4)*.28),g);c.rotation.z=(k%2?.25:-.25);}this.anim.push({o:g,t:'sway',k:i});}
       else{this.mesh(new T.SphereGeometry(.22,8,6),this.M(0x2A2D36,{roughness:.4}),-.1,.18,0,g).scale.y=1.2;this.mesh(new T.SphereGeometry(.18,8,6),this.M(0x3A3F4B,{roughness:.4}),.17,.15,.1,g);
         this.mesh(new T.CylinderGeometry(.05,.05,.22,8),this.M(0x3FAE6A,{transparent:true,opacity:.8}),.05,.05,-.22,g).rotation.z=Math.PI/2;}
       const hit=this.mesh(new T.BoxGeometry(.95,.6,.95),new T.MeshBasicMaterial({visible:false}),0,.3,0,g);hit.castShadow=false;});
@@ -2034,6 +2055,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
         else if(a.t==='peck'){o.rotation.z=Math.max(0,Math.sin(s*3+a.k))*-.5;o.position.y=.08+Math.max(0,Math.sin(s*1.3+a.k*2))*.05;}
         else if(a.t==='graze')o.rotation.y=a.r+Math.sin(s*.4+a.k)*.6;
         else if(a.t==='turn')o.rotation.y=s*.8;
+        else if(a.t==='drip'){const c=(s*.8+a.k)%1;o.position.y=.35-c*.35;o.scale.setScalar(1-c*.5);}
         else if(a.t==='ready'){o.position.y=a.k+Math.sin(s*3)*.12;o.rotation.y=s*2.2;}
         else if(a.t==='beam')o.rotation.y=s*1.2;
         else if(a.t==='boat'){const q=s*a.sp+a.k;o.position.set(Math.cos(q)*a.r,-.25+Math.sin(s*2+a.k)*.04,Math.sin(q)*a.r);o.rotation.y=-q;}
@@ -2509,6 +2531,98 @@ Object.assign(W3.models,{
 });
 
 const renderMarket0=renderMarket;renderMarket=function(){renderMarket0();renderEnc();};
+
+/* ---------- cidade viva: moradores, energia, água, lazer, variedade, impostos e problemas na cidade ---------- */
+const CAT={casa:'moradia',castelo:'moradia',arvore:'lazer',flores:'lazer',piscina:'lazer',quadra:'lazer',lago:'lazer',
+  horta:'fazenda',galinheiro:'fazenda',curral:'fazenda',padaria:'comercio',sorveteria:'comercio',pizzaria:'comercio',pisos:'comercio',
+  escola:'servicos',usina:'servicos',agua:'servicos',base:'servicos'};
+const CATN={moradia:'moradia',lazer:'lazer',fazenda:'fazenda',comercio:'comércio',servicos:'serviços'};
+const CATC={moradia:'#E5484D',lazer:'#22B357',fazenda:'#C48A3E',comercio:'#9B5BFF',servicos:'#2F6BFF'};
+const CAT_MAX=.5,CAT_MIN_TOTAL=16;/* nenhum tipo (menos serviços) pode passar de 50% da área construída, depois de 16 m² */
+const ENER={piscina:2,quadra:3,escola:6,base:10,padaria:4,sorveteria:5,pizzaria:4,pisos:3,galinheiro:1,curral:2,agua:2};
+const AGUA={piscina:8,horta:3,curral:4,galinheiro:2,escola:4,padaria:2,sorveteria:2,pizzaria:2,quadra:1,base:2,flores:1};
+const REDE={e:10,a:10};/* a cidade vizinha empresta um pouco de energia e água */
+const moradores=it=>CAT[it.t]==='moradia'?it.w*it.h*floorsOf(it):0;
+function cityStats(p){const items=p.world.items,pr=p.world.probs||[];let pop=0,ue=0,ua=0,pe=REDE.e,pa=REDE.a;const area={moradia:0,lazer:0,fazenda:0,comercio:0,servicos:0};
+  items.forEach(it=>{const m=moradores(it);pop+=m;ue+=m+(ENER[it.t]||0);ua+=m+(AGUA[it.t]||0);if(CAT[it.t])area[CAT[it.t]]+=it.w*it.h;
+    if(!it.dano){if(it.t==='usina')pe+=it.w*it.h*4*(it.lv||1);if(it.t==='agua')pa+=it.w*it.h*5*(it.lv||1);if(it.t==='lago')pa+=6;}});
+  const poste=pr.filter(q=>q.k==='poste').length,cano=pr.filter(q=>q.k==='cano').length;pe=Math.max(0,pe-5*poste);pa=Math.max(0,pa-5*cano);
+  const tot=Object.values(area).reduce((a,b)=>a+b,0),lazer=items.some(i=>CAT[i.t]==='lazer'&&i.t!=='arvore')||items.filter(i=>i.t==='arvore').length>=3;
+  return {pop,ue,ua,pe,pa,area,tot,lazer,faltaE:ue>pe,faltaA:ua>pa,semLazer:pop>0&&!lazer};}
+function catBlock(t,addArea){const c=CAT[t];if(!c||c==='servicos'||!P)return null;const st=cityStats(P),tot=st.tot+addArea,mine=st.area[c]+addArea;
+  if(tot<CAT_MIN_TOTAL||mine/tot<=CAT_MAX)return null;return {c,mine,tot,pct:Math.round(mine/tot*100)};}
+const happy0=happy;
+happy=function(p){const pr=p.world.probs||[],st=cityStats(p);let h=happy0(p)-6*pr.filter(q=>q.k==='buraco'||q.k==='cano'||q.k==='poste').length;
+  if(st.faltaE)h-=15;if(st.faltaA)h-=15;if(st.semLazer)h-=10;return Math.max(0,Math.min(100,h));};
+/* impostos: 1 moeda por morador a cada hora, vezes a felicidade; guarda até 3 horas */
+const TAXH=60*MIN;
+function taxState(p){if(!p.tax)p.tax={t:Date.now()};const n=Math.min(3,Math.floor((Date.now()-p.tax.t)/TAXH)),st=cityStats(p),h=happy(p);
+  return {n,per:Math.floor(st.pop*h/100),pop:st.pop,h,total:n*Math.floor(st.pop*h/100),next:TAXH-((Date.now()-p.tax.t)%TAXH)};}
+function collectTax(){const ts=taxState(P);if(ts.n<1||ts.total<1)return;P.tax.t=ts.n>=3?Date.now():P.tax.t+ts.n*TAXH;P.coins+=ts.total;P.xp+=ts.total;P.taxN=(P.taxN||0)+ts.total;
+  const got=checkAch();saveProfile();sfx('cash');toast(`Impostos coletados: +${ts.total} moedas!`);renderWorld();announceAch(got,1500);}
+/* problemas que aparecem na cidade com o tempo (no máximo 2 de cada vez) */
+const PROB_N={mato:'Limpar o mato',lixo:'Recolher o lixo',buraco:'Tapar o buraco na rua',cano:'Consertar o cano vazando',poste:'Trocar a lâmpada do poste'};
+function cityEvents(){if(!P||!P.world.items.length)return;const now=Date.now();if(!P.ev){P.ev=now;return}if(now-P.ev<90*MIN)return;P.ev=now;
+  const pr=P.world.probs||[];if(pr.filter(q=>['buraco','cano','poste'].includes(q.k)).length>=2)return;const st=cityStats(P);
+  const k=pick(st.pop>0?['buraco','cano','poste']:['buraco','poste']);if(addProb(k)){saveProfile();toast({buraco:'Apareceu um buraco na rua!',cano:'Um cano está vazando: a cidade perde água.',poste:'Um poste apagou: a cidade perde energia.'}[k]+' Toque nele para consertar.');}}
+function renderCity(){const el=$('#w-city');if(!el||!P)return;const st=cityStats(P),ts=taxState(P),items=P.world.items;
+  const houses=items.filter(i=>CAT[i.t]==='moradia');const bar=(u,p)=>`<div class="cbar ${u>p?'bad':''}"><i style="width:${Math.min(100,p?u/p*100:100)}%"></i></div>`;
+  const usinas=items.filter(i=>i.t==='usina'&&!i.dano),aguas=items.filter(i=>i.t==='agua'&&!i.dano);
+  const cats=Object.keys(st.area).filter(c=>st.area[c]>0);
+  el.innerHTML=`<div class="ccard"><b>👪 ${st.pop} moradores</b><small>${houses.length?houses.map(i=>`${lvName(i)}: ${i.w} × ${i.h} = ${i.w*i.h} m²${floorsOf(i)>1?` × ${floorsOf(i)} andares`:''} = ${moradores(i)}`).slice(0,3).join('<br>')+(houses.length>3?'<br>…':''):'Construa casas para ter moradores. Cada m² construído de casa abriga 1 morador.'}</small>
+      ${st.pop?`<div class="tax"><small>Impostos: ${st.pop} moradores × ${ts.h}% de felicidade = ${ts.per} moedas por hora (guarda até 3 h)</small>${ts.total?`<button type="button" class="btn go small" id="c-tax">Coletar ${COIN}${ts.total}</button>`:`<small>Próximos impostos em ${fmtLeft(ts.next)}.</small>`}</div>`:''}</div>
+    <div class="ccard"><b>⚡ Energia: usa ${st.ue} de ${st.pe}</b>${bar(st.ue,st.pe)}<small>${st.faltaE?`<span class="warn">Falta energia! Construa ou melhore uma usina solar.</span>`:'Tudo aceso.'} Rede vizinha: ${REDE.e}.${usinas.length?' '+usinas.map(u=>`Usina: ${u.w} × ${u.h} = ${u.w*u.h} m² de painel × 4${(u.lv||1)>1?` × ${u.lv}`:''} = ${u.w*u.h*4*(u.lv||1)}`).join('; '):''}</small></div>
+    <div class="ccard"><b>💧 Água: usa ${st.ua} de ${st.pa}</b>${bar(st.ua,st.pa)}<small>${st.faltaA?`<span class="warn">Falta água! Construa ou melhore uma caixa d'água.</span>`:'Torneiras funcionando.'} Rede vizinha: ${REDE.a}.${aguas.length?' '+aguas.map(u=>`Caixa: ${u.w} × ${u.h} = ${u.w*u.h} m² × 5${(u.lv||1)>1?` × ${u.lv}`:''} = ${u.w*u.h*5*(u.lv||1)}`).join('; '):''}${items.some(i=>i.t==='lago')?' Lago: +6.':''}</small></div>
+    <div class="ccard"><b>🏙️ Variedade da cidade</b>${st.tot?`<div class="cstack">${cats.map(c=>`<i style="width:${st.area[c]/st.tot*100}%;background:${CATC[c]}" title="${CATN[c]}"></i>`).join('')}</div><small>${cats.map(c=>`<span class="dot" style="background:${CATC[c]}"></span>${CATN[c]} ${st.area[c]} de ${st.tot} m² = ${Math.round(st.area[c]/st.tot*100)}%`).join('<br>')}</small>`:'<small>Nada construído ainda.</small>'}<small>Regra: nenhum tipo pode passar de 50% da área construída (serviços não contam no limite).</small></div>`;
+  const b=$('#c-tax');if(b)b.onclick=collectTax;}
+/* liga a cidade nas telas que já existem */
+const renderWorld0=renderWorld;renderWorld=function(){cityEvents();renderWorld0();renderCity();if(P&&!P.cityIntro&&P.world.items.length){P.cityIntro=1;saveProfile();setTimeout(()=>toast('Novidade: sua cidade agora tem moradores, energia e água! Veja o painel da cidade e construa uma usina solar e uma caixa d\'água.'),600);}
+  document.querySelectorAll('#w-build .bcard').forEach((card,i)=>{const bd=BUILD[i];if(!bd||card.classList.contains('locked'))return;const cb=catBlock(bd.id,bd.w*bd.h);
+    if(cb){const btn=card.querySelector('button');if(btn){btn.disabled=true;btn.className='btn ghost';btn.textContent='Limite de 50%';}card.classList.add('capped');card.title=`Ficaria com ${cb.pct}% de ${CATN[cb.c]}`;}
+    const cat=document.createElement('span');cat.className='cat';cat.style.background=CATC[CAT[bd.id]]||'#888';cat.textContent=CATN[CAT[bd.id]]||'';card.prepend(cat);});};
+const worldTap0=worldTap;worldTap=function(c,pickIdx,probIdx){if(WS.sel&&WS.move==null&&c){const bd=BMAP[WS.sel],[w,h]=selDims(),cb=catBlock(WS.sel,w*h);
+    if(cb){toast(`Sua cidade ficaria com ${cb.mine} de ${cb.tot} m² de ${CATN[cb.c]} = ${cb.pct}%. O limite é 50%: construa outro tipo antes.`);return}}
+  return worldTap0(c,pickIdx,probIdx);};
+const renderHappy0=renderHappy;renderHappy=function(){renderHappy0();const st=cityStats(P),pr=P.world.probs||[],el=$('#w-happy');const extra=[];
+  const nb=pr.filter(q=>q.k==='buraco').length,nc=pr.filter(q=>q.k==='cano').length,np=pr.filter(q=>q.k==='poste').length;
+  if(nb)extra.push(`${nb} buraco${nb>1?'s':''} na rua (−${6*nb})`);if(nc)extra.push(`${nc} cano${nc>1?'s':''} vazando (−${6*nc})`);if(np)extra.push(`${np} poste${np>1?'s':''} apagado${np>1?'s':''} (−${6*np})`);
+  if(st.faltaE)extra.push('falta energia (−15)');if(st.faltaA)extra.push('falta água (−15)');if(st.semLazer)extra.push('moradores sem lazer (−10)');
+  if(extra.length){const box=el.querySelector('div');if(box)box.insertAdjacentHTML('beforeend',`<small class="warn">${extra.join(' · ')}</small>`);}};
+/* título dos consertos novos */
+const newFixQ0=newFixQ;newFixQ=function(){newFixQ0();if(FX.k!=='dano'){const pr=P.world.probs[FX.idx];if(pr&&PROB_N[pr.k])$('#fix-title').textContent=PROB_N[pr.k];}};
+/* desenhos dos problemas novos e das construções de serviço */
+const PROB2D={
+  buraco:(X,Y)=>`<rect x="${X+3}" y="${Y+8}" width="34" height="24" rx="4" fill="#7D8597"/><ellipse cx="${X+20}" cy="${Y+21}" rx="11" ry="7" fill="#2A2D36"/><path d="M${X+6} ${Y+12} l6 3 M${X+30} ${Y+29} l5 -3" stroke="#555D6E" stroke-width="2"/><polygon points="${X+30},${Y+4} ${X+37},${Y+16} ${X+23},${Y+16}" fill="#FF8A3D" stroke="#fff" stroke-width="1.5"/>`,
+  cano:(X,Y)=>`<rect x="${X+4}" y="${Y+17}" width="32" height="8" rx="3" fill="#9AA3B2" stroke="#5E6878" stroke-width="1.5"/><rect x="${X+17}" y="${Y+14}" width="6" height="14" rx="2" fill="#7D8597"/><path d="M${X+20} ${Y+13} q-6 -6 -2 -11 M${X+20} ${Y+13} q6 -6 3 -11" stroke="#4FB3E8" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="${X+20}" cy="${Y+34}" rx="12" ry="3.5" fill="#7FC8F8" opacity=".8"/>`,
+  poste:(X,Y)=>`<rect x="${X+18}" y="${Y+8}" width="4" height="28" fill="#5E6878"/><path d="M${X+20} ${Y+9} q8 -4 12 2" stroke="#5E6878" stroke-width="3" fill="none"/><ellipse cx="${X+32}" cy="${Y+13}" rx="5" ry="3" fill="#3A3F4B"/><circle cx="${X+10}" cy="${Y+10}" r="6" fill="#E5484D"/><rect x="${X+9}" y="${Y+6}" width="2" height="5" fill="#fff"/><rect x="${X+9}" y="${Y+12}" width="2" height="2" fill="#fff"/>`,
+};
+const PROB3D={
+  buraco(g){this.mesh(new THREE.CylinderGeometry(.34,.3,.04,14),this.M(0x2A2D36),0,0,0,g);this.mesh(new THREE.BoxGeometry(.8,.03,.8),this.M(0x7D8597),0,-.02,0,g);
+    const c=this.mesh(new THREE.ConeGeometry(.12,.32,8),this.M(0xFF8A3D),.32,.16,-.3,g);this.mesh(new THREE.CylinderGeometry(.125,.1,.06,8),this.M(0xFFFFFF),.32,.18,-.3,g);},
+  cano(g,i){const p=this.mesh(new THREE.CylinderGeometry(.08,.08,.8,10),this.M(0x9AA3B2,{metalness:.5,roughness:.4}),0,.1,0,g);p.rotation.z=Math.PI/2;
+    this.mesh(new THREE.CylinderGeometry(.3,.3,.02,16),this.M(0x7FC8F8,{transparent:true,opacity:.7}),0,0,0,g);
+    for(let k=0;k<3;k++){const d=this.mesh(new THREE.SphereGeometry(.05,8,6),this.M(0x4FB3E8),0,.3,0,g);d.castShadow=false;this.anim.push({o:d,t:'drip',k:k*.33});}},
+  poste(g,i){this.box(.07,1.1,.07,this.M(0x5E6878),0,0,0,g);this.box(.35,.05,.05,this.M(0x5E6878),.15,1.08,0,g);this.mesh(new THREE.SphereGeometry(.09,8,6),this.M(0x3A3F4B),.3,1.02,0,g);
+    const w=new THREE.Group();w.position.set(0,1.5,0);g.add(w);this.mesh(new THREE.SphereGeometry(.14,10,8),this.M(0xE5484D,{emissive:0xE5484D,emissiveIntensity:.5}),0,0,0,w);this.anim.push({o:w,t:'warn',k:i});},
+};
+Object.assign(BD,{
+  usina:(x,y,W,H)=>{let s=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="5" fill="#C9D3E3"/>`;const cw=(W-12)/2,ch=(H-12)/2;
+    for(let a=0;a<2;a++)for(let b=0;b<2;b++){const px=x+4+a*(cw+4),py=y+4+b*(ch+4);s+=`<rect x="${n1(px)}" y="${n1(py)}" width="${n1(cw)}" height="${n1(ch)}" rx="2" fill="#2F4FA8" stroke="#E4EDFF" stroke-width="1.5"/><path d="M${n1(px+cw/3)} ${n1(py)} v${n1(ch)} M${n1(px+2*cw/3)} ${n1(py)} v${n1(ch)} M${n1(px)} ${n1(py+ch/2)} h${n1(cw)}" stroke="#7FA8FF" stroke-width="1"/>`;}
+    return s+`<circle cx="${n1(x+W-8)}" cy="${n1(y+8)}" r="6" fill="#FFD43B"/>`;},
+  agua:(x,y,W,H)=>{const cx=x+W/2;return `<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="5" fill="#D9EEF9"/><path d="M${n1(cx-16)} ${n1(y+H-6)} l6 -26 M${n1(cx+16)} ${n1(y+H-6)} l-6 -26" stroke="#5E6878" stroke-width="3"/><ellipse cx="${n1(cx)}" cy="${n1(y+H*.38)}" rx="${n1(W*.3)}" ry="${n1(H*.26)}" fill="#4FB3E8" stroke="#2F6BFF" stroke-width="2"/><path d="M${n1(cx-W*.2)} ${n1(y+H*.36)} q${n1(W*.1)} -5 ${n1(W*.2)} 0 t${n1(W*.2)} 0" stroke="#fff" stroke-width="2" fill="none"/><path d="M${n1(cx)} ${n1(y+H*.66)} q-4 7 0 10 q4 -3 0 -10z" fill="#4FB3E8"/>`;},
+});
+Object.assign(W3.models,{
+  usina(g,fw,fd,lv){const T=THREE;this.box(fw-.1,.05,fd-.1,0xC9D3E3,0,0,0,g);const n=lv>=2?3:2;
+    for(let a=0;a<2;a++)for(let b=0;b<n;b++){const pg=new T.Group();pg.position.set(-fw/4+a*fw/2,.3,-fd/2+(b+.5)*fd/n);g.add(pg);
+      const pn=this.box(fw/2-.2,.04,fd/n-.15,this.M(0x2F4FA8,{metalness:.6,roughness:.25}),0,0,0,pg);pn.rotation.x=-.45;this.box(.05,.3,.05,this.M(0x9AA3B2),0,-.3,0,pg);}
+    if(lv>=3){const t=new T.Group();t.position.set(fw/2-.3,0,fd/2-.3);g.add(t);this.mesh(new T.CylinderGeometry(.04,.06,1.8,8),this.M(0xFFFFFF),0,.9,0,t);
+      const r=new T.Group();r.position.set(0,1.8,.08);t.add(r);for(let k=0;k<3;k++){const bl=this.box(.06,.6,.02,this.M(0xFFFFFF),0,0,0,r);bl.geometry.translate(0,.3,0);bl.position.y=0;bl.rotation.z=k*Math.PI*2/3;}
+      this.anim.push({o:r,t:'spin',k:0});}},
+  agua(g,fw,fd,lv){const T=THREE;this.box(fw-.1,.05,fd-.1,0xD9EEF9,0,0,0,g);const h=1.1+(lv>=2?.4:0);
+    for(const [a,b] of [[-.35,-.35],[.35,-.35],[-.35,.35],[.35,.35]])this.box(.07,h,.07,this.M(0x5E6878),a,0,b,g);
+    this.mesh(new T.CylinderGeometry(.6,.6,.7,16),this.M(0x4FB3E8,{roughness:.3}),0,h+.35,0,g);this.mesh(new T.ConeGeometry(.66,.3,16),this.M(0x2F6BFF),0,h+.85,0,g);
+    if(lv>=3){this.mesh(new T.CylinderGeometry(.4,.4,.25,16),this.M(0x7FC8F8,{transparent:true,opacity:.8}),fw/2-.45,.15,fd/2-.45,g);}},
+});
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};
