@@ -7,7 +7,9 @@
  */
 const PLANILHA_ID = '1JouLmAOOjlO9q5mhMLXhL27FFCfLMStuOi104A01rtU';
 const ABA = 'jogadores';
-const COLS = ['id', 'nome', 'publico', 'ano', 'senha', 'xp', 'moedas', 'nivel', 'm2', 'avatar', 'dados', 'atualizado'];
+const COLS = ['id', 'nome', 'publico', 'ano', 'senha', 'xp', 'moedas', 'nivel', 'm2', 'avatar', 'dados', 'atualizado', 'curtidas', 'presentes'];
+const ABA_CURTIDAS = 'curtidas';
+const PRESENTE = 5; // moedas para quem curte e para quem é curtido
 const C = Object.fromEntries(COLS.map((c, i) => [c, i]));
 
 function aba_() {
@@ -17,8 +19,32 @@ function aba_() {
     s = ss.insertSheet(ABA);
     s.getRange(1, 1, 1, COLS.length).setValues([COLS]).setFontWeight('bold');
     s.setFrozenRows(1);
+  } else if (s.getLastColumn() < COLS.length) {
+    s.getRange(1, 1, 1, COLS.length).setValues([COLS]).setFontWeight('bold'); // planilha antiga: acrescenta as colunas novas
   }
   return s;
+}
+
+function preparar() { aba_(); abaCurtidas_(); }
+
+function abaCurtidas_() {
+  const ss = SpreadsheetApp.openById(PLANILHA_ID);
+  let s = ss.getSheetByName(ABA_CURTIDAS);
+  if (!s) {
+    s = ss.insertSheet(ABA_CURTIDAS);
+    s.getRange(1, 1, 1, 3).setValues([['dia', 'de', 'para']]).setFontWeight('bold');
+    s.setFrozenRows(1);
+  }
+  return s;
+}
+
+// código público de visita: não revela o nome completo
+function vid_(id) {
+  return hash_(id, 'visita').replace(/[^A-Za-z0-9]/g, '').slice(0, 12);
+}
+
+function hoje_() {
+  return Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'yyyy-MM-dd');
 }
 
 function json_(o) {
@@ -83,7 +109,9 @@ function grava_(s, row, id, b, perfil) {
     row ? s.getRange(row, C.senha + 1).getValue() : hash_(id, b.senha),
     perfil.xp, perfil.coins, nivel_(perfil.xp), m2_(perfil),
     JSON.stringify({ eq: perfil.eq || {}, look: perfil.look || {} }),
-    JSON.stringify(perfil).slice(0, 45000), new Date()
+    JSON.stringify(perfil).slice(0, 45000), new Date(),
+    row ? Number(s.getRange(row, C.curtidas + 1).getValue()) || 0 : 0,
+    row ? Number(s.getRange(row, C.presentes + 1).getValue()) || 0 : 0
   ];
   if (row) s.getRange(row, 1, 1, COLS.length).setValues([vals]);
   else s.appendRow(vals);
@@ -97,6 +125,7 @@ function doGet(e) {
     return json_({ ok: true, existe: !!linha_(aba_(), chave_(p.nome, p.ano)) });
   }
   if (p.acao === 'ranking') return json_(ranking_(p.ano));
+  if (p.acao === 'visitar') return json_(visitar_(String(p.vid || '')));
   return json_({ ok: true, app: 'Áreas do Tio Danilo' });
 }
 
@@ -108,6 +137,7 @@ function doPost(e) {
   try {
     if (b.acao === 'entrar') return json_(entrar_(b));
     if (b.acao === 'salvar') return json_(salvar_(b));
+    if (b.acao === 'curtir') return json_(curtir_(b));
     return json_({ ok: false, erro: 'acao' });
   } finally {
     lock.releaseLock();
@@ -152,7 +182,9 @@ function salvar_(b) {
   }
   if (novo.xp - xpAntes > 3000) return { ok: false, erro: 'suspeito' };
   grava_(s, row, id, b, novo);
-  return { ok: true };
+  const presentes = Number(s.getRange(row, C.presentes + 1).getValue()) || 0;
+  if (presentes > 0) s.getRange(row, C.presentes + 1).setValue(0); // o jogo do aluno soma as moedas dos presentes
+  return { ok: true, presentes: presentes };
 }
 
 function ranking_(ano) {
@@ -171,10 +203,67 @@ function ranking_(ano) {
       .map(r => {
         let av = {};
         try { av = JSON.parse(r[C.avatar] || '{}'); } catch (e) {}
-        return { publico: r[C.publico], ano: r[C.ano], xp: r[C.xp], moedas: r[C.moedas], nivel: r[C.nivel], m2: r[C.m2], avatar: av };
+        return { publico: r[C.publico], ano: r[C.ano], xp: r[C.xp], moedas: r[C.moedas], nivel: r[C.nivel], m2: r[C.m2], avatar: av,
+          vid: vid_(r[C.id]), curtidas: Number(r[C.curtidas]) || 0 };
       });
   }
   const o = { ok: true, rows: rows };
   cache.put(key, JSON.stringify(o), 30);
   return o;
+}
+
+function linhaVid_(s, vid) {
+  const n = s.getLastRow() - 1;
+  if (n < 1 || !/^[A-Za-z0-9]{12}$/.test(vid)) return 0;
+  const v = s.getRange(2, 1, n, 1).getValues();
+  for (let i = 0; i < v.length; i++) if (v[i][0] && vid_(v[i][0]) === vid) return i + 2;
+  return 0;
+}
+
+// visita: só o que aparece na cidade (sem senha, sem nome completo)
+function visitar_(vid) {
+  const s = aba_();
+  const row = linhaVid_(s, vid);
+  if (!row) return { ok: false, erro: 'naoexiste' };
+  const r = s.getRange(row, 1, 1, COLS.length).getValues()[0];
+  let p = {};
+  try { p = JSON.parse(r[C.dados] || '{}'); } catch (e) {}
+  const w = p.world || {};
+  return {
+    ok: true, vid: vid, publico: r[C.publico], ano: r[C.ano], xp: Number(r[C.xp]) || 0, nivel: r[C.nivel], m2: r[C.m2],
+    curtidas: Number(r[C.curtidas]) || 0, eq: p.eq || {}, look: p.look || {},
+    world: { w: w.w, h: w.h, items: (w.items || []).slice(0, 300), probs: (w.probs || []).slice(0, 20) }
+  };
+}
+
+// curtir a cidade de um colega: 1 vez por dia para cada cidade; os dois ganham moedas
+function curtir_(b) {
+  const er = valida_(b);
+  if (er) return { ok: false, erro: er };
+  const s = aba_();
+  const id = chave_(b.nome, b.ano);
+  const row = linha_(s, id);
+  if (!row) return { ok: false, erro: 'naoexiste' };
+  if (s.getRange(row, C.senha + 1).getValue() !== hash_(id, b.senha)) return { ok: false, erro: 'senha' };
+  const vid = String(b.vid || '');
+  if (vid === vid_(id)) return { ok: false, erro: 'propria' };
+  const alvo = linhaVid_(s, vid);
+  if (!alvo) return { ok: false, erro: 'naoexiste' };
+  const c = abaCurtidas_();
+  const dia = hoje_();
+  const n = c.getLastRow() - 1;
+  if (n > 0) {
+    const ini = Math.max(2, c.getLastRow() - 3000);
+    const v = c.getRange(ini, 1, c.getLastRow() - ini + 1, 3).getValues();
+    for (let i = 0; i < v.length; i++) {
+      const d = v[i][0] instanceof Date ? Utilities.formatDate(v[i][0], 'America/Sao_Paulo', 'yyyy-MM-dd') : String(v[i][0]);
+      if (d === dia && v[i][1] === vid_(id) && v[i][2] === vid) return { ok: false, erro: 'hoje' };
+    }
+  }
+  c.appendRow(["'" + dia, vid_(id), vid]);
+  const cur = Number(s.getRange(alvo, C.curtidas + 1).getValue()) || 0;
+  const pre = Number(s.getRange(alvo, C.presentes + 1).getValue()) || 0;
+  s.getRange(alvo, C.curtidas + 1, 1, 2).setValues([[cur + 1, pre + 1]]);
+  CacheService.getScriptCache().removeAll(['rk_all', 'rk_' + Number(s.getRange(alvo, C.ano + 1).getValue())]);
+  return { ok: true, moedas: PRESENTE, curtidas: cur + 1 };
 }
