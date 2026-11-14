@@ -18,6 +18,21 @@ O aluno escreve o nome, escolhe o ano e as figuras, e responde perguntas de áre
 - **Bônus de variedade** (ideia dos alunos): cada figura a mais na partida vale +1 moeda por acerto no fácil e +2 no difícil (2 figuras = +1, 3 figuras = +2…, até +5 no fácil e +10 no difícil).
 - **Rodízio de figuras**: quem joga uma partida só com uma figura pode repetir uma vez, mas aí as medidas vêm com vírgula (,5 até o 6º ano; décimos do 7º em diante). Na terceira partida seguida com a mesma figura sozinha, o jogo pede para marcar pelo menos mais uma. A regra zera quando o aluno joga com duas ou mais figuras.
 
+## Outros conteúdos (6º e 7º ano)
+
+Além das áreas, o aluno pode marcar conteúdos sem figura e misturar tudo numa partida (contam para o bônus de variedade e para o rodízio):
+
+- **Expressões numéricas** (5º+): ordem das operações e parênteses.
+- **Frações de quantidade** (5º+): 3/4 de 20, problemas com turmas, lápis, páginas.
+- **Potências e raízes** (6º+): 2⁵, √81.
+- **MMC e MDC** (6º+): contas diretas e problemas (ônibus que passam juntos, saquinhos iguais).
+- **Porcentagem** (6º+): p% de um valor, desconto e preço final.
+- **Números inteiros** (7º+): as quatro operações com sinais (no modo difícil aceita − ou -).
+- **Equações do 1º grau** (7º+): ax + b = c, ax − b = c, problemas ("o triplo de um número mais 5…") e, do 8º em diante, a(x + b) = c.
+- **Regra de três** (7º+): diretamente proporcional (cadernos, gasolina, receita, velocidade) e inversamente proporcional (pedreiros e dias).
+
+As alternativas erradas são os erros mais comuns (fazer a conta da esquerda para a direita, multiplicar base por expoente, esquecer de dividir na equação, usar regra direta onde é inversa…), e a resolução aparece depois de cada resposta. A lista em PDF continua só com áreas.
+
 ## Visual de jogo
 
 - O jogo acontece ao ar livre: céu, colinas e, na tela inicial, o avatar do aluno na frente das construções do mundo dele. No modo escuro vira noite.
@@ -96,6 +111,10 @@ Um segundo mundo, liberado no nível 15 depois de 3 viagens do foguete à Lua. N
 - **O mundo evolui**: cada construção sobe até o nível 3 (a casa vira sobrado e depois prédio de 3 andares, a piscina ganha escorregador e guarda-sóis, a quadra vira estádio com refletores, o lago ganha píer e chafariz, o foguete passa a decolar). Casa, escola e castelo ganham andares e o jogo mostra a área construída (piso × andares). Cada m² construído vale 1 ponto por nível, e os pontos fazem a ilha mudar de fase: Acampamento → Sítio (12) → Vila (35) → Cidade (80) → Metrópole (160) → Metrópole 2, 3… a cada 120 pontos. Cada fase traz novidades no 3D: moinho, caminho de pedras, postes de luz, barcos, farol, píer, moradores passeando, balão e chafariz.
 - **Meu mundo**: um terreno quadriculado em que cada quadradinho vale 1 m². O aluno gasta moedas em construções (árvore 1 m², casa 2 × 2 = 4 m², piscina 3 × 2 = 6 m², quadra 4 × 3 = 12 m², castelo 4 × 4 = 16 m²…) e pode aumentar o terreno a 12 moedas por m².
 - **Quadro de honra de todos** que jogam no site, em "Todos" ou "Meu ano", com primeiro nome e inicial do sobrenome.
+
+## Visitar a cidade dos colegas
+
+No **Quadro de honra**, o botão **Visitar** abre a cidade (e a colônia na Lua, se houver) de um colega, em 3D ou na planta, só para olhar e passear com o personagem dele. Uma vez por dia, cada cidade visitada pode receber uma **curtida**: quem curte e quem é curtido ganham 5 moedas (quem foi curtido recebe as moedas e um aviso na próxima vez que entrar). Sem o servidor, dá para visitar quem joga no mesmo computador; com o servidor, a turma toda. Aparece só o primeiro nome e a inicial do sobrenome.
 
 ## Onde fica o progresso
 

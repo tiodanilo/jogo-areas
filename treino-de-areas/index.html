@@ -163,7 +163,7 @@ input:focus{border-color:var(--blue);outline:none}
 .sync{font-size:.8rem;font-weight:700;color:var(--ink-2);min-height:1.2em;margin:0}
 .sync[data-s=ok]{color:var(--good)}
 .sync[data-s=local]{color:var(--coin)}
-.rank li{display:grid;grid-template-columns:26px 44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 8px;border-radius:12px}
+.rank li{display:grid;grid-template-columns:26px 44px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:6px 8px;border-radius:12px}
 .rank li.me{background:var(--blue-soft)}
 .note{margin:0;font-size:.9rem;color:var(--ink-2);font-weight:600}
 .world-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
@@ -628,6 +628,15 @@ details.fold.big[open] > summary{margin-bottom:10px}
 .bcard .mat{display:block;font-weight:800;font-size:.75rem;color:#5E6878}
 .bcard .mat.falta{color:var(--bad)}
 .note.warn{color:var(--bad);font-weight:800}
+.qcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:190px;padding:18px;border-radius:18px;background:linear-gradient(160deg,var(--paper),var(--card));border:3px dashed var(--line)}
+.qcard .qic{width:40px;height:40px;color:var(--blue,#2F5BEA)}
+.qcard .big{font-family:var(--f-display);font-weight:800;font-size:clamp(1.8rem,6vw,3rem);color:var(--ink);text-align:center;line-height:1.25;font-variant-numeric:tabular-nums}
+.qcard .big sup{font-size:.55em}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 .1em}
+.fr i{font-style:normal;padding:0 .12em}.fr i:first-child{border-bottom:3px solid currentColor}
+.chip small{opacity:.65;font-weight:700}
+.vbtn{white-space:nowrap}
+@media (max-width:560px){.rank li{grid-template-columns:26px 40px minmax(0,1fr) auto}.rank li .vbtn{grid-column:3/-1;justify-self:start}}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -716,7 +725,8 @@ details.fold.big[open] > summary{margin-bottom:10px}
   <section id="sc-setup" class="screen" hidden>
     <div class="panel step">
       <div><p class="eyebrow">Passo 3 de 3</p><h1>Monte o seu treino</h1></div>
-      <div class="field"><span class="lab">Figuras <small>· já marcamos as do seu ano</small></span><div class="chips" id="shapes"></div></div>
+      <div class="field"><span class="lab">Áreas das figuras <small>· já marcamos as do seu ano</small></span><div class="chips" id="shapes"></div></div>
+      <div class="field"><span class="lab">Outros conteúdos <small>· pode misturar com as figuras</small></span><div class="chips" id="topics"></div></div>
       <div class="field"><span class="lab">Modo</span>
         <div class="seg" id="modo">
           <button type="button" data-v="facil" aria-pressed="true"><b>Fácil</b><small>com alternativas · 5 moedas</small></button>
@@ -753,6 +763,16 @@ details.fold.big[open] > summary{margin-bottom:10px}
       <ol class="rank" id="rank"></ol>
       <div class="actions"><button class="btn ghost" type="button" id="rank-back">Voltar</button></div>
     </div>
+  </section>
+
+  <!-- VISITA -->
+  <section id="sc-visit" class="screen" hidden>
+    <div class="panel world-top">
+      <div><p class="eyebrow">Visitando a cidade de um colega</p><h1 id="v-title"></h1><p class="w-stats" id="v-stats"></p><div class="places" id="v-places"></div></div>
+      <div class="actions"><button class="btn go small" type="button" id="v-like">❤ Curtir</button><button class="btn ghost small" type="button" id="v-back">Voltar ao quadro</button></div>
+    </div>
+    <div class="panel"><div class="w-bar"><p class="w-hint" id="v-hint"></p><div class="seg2" id="v-view" role="group" aria-label="Visão da cidade"><button type="button" data-v="3d" aria-pressed="true">3D</button><button type="button" data-v="2d" aria-pressed="false">Planta</button></div></div>
+      <div id="v-3dbox"></div><div class="w-scroll" id="v-map" hidden></div></div>
   </section>
 
   <!-- JOGO -->
@@ -1035,16 +1055,73 @@ const SHAPES=[
 const SH=Object.fromEntries(SHAPES.map(s=>[s.id,s]));
 
 function makeQ(sid,ano,allowCtx=true){
-  const s=SH[sid];let u=Math.random()<.65?'cm':'m',txt=s.q;
+  const s=SH[sid];if(s.topic){const g=s.gen(ano);return {sid,nome:s.nome,formula:s.formula,topic:true,u:'',...g};}
+  let u=Math.random()<.65?'cm':'m',txt=s.q;
   if(allowCtx&&Math.random()<.5){const c=pick(s.ctx);u=c[1];txt=`${c[0]} tem as medidas da figura. Qual é a área?`}
   const g=s.gen(ano,u);if(g.pi)txt+=' Use π = 3,14.';
   return {sid,nome:s.nome,formula:s.formula,txt,u,...g};
 }
-function buildOpts(q){const seen=new Set([f(q.ans)]),o=[q.ans];
-  for(const w of q.wrong){const v=R2(w);if(v>0&&!seen.has(f(v))){seen.add(f(v));o.push(v)}if(o.length===4)break}
-  let guard=0;while(o.length<4&&guard++<200){const v=R2(q.ans+pick([-1,1])*rnd(1,Math.max(3,Math.round(q.ans*.3))));if(v>0&&!seen.has(f(v))){seen.add(f(v));o.push(v)}}
+function buildOpts(q){const seen=new Set([f(q.ans)]),o=[q.ans];const okV=v=>q.topic?(Number.isInteger(v)&&(q.neg?v!==0:v>0)):v>0;
+  for(const w of q.wrong){const v=R2(w);if(okV(v)&&!seen.has(f(v))){seen.add(f(v));o.push(v)}if(o.length===4)break}
+  let guard=0;while(o.length<4&&guard++<200){const v=R2(q.ans+pick([-1,1])*rnd(1,Math.max(3,Math.round(Math.abs(q.ans)*.3))));if(okV(v)&&!seen.has(f(v))){seen.add(f(v));o.push(v)}}
   return shuffle(o);}
 function makeSet(ids,ano,n,ctx=true){const order=[];while(order.length<n)order.push(...shuffle([...ids]));return order.slice(0,n).map(id=>makeQ(id,ano,ctx));}
+
+/* ---------- outros conteúdos do 6º e 7º ano: questões sem figura ---------- */
+const MN='−';const sg=v=>v<0?MN+Math.abs(v):String(v);const par=v=>v<0?`(${MN}${Math.abs(v)})`:`(+${v})`;
+const frH=(n,d)=>`<span class="fr"><i>${n}</i><i>${d}</i></span>`;
+const ticon=t=>`<text x="12" y="16.5" text-anchor="middle" font-size="${t.length>2?8:11}" font-weight="800" fill="currentColor" font-family="sans-serif">${t}</text>`;
+const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a/gcd(a,b)*b;
+const TOPICS=[
+ {id:'expr',nome:'Expressões numéricas',minAno:5,icon:ticon('+×'),formula:'Primeiro o que está nos parênteses, depois × e ÷, por último + e −.',
+  gen(ano){const M=ano>=7?12:9,a=rnd(2,M),b=rnd(2,M),c=rnd(2,M);const k=rnd(0,3);let big,ans,steps,wrong;
+   if(k===0){big=`${a} + ${b} × ${c}`;ans=a+b*c;steps=`Primeiro a multiplicação: ${b} × ${c} = ${b*c}. Depois: ${a} + ${b*c} = ${ans}`;wrong=[(a+b)*c,a+b+c,a*b+c];}
+   else if(k===1){big=`(${a} + ${b}) × ${c}`;ans=(a+b)*c;steps=`Primeiro os parênteses: ${a} + ${b} = ${a+b}. Depois: ${a+b} × ${c} = ${ans}`;wrong=[a+b*c,a*b+c,a+b+c];}
+   else if(k===2){big=`${a*b} ÷ ${b} + ${c}`;ans=a+c;steps=`Primeiro a divisão: ${a*b} ÷ ${b} = ${a}. Depois: ${a} + ${c} = ${ans}`;wrong=[a*b/(b+c)>0&&Number.isInteger(a*b/(b+c))?a*b/(b+c):a*b-b+c,a*c,a+b+c];}
+   else{const cc=Math.min(c,a*b-1);big=`${a} × ${b} − ${cc}`;ans=a*b-cc;steps=`Primeiro a multiplicação: ${a} × ${b} = ${a*b}. Depois: ${a*b} − ${cc} = ${ans}`;wrong=[a*(b-cc)>0?a*(b-cc):a*b+cc,a*b+cc,a+b-cc>0?a+b-cc:a*b];}
+   return {big,ans,steps,wrong,txt:'Quanto vale a expressão?',ul:''};}},
+ {id:'frac',nome:'Frações de quantidade',minAno:5,icon:ticon('¾'),formula:'Divida pelo número de baixo (denominador) e multiplique pelo de cima (numerador).',
+  gen(ano){const d=pick([2,3,4,5,6,8,10]),n=rnd(1,d-1),k=rnd(2,ano>=7?12:8),T=d*k,ans=n*k;
+   const ctx=pick([[`Uma turma tem ${T} alunos e ${n}/${d} deles usam óculos. Quantos alunos usam óculos?`,'alunos'],[`Uma caixa tem ${T} lápis. ${n}/${d} são vermelhos. Quantos lápis são vermelhos?`,'lápis'],[`Quanto é ${n}/${d} de ${T}?`,''],[`Lia leu ${n}/${d} de um livro de ${T} páginas. Quantas páginas ela leu?`,'páginas']]);
+   return {big:`${frH(n,d)} de ${T}`,ans,steps:`${T} ÷ ${d} = ${k}. Depois ${k} × ${n} = ${ans}`,wrong:[k,T-ans,T*n/ (d>2?2:1),ans+k],txt:ctx[0],ul:ctx[1]};}},
+ {id:'pot',nome:'Potências e raízes',minAno:6,icon:ticon('x²'),formula:'Potência: multiplique a base por ela mesma. Raiz quadrada: qual número vezes ele mesmo dá o valor?',
+  gen(ano){if(Math.random()<.35){const n=rnd(2,ano>=7?15:12);return {big:`√${n*n}`,ans:n,steps:`${n} × ${n} = ${n*n}, então √${n*n} = ${n}`,wrong:[n*n/2,n+1,2*n],txt:'Qual é a raiz quadrada?',ul:''};}
+   const b=rnd(2,ano>=7?10:6),e=b<=3?rnd(2,5):b<=5?rnd(2,3):2,ans=b**e;return {big:`${b}<sup>${e}</sup>`,ans,steps:`${Array(e).fill(b).join(' × ')} = ${ans}`,wrong:[b*e,b+e,b**(e-1)],txt:'Quanto vale a potência?',ul:''};}},
+ {id:'mmc',nome:'MMC e MDC',minAno:6,icon:ticon('mmc'),formula:'MMC: o menor número que é múltiplo dos dois. MDC: o maior número que divide os dois.',
+  gen(ano){if(Math.random()<.5){let a,b;do{a=rnd(2,12);b=rnd(2,12)}while(a===b);const ans=lcm(a,b);
+     return {big:`mmc(${a}, ${b})`,ans,steps:`Múltiplos de ${a}: ${[1,2,3,4,5,6].map(k=>a*k).join(', ')}… Múltiplos de ${b}: ${[1,2,3,4,5,6].map(k=>b*k).join(', ')}… O menor comum é ${ans}.`,wrong:[a*b===ans?ans*2:a*b,a+b,gcd(a,b)],txt:pick(['Qual é o mínimo múltiplo comum?',`Dois ônibus passam no ponto: um a cada ${a} minutos e outro a cada ${b}. Saíram juntos agora. Daqui a quantos minutos passam juntos de novo?`]),ul:''};}
+   const g=rnd(2,9);let m,n;do{m=rnd(1,6);n=rnd(1,6)}while(m===n||gcd(m,n)!==1);const a=g*m,b=g*n;
+   return {big:`mdc(${a}, ${b})`,ans:g,steps:`Divisores de ${a} e de ${b}: o maior que divide os dois é ${g} (${a} ÷ ${g} = ${m} e ${b} ÷ ${g} = ${n}).`,wrong:[lcm(a,b),Math.min(a,b),g*2],txt:pick(['Qual é o máximo divisor comum?',`Quero dividir ${a} balas e ${b} pirulitos em saquinhos iguais, o maior número possível de saquinhos, sem sobrar nada. Quantos saquinhos?`]),ul:''};}},
+ {id:'pct',nome:'Porcentagem',minAno:6,icon:ticon('%'),formula:'p% de um valor = valor ÷ 100 × p. 10% é dividir por 10; 50% é a metade; 25% é a quarta parte.',
+  gen(ano){const p=pick([10,20,25,50,75,5,30,40]);let base;do{base=pick(p===25||p===75?[40,80,120,160,200]:[20,40,60,80,100,120,150,200,300])}while(base*p%100);const v=base*p/100;
+   if(ano>=7&&Math.random()<.4){const fin=base-v;return {big:`${base} − ${p}%`,ans:fin,steps:`${p}% de ${base} = ${base} ÷ 100 × ${p} = ${v}. Preço com desconto: ${base} − ${v} = ${fin}`,wrong:[v,base-p,base+v],txt:`Um tênis custa ${base} reais e está com ${p}% de desconto. Por quanto ele sai?`,ul:'reais'};}
+   const c=pick([[`Quanto é ${p}% de ${base}?`,''],[`Numa escola de ${base} alunos, ${p}% vão de bicicleta. Quantos alunos vão de bicicleta?`,'alunos'],[`Um jogo custa ${base} reais e tem ${p}% de desconto. Quantos reais de desconto?`,'reais']]);
+   return {big:`${p}% de ${base}`,ans:v,steps:`${base} ÷ 100 = ${f(base/100)}. ${f(base/100)} × ${p} = ${v}`,wrong:[base-v,p,v*2],txt:c[0],ul:c[1]};}},
+ {id:'inteiros',nome:'Números inteiros',minAno:7,icon:ticon('±'),formula:'Sinais iguais: soma e fica o sinal. Sinais diferentes: subtrai e fica o sinal do maior. Na multiplicação e divisão: sinais iguais dá +, diferentes dá −.',
+  neg:true,gen(ano){const r=()=>{let v;do{v=rnd(-15,15)}while(!v);return v};const k=rnd(0,3);let a=r(),b=r(),big,ans,steps,wrong;
+   if(k===0){ans=a+b;big=`${par(a)} + ${par(b)}`;steps=`${par(a)} + ${par(b)} = ${sg(ans)}`;wrong=[-ans||1,Math.abs(a)+Math.abs(b),a-b];}
+   else if(k===1){ans=a-b;big=`${par(a)} − ${par(b)}`;steps=`Subtrair é somar o oposto: ${par(a)} + ${par(-b)} = ${sg(ans)}`;wrong=[a+b,-ans||1,Math.abs(a)-Math.abs(b)||2];}
+   else if(k===2){a=Math.sign(a)*rnd(2,9);b=Math.sign(b)*rnd(2,9);ans=a*b;big=`${par(a)} × ${par(b)}`;steps=`${Math.abs(a)} × ${Math.abs(b)} = ${Math.abs(ans)}; sinais ${a*b>0?'iguais dá +':'diferentes dá −'}: ${sg(ans)}`;wrong=[-ans,a+b||3,Math.abs(a)+Math.abs(b)];}
+   else{const q=Math.sign(a)*rnd(2,9);b=Math.sign(b)*rnd(2,9);a=q*b;ans=q;big=`${par(a)} ÷ ${par(b)}`;steps=`${Math.abs(a)} ÷ ${Math.abs(b)} = ${Math.abs(q)}; sinais ${q>0?'iguais dá +':'diferentes dá −'}: ${sg(q)}`;wrong=[-q,a-b||4,a+b||5];}
+   return {big,ans,steps,wrong,txt:'Qual é o resultado?',ul:'',neg:true};}},
+ {id:'eq',nome:'Equações do 1º grau',minAno:7,icon:ticon('x='),formula:'Faça a mesma conta dos dois lados para deixar o x sozinho: o que soma passa subtraindo, o que multiplica passa dividindo.',
+  gen(ano){const x=rnd(1,ano>=8?15:12),a=rnd(2,9),b=rnd(1,20),k=rnd(0,ano>=8?3:2);let big,ans=x,steps,wrong,txt='Qual é o valor de x?';
+   if(k===0){const c=a*x+b;big=`${a}x + ${b} = ${c}`;steps=`${a}x = ${c} − ${b} = ${c-b} → x = ${c-b} ÷ ${a} = ${x}`;wrong=[c-b,Math.round((c+b)/a),x+1];}
+   else if(k===1){const c=a*x-b>0?a*x-b:a*x+b,s=a*x-b>0?'−':'+';big=`${a}x ${s} ${b} = ${c}`;const m=s==='−'?c+b:c-b;steps=`${a}x = ${c} ${s==='−'?'+':'−'} ${b} = ${m} → x = ${m} ÷ ${a} = ${x}`;wrong=[m,Math.round((s==='−'?c-b:c+b)/a)||x+2,x+1];}
+   else if(k===2){const c=a*x+b,nomes={2:'O dobro',3:'O triplo',4:'O quádruplo',5:'O quíntuplo'};if(nomes[a]){txt=`${nomes[a]} de um número mais ${b} é igual a ${c}. Qual é esse número?`;}big=`${a}x + ${b} = ${c}`;steps=`${a}x = ${c} − ${b} = ${c-b} → x = ${(c-b)} ÷ ${a} = ${x}`;wrong=[c-b,x+1,Math.round(c/a)];}
+   else{const c=a*(x+b);big=`${a}(x + ${b}) = ${c}`;steps=`x + ${b} = ${c} ÷ ${a} = ${x+b} → x = ${x+b} − ${b} = ${x}`;wrong=[x+b,c-b,Math.round(c/a-b/a)];}
+   return {big,ans,steps,wrong,txt,ul:'',pre:'x = '};}},
+ {id:'r3',nome:'Regra de três',minAno:7,icon:ticon('3→'),formula:'Monte a tabela. Diretamente proporcional: as duas grandezas aumentam juntas. Inversamente: uma aumenta e a outra diminui.',
+  gen(ano){if(Math.random()<(ano>=8?.4:.25)){const w1=pick([2,3,4,5,6]),d1=pick([4,6,8,10,12]),P=w1*d1,opts=[2,3,4,5,6,8,10,12].filter(w=>w!==w1&&P%w===0),w2=pick(opts.length?opts:[w1*2]),ans=P/w2;
+     return {big:`${w1} → ${d1} dias<br>${w2} → ? dias`,ans,steps:`Inversamente proporcional (mais pedreiros, menos dias): ${w1} × ${d1} = ${P}. ${P} ÷ ${w2} = ${ans} dias`,wrong:[Math.round(d1*w2/w1),d1,ans+2],txt:`${w1} pedreiros constroem um muro em ${d1} dias. Em quantos dias ${w2} pedreiros constroem o mesmo muro?`,ul:'dias'};}
+   const c=pick([['cadernos','reais',rnd(3,9)],['litros de gasolina','km',pick([10,12,14,15])],['bolos','ovos',pick([2,3,4])],['horas','km',pick([40,50,60,80])]]),q1=rnd(2,6);let q2;do{q2=rnd(2,12)}while(q2===q1);const v1=q1*c[2],ans=q2*c[2];
+   const txt=c[0]==='cadernos'?`${q1} cadernos custam ${v1} reais. Quanto custam ${q2} cadernos?`:c[0]==='bolos'?`Para fazer ${q1} bolos uso ${v1} ovos. Quantos ovos uso para ${q2} bolos?`:c[0]==='horas'?`Um carro anda ${v1} km em ${q1} horas. Quantos km anda em ${q2} horas, na mesma velocidade?`:`Um carro anda ${v1} km com ${q1} litros de gasolina. Quantos km anda com ${q2} litros?`;
+   return {big:`${q1} → ${v1}<br>${q2} → ?`,ans,steps:`Diretamente proporcional: ${v1} ÷ ${q1} = ${c[2]} por unidade. ${c[2]} × ${q2} = ${ans}`,wrong:[Math.round(v1*q1/q2)||ans+3,v1+q2-q1>0?v1+q2-q1:ans+1,v1*q2],txt,ul:c[1]};}},
+];
+TOPICS.forEach(t=>{t.topic=true;SH[t.id]=t;});
+const TMAP=Object.fromEntries(TOPICS.map(t=>[t.id,t]));
+const UL=q=>q.topic?(q.ul||''):q.u+'²';
+const LAB=(q,v)=>q.topic?`${q.pre||''}${q.neg?sg(v):f(v)}${q.ul?' '+q.ul:''}`:`${f(v)} ${q.u}²`;
 
 let figN=0;
 function primsSVG(p,opt={}){
@@ -1267,7 +1344,7 @@ function rememberSession(){try{sessionStorage.setItem('td-areas-s',JSON.stringif
 async function api(acao,data={},ms=15000){if(!API)throw new Error('sem servidor');
   const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),ms);
   try{let r;
-    if(acao==='existe'||acao==='ranking'){const u=new URL(API);u.searchParams.set('acao',acao);for(const k in data)u.searchParams.set(k,data[k]);r=await fetch(u,{signal:ctl.signal});}
+    if(acao==='existe'||acao==='ranking'||acao==='visitar'){const u=new URL(API);u.searchParams.set('acao',acao);for(const k in data)u.searchParams.set(k,data[k]);r=await fetch(u,{signal:ctl.signal});}
     else r=await fetch(API,{method:'POST',body:JSON.stringify({acao,...data}),signal:ctl.signal});
     return await r.json();}finally{clearTimeout(t)}}
 let syncT=null;
@@ -1278,7 +1355,7 @@ function scheduleCloud(now=false){if(!P)return;if(!API||!SESSION.pw||SESSION.id!
   clearTimeout(syncT);setSync('busy');syncT=setTimeout(pushCloud,now?0:1200);}
 async function pushCloud(){if(!P||!SESSION.pw)return;
   try{const r=await api('salvar',{nome:P.name,ano:P.ano,senha:SESSION.pw,perfil:cloudPayload(P)});
-    if(r.ok)setSync('ok');
+    if(r.ok){setSync('ok');if(r.presentes>0){const g=r.presentes*LIKE;P.coins+=g;P.xp+=g;P.curt=(P.curt||0)+r.presentes;saveProfile();toast(`Seus colegas curtiram sua cidade ${r.presentes} vez${r.presentes>1?'es':''}! Você ganhou ${g} moedas.`);}}
     else if(r.erro==='antigo'&&r.perfil){adoptProfile(r.perfil);setSync('ok');}
     else setSync('local');}catch(e){setSync('local');}}
 function adoptProfile(srv){const keep={id:P.id,name:P.name,ano:P.ano};Object.assign(P,normalize(srv),keep);db.profiles[P.id]=P;saveDB();refreshViews();}
@@ -1293,7 +1370,7 @@ function statsHTML(p,showCoins=true,compact=false){const li=levelInfo(p.xp);cons
   ${tr?`<div class="trophies">${TROPHY.repeat(Math.min(tr,8))}${tr>8?` ×${tr}`:''} <span>${tr} troféu${tr>1?'s':''}</span></div>`:''}`;}
 
 /* ---------- navegação ---------- */
-const SCREENS=['home','login','setup','rank','game','result','shop','world','arcade','market','pdf'];let cur='home',backTo='home';
+const SCREENS=['home','login','setup','rank','game','result','shop','world','arcade','market','visit','pdf'];let cur='home',backTo='home';
 function show(n){if(n!=='arcade'&&typeof AR!=='undefined')stopArc();if(n!=='game')DEC=false;SCREENS.forEach(s=>$('#sc-'+s).hidden=s!==n);cur=n;try{window.scrollTo(0,0)}catch(e){}
   /* dentro do Google Sites, leva a página até o topo do jogo */
   try{document.querySelector('.topbar').scrollIntoView({block:'start'})}catch(e){}
@@ -1318,17 +1395,18 @@ function renderHomeProfile(){const p=findProfile(S.nome);try{renderCodeLinks()}c
 /* Regra do rodízio: 1ª partida só com uma figura = normal; 2ª seguida = números com vírgula; 3ª seguida = bloqueada */
 function soloState(){const ids=[...S.shapes];if(ids.length!==1||!P)return {k:0};const so=P.solo||{};const n=so.id===ids[0]?so.n||0:0;
   return {k:n>=2?2:n>=1?1:0,id:ids[0],nome:SH[ids[0]].nome.toLowerCase(),n};}
-function renderVari(){const el=$('#vari-note');if(!el)return;const n=S.shapes.size,v=variBonus(n,S.modo);el.innerHTML=n<2?`<b>Bônus de variedade:</b> marque 2 ou mais figuras e cada acerto vale mais moedas (+${S.modo==='dificil'?2:1} por figura a mais).`:`<b>Bônus de variedade:</b> ${n} figuras = <b>+${v} moeda${v>1?'s':''}</b> em cada acerto${v>=(S.modo==='dificil'?10:5)?' (o máximo!)':''}.`;el.classList.toggle('on',n>=2);}
+function renderVari(){const el=$('#vari-note');if(!el)return;const n=S.shapes.size,v=variBonus(n,S.modo);el.innerHTML=n<2?`<b>Bônus de variedade:</b> marque 2 ou mais figuras ou conteúdos e cada acerto vale mais moedas (+${S.modo==='dificil'?2:1} por escolha a mais).`:`<b>Bônus de variedade:</b> ${n} escolhas = <b>+${v} moeda${v>1?'s':''}</b> em cada acerto${v>=(S.modo==='dificil'?10:5)?' (o máximo!)':''}.`;el.classList.toggle('on',n>=2);}
 function renderSolo(){renderVari();const st=soloState(),el=$('#solo-note');if(!el)return;el.hidden=!st.k;el.className='solo-note'+(st.k===2?' block':'');
-  el.innerHTML=st.k===1?`<b>Rodízio de figuras:</b> você já jogou a última partida só com o ${st.nome}. Se repetir, as medidas vêm com vírgula. Marque outra figura para jogar com números inteiros.`
+  el.innerHTML=st.k===1&&TMAP[st.id]?`<b>Rodízio:</b> você já jogou a última partida só com ${st.nome}. Pode repetir mais uma vez; depois o jogo pede para marcar outro conteúdo ou figura junto.`:st.k===1?`<b>Rodízio de figuras:</b> você já jogou a última partida só com o ${st.nome}. Se repetir, as medidas vêm com vírgula. Marque outra figura para jogar com números inteiros.`
     :st.k===2?`<b>Rodízio de figuras:</b> você jogou ${st.n} partidas seguidas só com o ${st.nome}. Agora marque pelo menos mais uma figura.`:'';}
-function renderSetup(){$('#shapes').innerHTML=shapeChips(S.shapes);renderSolo();
+function renderSetup(){$('#shapes').innerHTML=shapeChips(S.shapes);$('#topics').innerHTML=TOPICS.map(t=>chip(`<svg class="ico" viewBox="0 0 24 24">${t.icon}</svg>${t.nome} <small>${t.minAno}º</small>`,S.shapes.has(t.id),`data-id="${t.id}"`)).join('');renderSolo();
   $('#qtd').innerHTML=[5,10,15,20].map(n=>chip(n,S.qtd===n,`data-v="${n}"`)).join('');
   document.querySelectorAll('#modo button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.modo));$('#err2').textContent='';}
 function goHome(){show('home');renderHome();}
 $('#in-nome').addEventListener('input',e=>{S.nome=e.target.value;renderHomeProfile();$('#err').textContent='';});
 $('#in-nome').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#next1').click()}});
 $('#anos').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.ano=+b.dataset.v;S.shapes=defaultShapes(S.ano);renderHome();});
+$('#topics').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id;S.shapes.has(id)?S.shapes.delete(id):S.shapes.add(id);b.setAttribute('aria-pressed',S.shapes.has(id));$('#err2').textContent='';renderSolo();});
 $('#shapes').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id;S.shapes.has(id)?S.shapes.delete(id):S.shapes.add(id);b.setAttribute('aria-pressed',S.shapes.has(id));$('#err2').textContent='';renderSolo();});
 $('#qtd').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.qtd=+b.dataset.v;renderSetup();});
 $('#modo').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.modo=b.dataset.v;document.querySelectorAll('#modo button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderVari();});
@@ -1395,11 +1473,11 @@ $('#lg-go').onclick=async()=>{const er=$('#err-lg');er.textContent='';const id=p
 /* ---------- quadro de honra (todos que jogam) ---------- */
 const RK={tab:'all',cache:{}};
 function localRank(){return Object.values(db.profiles).filter(p=>RK.tab==='all'||p.ano===S.ano).sort((a,b)=>b.xp-a.xp).slice(0,30)
-  .map(p=>({publico:pubName(p.name),ano:p.ano,xp:p.xp,moedas:p.coins,m2:built(p),avatar:{eq:p.eq,look:p.look}}));}
-function rankRows(rows,local){const me=P?pubName(P.name)+'|'+P.ano:'';
+  .map(p=>({publico:pubName(p.name),ano:p.ano,xp:p.xp,moedas:p.coins,m2:built(p._earth?{world:p._earth}:p),avatar:{eq:p.eq,look:p.look},lid:p.id,curtidas:p.curt||0}));}
+function rankRows(rows,local){const me=P?pubName(P.name)+'|'+P.ano:'';RK.rows=rows;rows.forEach(r=>{r.me=(r.publico+'|'+r.ano)===me;});
   $('#rank').innerHTML=(local&&API?'<p class="note">Sem conexão com o quadro geral agora. Mostrando quem jogou neste aparelho.</p>':!API?'<p class="note">Mostrando quem jogou neste aparelho.</p>':'')+
    (rows.length?rows.map((r,i)=>{const li=levelInfo(Number(r.xp)||0);const av=avatarSVG(normalize({eq:(r.avatar||{}).eq,look:(r.avatar||{}).look}));
-    return `<li class="${(r.publico+'|'+r.ano)===me?'me':''}"><span class="pos">${i+1}</span><span class="av">${av}</span><span class="nm">${esc(r.publico)}<small>${r.ano}º ano · nível ${li.lvl} · ${r.m2||0} m² construídos</small></span><span class="coins">${COIN}${r.moedas||0}</span></li>`}).join('')
+    return `<li class="${(r.publico+'|'+r.ano)===me?'me':''}"><span class="pos">${i+1}</span><span class="av">${av}</span><span class="nm">${esc(r.publico)}<small>${r.ano}º ano · nível ${li.lvl} · ${r.m2||0} m² construídos</small></span><span class="coins">${COIN}${r.moedas||0}</span>${(r.lid||r.vid)&&(r.m2||0)>0?`<button type="button" class="btn ghost small vbtn" data-vi="${i}">${r.me?'Ver':'Visitar'}${r.curtidas?` · ❤ ${r.curtidas}`:''}</button>`:'<span></span>'}</li>`}).join('')
    :'<p class="empty">Ainda ninguém por aqui. Jogue uma partida e apareça no quadro!</p>');}
 async function renderRank(){
   $('#rank-tabs').innerHTML=[['all','Todos'],['ano',`${S.ano}º ano`]].map(([k,n])=>`<button type="button" class="tab" aria-selected="${RK.tab===k}" data-k="${k}">${n}</button>`).join('');
@@ -1414,12 +1492,12 @@ $('#go-shop').onclick=()=>beginLogin('shop');
 $('#go-world').onclick=()=>beginLogin('world');
 $('#go-rank').onclick=()=>{show('rank');renderRank();};
 $('#rank-back').onclick=goHome;
-$('#go-pdf').onclick=()=>{PD.ano=S.ano;PD.shapes=new Set(S.shapes.size?S.shapes:defaultShapes(S.ano));openPDF();};
+$('#go-pdf').onclick=()=>{PD.ano=S.ano;const sh=[...S.shapes].filter(id=>!TMAP[id]);PD.shapes=new Set(sh.length?sh:defaultShapes(S.ano));openPDF();};
 
 /* ---------- jogo ---------- */
 let G=null;
 function variBonus(n,modo){return Math.min(5,Math.max(0,n-1))*(modo==='dificil'?2:1);}
-function startGame(){if(!P){goHome();return}const so=soloState();DEC=so.k===1;G={dec:DEC,nfig:S.shapes.size,vari:variBonus(S.shapes.size,S.modo),qs:makeSet([...S.shapes],S.ano,S.qtd),i:0,ok:0,streak:0,best:0,earned:0,modo:S.modo,done:false,res:[],wrong:[],revAdded:false,fast:0};show('game');renderQ();}
+function startGame(){if(!P){goHome();return}const so=soloState();DEC=so.k===1&&!TMAP[so.id];G={dec:DEC,nfig:S.shapes.size,vari:variBonus(S.shapes.size,S.modo),qs:makeSet([...S.shapes],S.ano,S.qtd),i:0,ok:0,streak:0,best:0,earned:0,modo:S.modo,done:false,res:[],wrong:[],revAdded:false,fast:0};show('game');renderQ();}
 function renderHud(coinsShown,mood){const li=levelInfo(P.xp);$('#hud-av').innerHTML=avatarSVG(P,{},{mood});$('#hud-name').textContent=P.name;
   $('#hud-xp').style.width=Math.round(li.into/li.need*100)+'%';$('#hud-lvl').textContent=`Nível ${li.lvl} · ${titleOf(li.lvl)} · ${li.need-li.into} XP para subir`;
   $('#hud-q').textContent=`Questão ${Math.min(G.i+1,G.qs.length)} de ${G.qs.length}`;
@@ -1427,19 +1505,19 @@ function renderHud(coinsShown,mood){const li=levelInfo(P.xp);$('#hud-av').innerH
   $('#hud-coins').innerHTML=`${COIN} ${coinsShown??P.coins}`;
   $('#trail').innerHTML=G.qs.map((_,i)=>`<i class="${G.res[i]===true?'ok':G.res[i]===false?'no':i===G.i?'now':''}"></i>`).join('');}
 function renderQ(){const q=G.qs[G.i];G.done=false;G.t0=performance.now();renderHud();
-  $('#q-fig').innerHTML=primsSVG(q.prims);$('#q-tag').textContent=(q.rev?'Revanche · ':'')+(G.dec?'Com vírgula · ':'')+q.nome;$('#q-text').textContent=q.txt;
-  $('#q-formula').hidden=true;$('#q-formula').textContent=q.formula;$('#q-hint').hidden=false;
+  $('#q-fig').innerHTML=q.topic?`<div class="qcard"><svg class="qic" viewBox="0 0 24 24" aria-hidden="true">${SH[q.sid].icon}</svg><div class="big">${q.big}</div></div>`:primsSVG(q.prims);$('#q-tag').textContent=(q.rev?'Revanche · ':'')+(G.dec?'Com vírgula · ':'')+q.nome;$('#q-text').textContent=q.txt;
+  $('#q-formula').hidden=true;$('#q-formula').textContent=q.formula;$('#q-hint').hidden=false;$('#q-hint').textContent=q.topic?'Ver a dica':'Ver a fórmula';
   $('#q-fb').hidden=true;$('#q-next').hidden=true;$('#q-next').textContent=G.i===G.qs.length-1?'Ver resultado':'Próxima';
   const a=$('#q-answer');
-  if(G.modo==='facil'){q.opts=q.opts||buildOpts(q);a.innerHTML=`<div class="opts">${q.opts.map((v,i)=>`<button type="button" class="opt" data-i="${i}">${f(v)} ${q.u}²</button>`).join('')}</div>`;}
-  else{a.innerHTML=`<div class="typed"><label class="inbox" for="ans"><input id="ans" type="text" inputmode="decimal" autocomplete="off" placeholder="Sua resposta" aria-label="Sua resposta"><span class="unit">${q.u}²</span></label><button type="button" class="btn primary" id="check">Verificar</button></div>`;
+  if(G.modo==='facil'){q.opts=q.opts||buildOpts(q);a.innerHTML=`<div class="opts">${q.opts.map((v,i)=>`<button type="button" class="opt" data-i="${i}">${LAB(q,v)}</button>`).join('')}</div>`;}
+  else{a.innerHTML=`<div class="typed"><label class="inbox" for="ans">${q.pre?`<span class="unit">${q.pre}</span>`:''}<input id="ans" type="text" inputmode="${q.neg?'text':'decimal'}" autocomplete="off" placeholder="Sua resposta" aria-label="Sua resposta"><span class="unit">${UL(q)}</span></label><button type="button" class="btn primary" id="check">Verificar</button></div>`;
     const inp=$('#ans');setTimeout(()=>inp.focus(),30);
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();checkTyped()}});$('#check').onclick=checkTyped;}
 }
 $('#q-hint').onclick=()=>{$('#q-formula').hidden=false;$('#q-hint').hidden=true;};
 $('#q-answer').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||G.done)return;const q=G.qs[G.i];const v=q.opts[+b.dataset.i];
   const ok=f(v)===f(q.ans);document.querySelectorAll('.opt').forEach((x,i)=>{x.disabled=true;if(f(q.opts[i])===f(q.ans))x.classList.add('right')});if(!ok)b.classList.add('wrong');resolve(ok,b);});
-function parseAns(s){s=String(s).toLowerCase().replace(/(cm|m)\s*(²|2)?\s*$/,'').replace(/[^\d,.\-]/g,'');if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'');s=s.replace(',','.');const n=parseFloat(s);return isNaN(n)?null:n;}
+function parseAns(s){s=String(s).toLowerCase().replace(/[−–]/g,'-').replace(/(cm|m)\s*(²|2)?\s*$/,'').replace(/[^\d,.\-]/g,'');if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'');s=s.replace(',','.');const n=parseFloat(s);return isNaN(n)?null:n;}
 function checkTyped(){if(G.done)return;const inp=$('#ans');const v=parseAns(inp.value);const box=inp.closest('.inbox');
   if(v===null){box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake');inp.placeholder='Digite um número';return}
   const q=G.qs[G.i];const tol=q.sid==='circulo'?0.06:0.011;const ok=Math.abs(v-q.ans)<=tol;inp.disabled=true;$('#check').disabled=true;
@@ -1448,14 +1526,14 @@ function resolve(ok,src){G.done=true;G.res[G.i]=ok;const q=G.qs[G.i];const fb=$(
   const dt=(performance.now()-(G.t0||0))/1000,fast=ok&&!q.rev&&dt<=(G.modo==='facil'?6:15),cityOk=P.world.items.length>0&&happy(P)>=80;let extra=[],cleaned=false,weed=false;
   if(ok){G.ok++;G.streak++;G.best=Math.max(G.best,G.streak);gain=(G.modo==='facil'?5:10)+(G.streak>=3?Math.min(10,(G.streak-2)*2):0);
     if(q.rev){gain=Math.ceil((G.modo==='facil'?5:10)/2);const i=(P.world.probs||[]).findIndex(p=>p.k==='mato');if(i>=0){P.world.probs.splice(i,1);cleaned=true;P.fixed=(P.fixed||0)+1;}}
-    if(G.vari&&!q.rev){gain+=G.vari;extra.push(`${G.nfig} figuras +${G.vari}`);}
+    if(G.vari&&!q.rev){gain+=G.vari;extra.push(`variedade +${G.vari}`);}
     if(fast){gain+=2;G.fast++;extra.push('Rápido! +2');}
     if(cityOk&&!q.rev){gain+=1;extra.push('Cidade feliz +1');}
     P.coins+=gain;P.xp+=gain;P.total=(P.total||0)+1;G.earned+=gain;P.best=Math.max(P.best||0,G.best);
     if(G.modo==='dificil')P.hard=(P.hard||0)+1;P.shapesOk=[...new Set([...(P.shapesOk||[]),q.sid])];
     fb.className='feedback ok';fb.innerHTML=`<strong>${q.rev?'Revanche vencida!':pick(['Acertou!','Isso aí!','Mandou bem!','Perfeito!'])} +${gain} moedas</strong>${extra.length?`<span class="chips-mini">${extra.map(e=>`<b>${e}</b>`).join('')}</span>`:''}${G.streak>=3&&!q.rev?`<span>Sequência de ${G.streak}: bônus de sequência.</span>`:''}${cleaned?'<span>Você limpou um matinho do seu mundo!</span>':''}<span class="steps">${esc(q.steps)}</span>`;}
   else{const lost=G.streak>=3;G.streak=0;if(!q.rev){G.wrong.push(q.sid);weed=addProb('mato');}
-    fb.className='feedback no';fb.innerHTML=`<strong>Quase! A resposta é ${f(q.ans)} ${q.u}²</strong>${lost?'<span>A sequência de acertos apagou.</span>':''}${weed?'<span class="weedline">Nasceu um matinho no seu mundo. Acerte a revanche no fim da partida para limpar.</span>':''}<span>Veja como resolver:</span><span class="steps">${esc(q.steps)}</span>`;}
+    fb.className='feedback no';fb.innerHTML=`<strong>Quase! A resposta é ${LAB(q,q.ans)}</strong>${lost?'<span>A sequência de acertos apagou.</span>':''}${weed?'<span class="weedline">Nasceu um matinho no seu mundo. Acerte a revanche no fim da partida para limpar.</span>':''}<span>Veja como resolver:</span><span class="steps">${esc(q.steps)}</span>`;}
   const got=checkAch();
   fb.hidden=false;saveProfile();
   const pill=$('#hud-coins');
@@ -1521,6 +1599,7 @@ const ACH=[
  {id:'lua1',nome:'Pé na Lua',desc:'Construa sua primeira coisa na Lua',r:100,ok:p=>!!(p.lua&&p.lua.items.length)},
  {id:'colon10',nome:'Colônia lunar',desc:'Tenha 10 colonos na Lua',r:120,ok:p=>!!p.lua&&p.lua.items.reduce((t,i)=>t+moonPop(i),0)>=10},
  {id:'helio1',nome:'Mineiro espacial',desc:'Colete hélio-3 na Lua',r:80,ok:p=>((p.prod||{}).helio||0)>=1},
+ {id:'curte5',nome:'Bom vizinho',desc:'Curta a cidade de 5 colegas',r:30,ok:p=>(p.curtiu||0)>=5},
  {id:'piso10',nome:'Mestre de obras',desc:'Atenda 10 clientes na loja de pisos',r:40,ok:p=>(p.pisos||0)>=10},
  {id:'enc5',nome:'Entregador',desc:'Entregue 5 encomendas',r:50,ok:p=>(p.encN||0)>=5},
  {id:'pizza1',nome:'Pizzaiolo',desc:'Asse uma pizza',r:30,ok:p=>((p.prod||{}).pizza||0)>=1},
@@ -1867,7 +1946,7 @@ function avStep(key){const a=W3.av;if(!a)return false;const th=W3.theta,fw=[-Mat
   const d=Math.abs(v[0])>=Math.abs(v[1])?[Math.sign(v[0]),0]:[0,Math.sign(v[1])],from=avFrom(a),n=[from[0]+d[0],from[1]+d[1]];
   a.manual=a.now||0;a.wait=6;if(!a.free.has(n[0]+','+n[1])){a.o.rotation.y=Math.atan2(d[0],d[1]);W3.draw();return true;}
   if(a.path.length>1)a.path=[a.path[0]];a.path.push(n);return true;}
-document.addEventListener('keydown',e=>{if(cur!=='world'||WS.view!=='3d'||!W3.ok||!W3.av||WS.sel)return;if(document.querySelector('.modal:not([hidden])'))return;
+document.addEventListener('keydown',e=>{if((cur!=='world'&&cur!=='visit')||WS.view!=='3d'||!W3.ok||!W3.av||WS.sel)return;if(document.querySelector('.modal:not([hidden])'))return;
   const t=e.target;if(t&&/INPUT|TEXTAREA|SELECT/.test(t.tagName))return;if(e.ctrlKey||e.metaKey||e.altKey)return;
   if(avStep(e.code)){e.preventDefault();}});
 const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0,night:false,
@@ -2097,7 +2176,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
 
   /* ---------- animação ---------- */
   loop(){cancelAnimationFrame(this.raf);if(REDUCED){this.draw();return}const t0=performance.now();
-    const step=t=>{if(cur!=='world'||WS.view!=='3d'||document.hidden){this.raf=0;return}const s=(t-t0)/1000;
+    const step=t=>{if((cur!=='world'&&cur!=='visit')||WS.view!=='3d'||document.hidden){this.raf=0;return}const s=(t-t0)/1000;
       for(const a of this.anim){const o=a.o;
         if(a.t==='sway')o.rotation.z=Math.sin(s*1.6+a.k)*.05;
         else if(a.t==='bob')o.position.y=a.k+Math.abs(Math.sin(s*2.2))*.06;
@@ -2162,7 +2241,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
   turn(){if(REDUCED){this.theta+=Math.PI/4;this.place();this.draw();return}const a=this.theta,b=a+Math.PI/2,t0=performance.now();
     const f=t=>{const k=Math.min(1,(t-t0)/600);this.theta=a+(b-a)*(1-Math.pow(1-k,3));this.place();this.draw();if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f);},
   ndc(e){const r=this.r.domElement.getBoundingClientRect();this.v2.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);this.ray.setFromCamera(this.v2,this.cam);},
-  cell(){const P3=new THREE.Vector3();if(!this.ray.ray.intersectPlane(this.plane,P3))return null;const wd=P.world;
+  cell(){const P3=new THREE.Vector3();if(!this.ray.ray.intersectPlane(this.plane,P3))return null;const wd=(cur==='visit'&&VIS.wd)||P.world;
     const i=Math.floor(P3.x+wd.w/2),j=Math.floor(P3.z+wd.h/2);if(i<0||j<0||i>=wd.w||j>=wd.h)return null;return {x:i,y:j};},
   hover(e){if(!WS.sel){if(this.ghost.visible){this.ghost.visible=false;this.draw()}return}this.ndc(e);const c=this.cell();const g=this.ghost;
     if(!c){g.visible=false;this.draw();return}const [w,h]=selDims();const ok=fits(P.world,c.x,c.y,w,h);
@@ -2906,6 +2985,53 @@ Object.assign(W3.models,{
 const worldSVGM=worldSVG;worldSVG=function(p){let s=worldSVGM(p);if(!(p.world&&p.world.lua))return s;
   return s.replace('fill="#CFEAC6"','fill="#2A2E3D"').replace('fill="#E6D2A2"','fill="#8E939E"').replace(/fill="#90D17F"/g,'fill="#C4C8D0"').replace(/fill="#86C875"/g,'fill="#B6BAC4"').replace(/stroke="#78B567"/g,'stroke="#A3A7B0"').replace(/stroke="#5FAE55"/g,'stroke="#9A9EA8"');};
 
+/* ---------- visitar a cidade de um colega (neste computador, ou de todos com o servidor) ---------- */
+const VIS={p:null,meta:null,place:'terra',wd:null,home:null};
+const LIKE=5;
+function visitLocal(id){const src=db.profiles[id];if(!src)return null;const c=clone(src);if(c._earth){c.world=c._earth;delete c._earth;}return normalize(c);}
+function likedToday(key){const d=dayKey();if(!P)return false;if(!P.likes||P.likes.d!==d)P.likes={d,ids:[]};return P.likes.ids.includes(key);}
+function openVisit(vp,meta){VIS.p=vp;VIS.meta=meta;VIS.place='terra';show('visit');renderVisit();}
+function park3D(){const box=$('#w-3d');if(!VIS.home){VIS.home={parent:box.parentNode,next:box.nextSibling};}if(box.parentNode!==VIS.home.parent)VIS.home.parent.insertBefore(box,VIS.home.next);}
+function renderVisit(){const m=VIS.meta,base=VIS.p,lua=VIS.place==='lua'&&base.lua;const vp=lua?{...base,world:base.lua}:base;VIS.wd=vp.world;WS.sel=null;WS.pick=null;WS.move=null;
+  const st=cityStats(vp),stg=worldStage(vp),li=levelInfo(vp.xp||0);
+  $('#v-title').textContent=(lua?'Colônia lunar de ':'Cidade de ')+m.publico;
+  $('#v-stats').textContent=`${base.ano}º ano · nível ${li.lvl} · ${stg.nome} · ${lua?st.pop+' colonos':st.pop+' moradores'} · ${built(vp)} m² construídos · ${happy(vp)}% feliz${m.curtidas!=null?` · ❤ ${m.curtidas}`:''}`;
+  $('#v-places').innerHTML=base.lua&&base.lua.items&&base.lua.items.length?`<button type="button" data-vp="terra" aria-pressed="${!lua}">🌍 Terra</button><button type="button" data-vp="lua" aria-pressed="${!!lua}">🌕 Lua</button>`:'';
+  const lb=$('#v-like'),key=m.key;
+  if(!P){lb.disabled=true;lb.textContent='Entre na sua conta para curtir';}
+  else if(m.me){lb.hidden=true;}
+  else{lb.hidden=false;const done=likedToday(key);lb.disabled=done;lb.textContent=done?'❤ Você já curtiu hoje':`❤ Curtir (+${LIKE} moedas para vocês dois)`;}
+  $('#v-hint').textContent=vp.world.items.length?'Arraste para girar. Clique no chão ou use as setas para passear com o personagem do seu colega.':'Esta cidade ainda está vazia.';
+  document.querySelectorAll('#v-view button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===WS.view));
+  const box=$('#w-3d'),holder=$('#v-3dbox');
+  if(WS.view==='3d'&&!W3.failed&&hasWebGL()){holder.appendChild(box);box.hidden=false;$('#v-map').hidden=true;holder.hidden=false;
+    if(W3.ok){try{W3.userZoom=false;W3.build(vp)}catch(e){W3.failed=true;WS.view='2d';renderVisit();}}
+    else{$('#w3-load').hidden=false;loadThree().then(()=>{if(!W3.ok)W3.init(box);$('#w3-load').hidden=true;if(cur==='visit')W3.build(vp);}).catch(()=>{W3.failed=true;WS.view='2d';if(cur==='visit')renderVisit();});}}
+  else{holder.hidden=true;$('#v-map').hidden=false;$('#v-map').innerHTML=worldSVG(vp);}}
+async function likeVisit(){const m=VIS.meta;if(!P||m.me||likedToday(m.key))return;const lb=$('#v-like');lb.disabled=true;
+  if(m.local){const t=db.profiles[m.lid];if(!t)return;t.coins=(t.coins||0)+LIKE;t.xp=(t.xp||0)+LIKE;t.curt=(t.curt||0)+1;t.likesNew=(t.likesNew||0)+1;m.curtidas=t.curt;}
+  else{if(!SESSION.pw||SESSION.id!==P.id){toast('Entre com a sua senha de figuras para curtir.');lb.disabled=false;return}
+    try{const r=await api('curtir',{nome:P.name,ano:P.ano,senha:SESSION.pw,vid:m.vid});
+      if(!r.ok){if(r.erro==='hoje'){P.likes.ids.push(m.key);saveProfile();renderVisit();toast('Você já curtiu essa cidade hoje.');return}toast('Não deu para curtir agora. Tente de novo.');lb.disabled=false;return}
+      m.curtidas=r.curtidas;}catch(e){toast('Sem internet agora. Tente de novo.');lb.disabled=false;return}}
+  P.likes.ids.push(m.key);P.coins+=LIKE;P.xp+=LIKE;P.curtiu=(P.curtiu||0)+1;const got=checkAch();saveProfile();sfx('cash');if(!REDUCED)confetti(60);
+  toast(`Você curtiu a cidade de ${m.publico}! +${LIKE} moedas para você e para ${m.publico.split(' ')[0]}.`);renderVisit();announceAch(got,1500);}
+$('#v-like').onclick=likeVisit;
+$('#v-back').onclick=()=>{show('rank');renderRank();};
+$('#v-places').addEventListener('click',e=>{const b=e.target.closest('[data-vp]');if(!b)return;VIS.place=b.dataset.vp;renderVisit();});
+$('#v-view').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;WS.view=b.dataset.v;try{localStorage.setItem('td-areas-vista',WS.view)}catch(err){}renderVisit();});
+$('#rank').addEventListener('click',async e=>{const b=e.target.closest('[data-vi]');if(!b)return;const r=(RK.rows||[])[+b.dataset.vi];if(!r)return;
+  if(r.lid){const vp=visitLocal(r.lid);if(vp)openVisit(vp,{local:true,lid:r.lid,key:'l:'+r.lid,publico:r.publico,curtidas:db.profiles[r.lid].curt||0,me:!!(P&&P.id===r.lid)});return}
+  if(r.vid){b.disabled=true;b.textContent='Abrindo…';try{const d=await api('visitar',{vid:r.vid});if(!d.ok)throw 0;
+      const vp=normalize({id:'v|'+d.vid,name:d.publico,ano:d.ano,xp:d.xp,eq:d.eq,look:d.look,world:d.world,lua:d.lua&&d.lua.items?Object.assign({lua:true},d.lua):undefined});
+      openVisit(vp,{vid:d.vid,key:'v:'+d.vid,publico:d.publico,curtidas:d.curtidas,me:!!r.me});}
+    catch(err){b.disabled=false;b.textContent='Visitar';toast('Não deu para abrir essa cidade agora.');}}});
+/* passear na cidade visitada e voltar o 3D para o Meu mundo ao sair */
+const worldTapV=worldTap;worldTap=function(c,pi,pb){if(cur==='visit'){if(c&&W3.av&&W3.av.free.has(c.x+','+c.y))avWalkTo(c.x,c.y);return}return worldTapV(c,pi,pb);};
+const showV=show;show=function(n){if(n!=='visit')park3D();return showV(n);};
+/* curtidas recebidas neste computador */
+const openWorldV=openWorld;openWorld=function(){const r=openWorldV();if(P&&P.likesNew){const n=P.likesNew;P.likesNew=0;saveProfile();setTimeout(()=>toast(`Seus colegas curtiram sua cidade ${n} vez${n>1?'es':''}! Você ganhou ${n*LIKE} moedas.`),700);}return r;};
+
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};
 function rectQ(w,h,fl,nome){const [W,H]=fit(w,h,180,118);const x=(300-W)/2,y=(150-H)/2+6;const a=w*h,ans=a*fl;
@@ -2926,7 +3052,7 @@ $('#fix-opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(
     P.coins+=4;P.xp+=4;P.fixed=(P.fixed||0)+1;const got=checkAch();saveProfile();sfx('ok');setTimeout(()=>sfx('build'),250);
     fb.className='feedback ok';fb.innerHTML=`<strong>Consertado! +4 moedas</strong><span>A cidade ficou mais feliz: ${happy(P)}%.</span>`;
     setTimeout(()=>{$('#fix-modal').hidden=true;renderWorld();announceAch(got,300);trackStage(FX.st0);},1300);}
-  else{b.classList.add('wrong');sfx('no');fb.className='feedback no';fb.innerHTML=`<strong>Quase! A resposta é ${f(q.ans)} ${q.u}²</strong><span class="steps">${esc(q.steps)}</span>`;$('#fix-next').hidden=false;$('#fix-next').focus();}});
+  else{b.classList.add('wrong');sfx('no');fb.className='feedback no';fb.innerHTML=`<strong>Quase! A resposta é ${LAB(q,q.ans)}</strong><span class="steps">${esc(q.steps)}</span>`;$('#fix-next').hidden=false;$('#fix-next').focus();}});
 $('#fix-next').onclick=newFixQ;$('#fix-close').onclick=()=>{$('#fix-modal').hidden=true;};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#fix-modal').hidden)$('#fix-modal').hidden=true;});
 const FACE={feliz:'M16 28 Q24 36 32 28',ok:'M17 30 H31',triste:'M16 33 Q24 26 32 33'};

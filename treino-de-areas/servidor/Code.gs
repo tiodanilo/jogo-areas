@@ -232,7 +232,8 @@ function visitar_(vid) {
   return {
     ok: true, vid: vid, publico: r[C.publico], ano: r[C.ano], xp: Number(r[C.xp]) || 0, nivel: r[C.nivel], m2: r[C.m2],
     curtidas: Number(r[C.curtidas]) || 0, eq: p.eq || {}, look: p.look || {},
-    world: { w: w.w, h: w.h, items: (w.items || []).slice(0, 300), probs: (w.probs || []).slice(0, 20) }
+    world: { w: w.w, h: w.h, items: (w.items || []).slice(0, 300), probs: (w.probs || []).slice(0, 20) },
+    lua: p.lua ? { w: p.lua.w, h: p.lua.h, items: (p.lua.items || []).slice(0, 300), probs: (p.lua.probs || []).slice(0, 20) } : null
   };
 }
 
