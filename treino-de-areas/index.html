@@ -1853,6 +1853,11 @@ function hasWebGL(){try{const c=document.createElement('canvas');return !!(windo
 const isNight=()=>{const t=document.documentElement.dataset.theme;if(t)return t==='dark';try{return matchMedia('(prefers-color-scheme: dark)').matches}catch(e){return false}};
 function rng(seed){let a=0;for(const ch of String(seed))a=(a*31+ch.charCodeAt(0))>>>0;return ()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
 
+/* caminho mais curto entre quadradinhos livres (busca em largura) */
+function strollPath(a){const key=c=>c[0]+','+c[1];let tgt=null;for(let k=0;k<12&&!tgt;k++){const c=a.list[Math.floor(Math.random()*a.list.length)];if(Math.abs(c[0]-a.cur[0])+Math.abs(c[1]-a.cur[1])>=2)tgt=c;}
+  if(!tgt)return [];const prev=new Map([[key(a.cur),null]]),q=[a.cur];
+  while(q.length){const c=q.shift();if(c[0]===tgt[0]&&c[1]===tgt[1])break;for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const n=[c[0]+dx,c[1]+dy],k=key(n);if(a.free.has(k)&&!prev.has(k)){prev.set(k,c);q.push(n);}}}
+  if(!prev.has(key(tgt)))return [];const path=[];let c=tgt;while(c&&key(c)!==key(a.cur)){path.unshift(c);c=prev.get(key(c));}return path.slice(0,14);}
 const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0,night:false,
   init(box){const T=THREE;this.host=box;
     const r=this.r=new T.WebGLRenderer({antialias:true,alpha:false});r.setPixelRatio(Math.min(devicePixelRatio||1,2));
@@ -1966,7 +1971,12 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
     if(sad&&!REDUCED){const n=600,pos=new Float32Array(n*6);for(let k=0;k<n;k++){const x=(rand()-.5)*R*2.2,z=(rand()-.5)*R*2.2,y=rand()*12;pos.set([x,y,z,x,y-.35,z],k*6);}
       const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(pos,3));const rain=new T.LineSegments(geo,new T.LineBasicMaterial({color:0xBFD4F0,transparent:true,opacity:.55}));root.add(rain);this.anim.push({o:rain,t:'rain',k:0});}
     /* avatar perto do portão */
-    const av=new T.Group();av.position.set(-W/2-1.6,.05,gz0+.5);av.rotation.y=Math.PI/2;root.add(av);this.avatar3d(av,p);if(MOON){const hm=this.mesh(new T.SphereGeometry(.34,16,12),this.M(0xBFE6FF,{transparent:true,opacity:.35,roughness:.05}),0,1.12,0,av);hm.castShadow=false;}this.anim.push({o:av,t:'bob',k:.05});
+    const av=new T.Group();root.add(av);this.avatar3d(av,p);if(MOON){const hm=this.mesh(new T.SphereGeometry(.34,16,12),this.M(0xBFE6FF,{transparent:true,opacity:.35,roughness:.05}),0,1.12,0,av);hm.castShadow=false;}
+    /* o avatar, menor, passeia pelos quadradinhos livres da vila */
+    const occA=occupied(wd),freeA=[];for(let i=0;i<W;i++)for(let j=0;j<H;j++)if(!occA.has(i+','+j))freeA.push([i,j]);
+    if(freeA.length>=2&&!REDUCED){av.scale.setScalar(.6);const st0=freeA.find(([i,j])=>i===0&&j===gateZ)||freeA[0];av.position.set(st0[0]+.5-W/2,.12,st0[1]+.5-H/2);av.rotation.y=Math.PI/2;
+      this.anim.push({o:av,t:'stroll',free:new Set(freeA.map(f=>f[0]+','+f[1])),list:freeA,cur:st0,path:[],W,H,wait:.8,last:0});}
+    else{av.position.set(-W/2-1.6,.05,gz0+.5);av.rotation.y=Math.PI/2;av.scale.setScalar(.75);this.anim.push({o:av,t:'bob',k:.05});}
     this.resize();this.loop();},
 
   /* boneco low-poly com as cores do avatar */
@@ -2080,6 +2090,11 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
         if(a.t==='sway')o.rotation.z=Math.sin(s*1.6+a.k)*.05;
         else if(a.t==='bob')o.position.y=a.k+Math.abs(Math.sin(s*2.2))*.06;
         else if(a.t==='hop')o.position.y=Math.abs(Math.sin(s*4))*.12;
+        else if(a.t==='stroll'){const dt=Math.min(.1,Math.max(0,s-(a.last||s)));a.last=s;
+          if(!a.path.length){a.wait-=dt;o.position.y=.12;if(a.wait<=0){a.path=strollPath(a);a.wait=1+Math.random()*2.5;}}
+          else{const [ti,tj]=a.path[0],tx=ti+.5-a.W/2,tz=tj+.5-a.H/2,dx=tx-o.position.x,dz=tz-o.position.z,d=Math.hypot(dx,dz),sp=1.1*dt;
+            if(d<=sp){o.position.x=tx;o.position.z=tz;a.cur=a.path.shift();}else{o.position.x+=dx/d*sp;o.position.z+=dz/d*sp;o.rotation.y=Math.atan2(dx,dz);}
+            o.position.y=.12+Math.abs(Math.sin(s*9))*.04;}}
         else if(a.t==='jump')o.position.y=.5+Math.abs(Math.sin(s*1.6+a.k))*.9;
         else if(a.t==='spin2')o.rotation.y+=.2;
         else if(a.t==='rover'){const ang=s*.12+a.k;o.position.set(Math.cos(ang)*a.r,.05,Math.sin(ang)*a.r);o.rotation.y=-ang;}
