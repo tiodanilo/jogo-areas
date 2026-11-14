@@ -620,6 +620,14 @@ details.fold > summary small{font-family:var(--f-body,inherit);font-size:.85rem;
 details.fold > summary .h2{margin:0}
 details.panel.fold{margin-top:0}
 details.fold.big[open] > summary{margin-bottom:10px}
+.places{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.places button{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-weight:800;cursor:pointer}
+.places button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.places button:disabled{opacity:.55;cursor:not-allowed}
+.places small{font-weight:700;color:var(--ink-2);flex-basis:100%}
+.bcard .mat{display:block;font-weight:800;font-size:.75rem;color:#5E6878}
+.bcard .mat.falta{color:var(--bad)}
+.note.warn{color:var(--bad);font-weight:800}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -795,7 +803,7 @@ details.fold.big[open] > summary{margin-bottom:10px}
   <!-- MEU MUNDO -->
   <section id="sc-world" class="screen" hidden>
     <div class="panel world-top">
-      <div><p class="eyebrow">Meu mundo · cada quadradinho = 1 m²</p><h1 id="w-title">Meu terreno</h1><p class="w-stats" id="w-stats"></p></div>
+      <div><p class="eyebrow">Meu mundo · cada quadradinho = 1 m²</p><h1 id="w-title">Meu terreno</h1><p class="w-stats" id="w-stats"></p><div class="places" id="w-places"></div></div>
       <div class="happy" id="w-happy"></div>
       <div class="actions"><span class="pill" id="w-coins"></span><button class="btn yellow small" type="button" id="w-mk">Mercado</button><button class="btn ghost small" type="button" id="w-back">Voltar</button></div>
     </div>
@@ -1462,12 +1470,12 @@ function resolve(ok,src){G.done=true;G.res[G.i]=ok;const q=G.qs[G.i];const fb=$(
 /* ---------- subir de nível ---------- */
 function showLevel(lvl){const m=$('#lvl-modal');$('#lvl-eye').textContent='Você subiu de nível!';$('#lvl-av').innerHTML=avatarSVG(P,{},{mood:'happy'});$('#lvl-title').textContent=`Nível ${lvl}`;
   $('#lvl-sub').textContent=titleOf(lvl)+(lvl%5===0?' · você ganhou um troféu!':'');
-  const novos=[...ITEMS.filter(it=>it.lvl===lvl).map(it=>it.nome),...BUILD.filter(b=>b.lvl===lvl).map(b=>b.nome)];
+  const novos=[...ITEMS.filter(it=>it.lvl===lvl).map(it=>it.nome),...BUILD.filter(b=>b.lvl===lvl).map(b=>b.nome+(b.place?' (na Lua)':''))];
   $('#lvl-new').innerHTML=novos.length?novos.map(n=>`<li>${esc(n)}</li>`).join(''):'<li>Continue jogando para liberar mais itens</li>';
   m.hidden=false;sfx('level');confetti(140);setTimeout(()=>$('#lvl-ok').focus(),50);}
 function showStage(st){const m=$('#lvl-modal');$('#lvl-eye').textContent='Seu mundo evoluiu!';$('#lvl-av').innerHTML=heroSVG(P);
-  $('#lvl-title').textContent=st.nome+'!';$('#lvl-sub').textContent='Novidades na sua ilha:';
-  const nv=st.i<STAGES.length?STAGES[st.i][2]:['Mais moradores','Mais barcos no mar'];$('#lvl-new').innerHTML=nv.map(n=>`<li>${esc(n)}</li>`).join('');
+  $('#lvl-title').textContent=st.nome+'!';const LM=P.world.lua;$('#lvl-sub').textContent=LM?'Novidades na colônia:':'Novidades na sua ilha:';if(LM)$('#lvl-av').innerHTML=`<div style="display:grid;place-items:center;height:100%;font-size:4rem">🌕</div>`;
+  const SG=LM?MSTAGES:STAGES;const nv=st.i<SG.length?SG[st.i][2]:(LM?['Mais colonos']:['Mais moradores','Mais barcos no mar']);$('#lvl-new').innerHTML=nv.map(n=>`<li>${esc(n)}</li>`).join('');
   m.hidden=false;sfx('level');confetti(160);setTimeout(()=>$('#lvl-ok').focus(),50);if(cur==='world'&&WS.view==='3d'&&W3.ok)W3.build(P);}
 $('#lvl-ok').onclick=()=>{$('#lvl-modal').hidden=true;if(cur==='game')$('#q-next').focus();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#lvl-modal').hidden)$('#lvl-ok').click();});
@@ -1510,6 +1518,9 @@ const ACH=[
  {id:'tax100',nome:'Prefeito',desc:'Colete 100 moedas de impostos',r:40,ok:p=>(p.taxN||0)>=100},
  {id:'astro1',nome:'Astronauta',desc:'Complete uma missão espacial',r:50,ok:p=>(p.missoes||0)>=1},
  {id:'marte1',nome:'Explorador de Marte',desc:'Traga um cristal de Marte',r:80,ok:p=>((p.prod||{}).marte||0)>=1},
+ {id:'lua1',nome:'Pé na Lua',desc:'Construa sua primeira coisa na Lua',r:100,ok:p=>!!(p.lua&&p.lua.items.length)},
+ {id:'colon10',nome:'Colônia lunar',desc:'Tenha 10 colonos na Lua',r:120,ok:p=>!!p.lua&&p.lua.items.reduce((t,i)=>t+moonPop(i),0)>=10},
+ {id:'helio1',nome:'Mineiro espacial',desc:'Colete hélio-3 na Lua',r:80,ok:p=>((p.prod||{}).helio||0)>=1},
  {id:'piso10',nome:'Mestre de obras',desc:'Atenda 10 clientes na loja de pisos',r:40,ok:p=>(p.pisos||0)>=10},
  {id:'enc5',nome:'Entregador',desc:'Entregue 5 encomendas',r:50,ok:p=>(p.encN||0)>=5},
  {id:'pizza1',nome:'Pizzaiolo',desc:'Asse uma pizza',r:30,ok:p=>((p.prod||{}).pizza||0)>=1},
@@ -1634,10 +1645,10 @@ const STAGES=[['Acampamento',0,[]],['Sítio',12,['Moinho de vento','Caminho de p
   ['Cidade',80,['Farol e píer','Moradores passeando']],['Metrópole',160,['Balão de ar quente','Chafariz na praça']]];
 function stageOf(pts){if(pts<160){let i=0;while(i<4&&pts>=STAGES[i+1][1])i++;return {i,nome:STAGES[i][0],base:STAGES[i][1],next:STAGES[i+1][1],nextNome:STAGES[i+1][0],novos:STAGES[i+1][2]};}
   const x=Math.floor((pts-160)/120);return {i:4+x,nome:x?`Metrópole ${x+1}`:'Metrópole',base:160+x*120,next:160+(x+1)*120,nextNome:`Metrópole ${x+2}`,novos:['Mais moradores','Mais barcos no mar']};}
-const worldStage=p=>stageOf(Math.max(worldPts(p),(p.world&&p.world.pmax)||0));
+let worldStage=p=>stageOf(Math.max(worldPts(p),(p.world&&p.world.pmax)||0));
 function trackStage(before){const now=worldPts(P);P.world.pmax=Math.max(P.world.pmax||0,now);const st=worldStage(P);
   if(st.i>before){const got=checkAch();saveProfile();setTimeout(()=>showStage(st),900);announceAch(got,3600);}}
-const M2PRICE=12,MAXW=30,MAXH=22,TS=40,WPAD=8,WLEFT=84;
+let M2PRICE=12,MAXW=30,MAXH=22;const TS=40,WPAD=8,WLEFT=84;
 const n1=v=>Math.round(v*10)/10;
 const BD={
  arvore:(x,y,W,H)=>{const cx=x+W/2,cy=y+H/2,r=Math.min(W,H)*.44;return `<circle cx="${n1(cx+2)}" cy="${n1(cy+3)}" r="${n1(r)}" fill="#1F6B43" opacity=".35"/><circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="#2E8B57"/><circle cx="${n1(cx-r*.3)}" cy="${n1(cy-r*.3)}" r="${n1(r*.5)}" fill="#46B06E"/><circle cx="${n1(cx+r*.35)}" cy="${n1(cy+r*.3)}" r="2.6" fill="#E5484D"/>`},
@@ -1706,7 +1717,7 @@ function cellAt(e){const svg=$('#w-map .wmap');if(!svg)return null;const pt=svg.
 function openWorld(){WS.sel=null;WS.pick=null;WS.move=null;WS.rot=false;show('world');renderWorld();farmWatch();}
 function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,area=wd.w*wd.h,b=built(P),lvl=levelInfo(P.xp).lvl;
   $('#w-title').textContent=`O mundo de ${P.name.split(/\s+/)[0]}`;
-  const pts=Math.max(worldPts(P),wd.pmax||0),st=stageOf(pts);
+  const pts=Math.max(worldPts(P),wd.pmax||0),st=wd.lua?moonStageOf(pts):stageOf(pts);
   $('#w-stats').textContent=`Terreno: ${wd.w} × ${wd.h} = ${area} m² · Ocupado: ${b} m² · Livre: ${area-b} m²`;
   $('#w-stage').innerHTML=`<div class="stage-top"><b>${st.nome}</b><span>${pts} / ${st.next} pontos</span></div><div class="xpbar"><i style="width:${Math.round((pts-st.base)/(st.next-st.base)*100)}%"></i></div>
     <small>${st.next-pts===1?'Falta 1 ponto':`Faltam ${st.next-pts} pontos`} para virar <b>${st.nextNome}</b>: ${st.novos.join(', ').toLowerCase()}.</small>
@@ -1731,8 +1742,8 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
       <span class="actions">${isProd(it)&&!it.dano?'<button class="btn go small" type="button" data-w="open">Abrir</button>':''}${up}<button class="btn ghost small" type="button" data-w="move">Mudar de lugar</button><button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
   $('#w-sel').innerHTML=box;
   const TABS=['moradia','lazer','fazenda','comercio','servicos'];if(!WS.tab)WS.tab='moradia';if(WS.sel&&CAT[WS.sel]&&WS.move==null)WS.tab=CAT[WS.sel];
-  $('#w-btabs').innerHTML=TABS.map(c=>`<button type="button" data-tab="${c}" aria-pressed="${WS.tab===c}" style="--c:${CATC[c]}">${CATN[c][0].toUpperCase()+CATN[c].slice(1)} <small>${BUILD.filter(b=>CAT[b.id]===c).length}</small></button>`).join('');
-  $('#w-build').innerHTML=BUILD.filter(bd=>CAT[bd.id]===WS.tab).map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id&&WS.move==null;
+  $('#w-btabs').innerHTML=TABS.map(c=>`<button type="button" data-tab="${c}" aria-pressed="${WS.tab===c}" style="--c:${CATC[c]}">${CATN[c][0].toUpperCase()+CATN[c].slice(1)} <small>${BUILD.filter(b=>CAT[b.id]===c&&(b.place||'terra')===(P.world.lua?'lua':'terra')).length}</small></button>`).join('');
+  $('#w-build').innerHTML=BUILD.filter(bd=>CAT[bd.id]===WS.tab&&(bd.place||'terra')===(P.world.lua?'lua':'terra')).map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id&&WS.move==null;
     const btn=locked?`<span class="m2">Libera no nível ${bd.lvl}</span>`:P.coins>=bd.price?`<button type="button" class="btn ${on?'primary':'yellow'}" data-b="${bd.id}">${on?'Escolhida':`${COIN}${bd.price}`}</button>`:`<button type="button" class="btn ghost" disabled>${COIN}${bd.price}</button>`;
     return `<div class="bcard ${on?'sel':''} ${locked?'locked':''}" data-id="${bd.id}"><svg viewBox="0 0 ${bd.w*TS} ${bd.h*TS}" aria-hidden="true">${BD[bd.id](3,3,bd.w*TS-6,bd.h*TS-6)}</svg><h4>${bd.nome}</h4><span class="m2">${bd.w} × ${bd.h} = ${bd.w*bd.h} m²</span>${btn}</div>`}).join('');
   const cCost=wd.h*M2PRICE,rCost=wd.w*M2PRICE;
@@ -1865,17 +1876,22 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
   build(p){const T=THREE;const wd=p.world,W=wd.w,H=wd.h;this.night=isNight();Object.values(this.mats).forEach(m=>m.dispose());this.mats={};
     if(this.root){this.scene.remove(this.root);this.root.traverse(o=>{if(o.geometry)o.geometry.dispose()});}
     const root=this.root=new T.Group();this.scene.add(root);this.anim=[];this.water=[];this.items=new T.Group();root.add(this.items);
-    const N=this.night,hp=happy(p),sad=hp<50&&wd.items.length>0;this.sad=sad;const sky=N?0x0B1430:sad?0x8D9BB0:0x9FDBFF;this.scene.background=new T.Color(sky);this.scene.fog=new T.Fog(sky,sad?25:40,sad?90:130);
-    this.hemi.intensity=N?.38:.78;this.hemi.color.set(N?0x8FA6FF:0xCFEFFF);this.sun.intensity=N?.42:sad?.45:.95;this.sun.color.set(N?0xA9B8FF:0xFFF1D6);
+    const MOON=!!wd.lua;const N=this.night,hp=happy(p),sad=!MOON&&hp<50&&wd.items.length>0;this.sad=sad;const sky=MOON?0x05070F:N?0x0B1430:sad?0x8D9BB0:0x9FDBFF;this.scene.background=new T.Color(sky);this.scene.fog=new T.Fog(sky,sad?25:40,sad?90:130);
+    this.hemi.intensity=MOON?.55:N?.38:.78;this.hemi.color.set(N?0x8FA6FF:0xCFEFFF);this.sun.intensity=N?.42:sad?.45:.95;this.sun.color.set(N?0xA9B8FF:0xFFF1D6);
     const st=worldStage(p).i;const R=Math.hypot(W,H)/2+4.5+Math.min(st,6)*.7;this.R=R;
     this.sun.position.set(R*.9,R*1.6,R*.55);this.sun.target.position.set(0,0,0);const sc=this.sun.shadow.camera;sc.left=sc.bottom=-R-2;sc.right=sc.top=R+2;sc.near=1;sc.far=R*5;sc.updateProjectionMatrix();
     this.maxD=R*3.2;if(!this.userZoom)this.dist=Math.max(W,H)*1.25+9;
     /* mar, praia e ilha */
-    const sea=this.mesh(new T.CircleGeometry(R+60,48),this.M(N?0x1C3E78:0x4FB8EC,{roughness:.35}),0,-.35,0);sea.rotation.x=-Math.PI/2;sea.castShadow=false;this.water.push(sea);
-    this.mesh(new T.CylinderGeometry(R+1.6,R+2.4,.5,40),this.M(N?0x9C8A5E:0xF1DCA0),0,-.3,0);
-    this.mesh(new T.CylinderGeometry(R,R+.6,.5,40),this.M(N?0x3C7444:0x86CC6C),0,-.2,0);
+    if(MOON){const gr=this.mesh(new T.CircleGeometry(R+60,48),this.M(0x6E727C,{roughness:1}),0,-.35,0);gr.rotation.x=-Math.PI/2;gr.castShadow=false;
+      const sp=new Float32Array(900);const rs=rng('estrelas');for(let k=0;k<300;k++){const a=rs()*Math.PI*2,b=rs()*Math.PI*.45+.05,rr=150;sp.set([Math.cos(a)*Math.cos(b)*rr,Math.sin(b)*rr,Math.sin(a)*Math.cos(b)*rr],k*3);}
+      const sg=new T.BufferGeometry();sg.setAttribute('position',new T.BufferAttribute(sp,3));root.add(new T.Points(sg,new T.PointsMaterial({color:0xFFFFFF,size:1.2,sizeAttenuation:false})));
+      const earth=this.mesh(new T.SphereGeometry(5,24,16),this.M(0x2F6BFF,{emissive:0x1C47C9,emissiveIntensity:.6}),-50,38,-70);earth.castShadow=false;
+      [[1.5,2.5,2],[-2,-1,3],[0,3.5,2.6]].forEach(([a,b,c])=>{const l=this.mesh(new T.SphereGeometry(2,10,8),this.M(0x22B357,{emissive:0x116633,emissiveIntensity:.5}),-50+a,38+b,-70+c);l.scale.set(1,.6,.5);l.castShadow=false;});}
+    else{const sea=this.mesh(new T.CircleGeometry(R+60,48),this.M(N?0x1C3E78:0x4FB8EC,{roughness:.35}),0,-.35,0);sea.rotation.x=-Math.PI/2;sea.castShadow=false;this.water.push(sea);}
+    this.mesh(new T.CylinderGeometry(R+1.6,R+2.4,.5,40),this.M(MOON?0x7D818B:N?0x9C8A5E:0xF1DCA0),0,-.3,0);
+    this.mesh(new T.CylinderGeometry(R,R+.6,.5,40),this.M(MOON?0x9A9EA8:N?0x3C7444:0x86CC6C),0,-.2,0);
     /* terreno quadriculado: cada placa é 1 m² */
-    const tA=this.M(N?0x4B8A50:0x9BDB84),tB=this.M(N?0x427C48:0x8CCF75);const tg=new T.BoxGeometry(.97,.12,.97);
+    const tA=this.M(MOON?0xC4C8D0:N?0x4B8A50:0x9BDB84),tB=this.M(MOON?0xB6BAC4:N?0x427C48:0x8CCF75);const tg=new T.BoxGeometry(.97,.12,.97);
     for(let i=0;i<W;i++)for(let j=0;j<H;j++){const m=this.mesh(tg,(i+j)%2?tB:tA,i+.5-W/2,.06,j+.5-H/2);m.castShadow=false;m.userData.tile=[i,j];}
     /* cerca branca com portão do lado do caminho */
     const wood=this.M(N?0xC9CFE0:0xFFFFFF),pg=new T.BoxGeometry(.12,.55,.12);
@@ -1886,30 +1902,32 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
     rail(W,0,-H/2,0);rail(W,0,H/2,0);rail(H,W/2,0,1);
     const gz0=gateZ-H/2,gz1=gz0+1;if(gz0>-H/2)rail(gz0+H/2,-W/2,(-H/2+gz0)/2,1);if(gz1<H/2)rail(H/2-gz1,-W/2,(gz1+H/2)/2,1);
     /* caminho de terra até o avatar */
-    const path=this.mesh(new T.BoxGeometry(R-W/2+.6,.04,1.1),this.M(N?0xA48F62:0xE9D3A0),-(W/2+(R-W/2)/2)+.3,.07,gz0+.5);path.castShadow=false;
+    const path=this.mesh(new T.BoxGeometry(R-W/2+.6,.04,1.1),this.M(MOON?0x8E939E:N?0xA48F62:0xE9D3A0),-(W/2+(R-W/2)/2)+.3,.07,gz0+.5);path.castShadow=false;
     /* enfeites fora da cerca, sempre no mesmo lugar para cada aluno */
     const rand=rng(p.id||p.name||'x');const trunk=this.M(0x8A5A2B);
     for(let k=0;k<Math.round(R*2.2);k++){const a=rand()*Math.PI*2,rr=Math.hypot(W,H)/2+1.2+rand()*(R-Math.hypot(W,H)/2-1.8);
       const x=Math.cos(a)*rr,z=Math.sin(a)*rr;if(x<-W/2&&Math.abs(z-(gz0+.5))<1.4)continue;
       const kind=rand();
-      if(kind<.45){const g=new T.Group();g.position.set(x,0,z);root.add(g);this.mesh(new T.CylinderGeometry(.08,.12,.6,6),trunk,0,.3,0,g);
+      if(MOON){if(kind<.4){const s=.4+rand()*.6;const c=this.mesh(new T.TorusGeometry(s,.1+s*.12,6,18),this.M(0x8E929C),x,.02,z);c.rotation.x=Math.PI/2;c.castShadow=false;const f=this.mesh(new T.CircleGeometry(s,16),this.M(0x5E626C),x,.01,z);f.rotation.x=-Math.PI/2;f.castShadow=false;}
+        else{const s=.2+rand()*.35;this.mesh(new T.DodecahedronGeometry(s,0),this.M(0x8C909A),x,s*.5,z);}}
+      else if(kind<.45){const g=new T.Group();g.position.set(x,0,z);root.add(g);this.mesh(new T.CylinderGeometry(.08,.12,.6,6),trunk,0,.3,0,g);
         const s=.32+rand()*.22;this.mesh(new T.ConeGeometry(s,s*2.1,7),this.M(N?0x2D6B45:0x3E9B5C),0,.6+s,0,g);this.anim.push({o:g,t:'sway',k:rand()*6});}
       else if(kind<.7){const s=.25+rand()*.3;this.mesh(new T.DodecahedronGeometry(s,0),this.M(N?0x7D8696:0xA9B2BF),x,s*.5,z);}
       else{const g=new T.Group();g.position.set(x,0,z);root.add(g);const col=[0xFF6B9A,0xFFD43B,0xB07CFF,0xFFFFFF][Math.floor(rand()*4)];
         for(let f=0;f<4;f++){this.mesh(new T.SphereGeometry(.07,6,4),this.M(col),(rand()-.5)*.5,.08,(rand()-.5)*.5,g)}}}
     /* a ilha muda conforme a fase do mundo */
     const at=(ang,r)=>[Math.cos(ang)*r,Math.sin(ang)*r];const pz=gz0+.5,px0=-W/2-.2,px1=-R+.6;
-    if(st>=1){path.material=this.M(N?0x7E8796:0xC8CDD6);for(let x=px0-.6;x>px1;x-=.7){const sp=this.mesh(new T.CylinderGeometry(.28,.3,.05,8),this.M(N?0x9AA3B2:0xE6E9EF),x,.1,pz+(Math.round(x*3)%2?.15:-.15));sp.castShadow=false;}
+    if(st>=1&&!MOON){path.material=this.M(N?0x7E8796:0xC8CDD6);for(let x=px0-.6;x>px1;x-=.7){const sp=this.mesh(new T.CylinderGeometry(.28,.3,.05,8),this.M(N?0x9AA3B2:0xE6E9EF),x,.1,pz+(Math.round(x*3)%2?.15:-.15));sp.castShadow=false;}
       const [mx,mz]=at(-.9,R-1.4);const mill=new T.Group();mill.position.set(mx,0,mz);root.add(mill);
       this.mesh(new T.CylinderGeometry(.45,.75,2.6,8),this.M(N?0xC9CFE0:0xF6EFE4),0,1.3,0,mill);this.mesh(new T.ConeGeometry(.6,.8,8),this.M(0xD9363E),0,3,0,mill);
       const bl=new T.Group();bl.position.set(0,2.4,.62);mill.add(bl);for(let k=0;k<4;k++){const b=this.box(.18,1.5,.04,this.M(0xFFFFFF),0,0,0,bl);b.geometry.translate(0,0,0);b.position.set(0,0,0);b.rotation.z=k*Math.PI/2;b.geometry.translate(0,.75-.75,0);b.translateY(.75);}
       this.mesh(new T.SphereGeometry(.1,8,6),this.M(0x8A5A2B),0,0,.03,bl);mill.lookAt(0,0,0);this.anim.push({o:bl,t:'spin',k:0});}
-    if(st>=2){const lampM=this.M(0xFFF1B0,{emissive:0xFFD27A,emissiveIntensity:N?1.3:.25});
+    if(st>=2&&!MOON){const lampM=this.M(0xFFF1B0,{emissive:0xFFD27A,emissiveIntensity:N?1.3:.25});
       for(let x=px0-.9;x>px1+.3;x-=1.8)for(const dz of [-.85,.85]){this.box(.06,1.1,.06,this.M(0x3A4256),x,0,pz+dz);this.mesh(new T.SphereGeometry(.12,10,8),lampM,x,1.18,pz+dz);
         if(N){const pl=new T.PointLight(0xFFC870,.5,3.2);pl.position.set(x,1.1,pz+dz);root.add(pl);}}
       const nb=Math.min(1+Math.max(0,st-2),4);for(let k=0;k<nb;k++){const bt=new T.Group();root.add(bt);this.box(1,.3,.45,this.M([0xD9363E,0xFFFFFF,0x2F6BFF,0xFFD43B][k]),0,0,0,bt);
         const sail=this.mesh(new T.ConeGeometry(.45,1.1,3),this.M(0xFFFFFF),0,.85,0,bt);sail.scale.z=.12;this.anim.push({o:bt,t:'boat',k:k*1.7,r:R+3.5+k*1.8,sp:.08+k*.02});}}
-    if(st>=3){const [lx,lz]=at(.55,R+.9);const lh=new T.Group();lh.position.set(lx,-.1,lz);root.add(lh);
+    if(st>=3&&!MOON){const [lx,lz]=at(.55,R+.9);const lh=new T.Group();lh.position.set(lx,-.1,lz);root.add(lh);
       for(let k=0;k<4;k++)this.mesh(new T.CylinderGeometry(.42-k*.05,.47-k*.05,.7,12),this.M(k%2?0xFFFFFF:0xD9363E),0,.35+k*.7,0,lh);
       this.mesh(new T.CylinderGeometry(.32,.32,.4,12),this.M(0xFFF6C8,{emissive:0xFFE08A,emissiveIntensity:N?1.4:.4}),0,3.05,0,lh);this.mesh(new T.ConeGeometry(.42,.5,12),this.M(0x3A4256),0,3.5,0,lh);
       if(N){const beam=new T.Group();beam.position.y=3.05;lh.add(beam);const bm=this.mesh(new T.ConeGeometry(.9,6,16,1,true),this.M(0xFFF3B0,{transparent:true,opacity:.18,emissive:0xFFF3B0,emissiveIntensity:1,side:T.DoubleSide,depthWrite:false}),3,0,0,beam);bm.rotation.z=Math.PI/2;bm.castShadow=false;this.anim.push({o:beam,t:'beam',k:0});}
@@ -1917,13 +1935,16 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
       const nr=Math.min(2+(st-3)*2,8),keys=Object.keys(SHIRT);
       for(let k=0;k<nr;k++){const npc=new T.Group();root.add(npc);const fake={look:{g:rand()<.5?'f':'m',skin:Math.floor(rand()*5),hair:Math.floor(rand()*6),style:Math.floor(rand()*3)},eq:{shirt:keys[Math.floor(rand()*keys.length)]}};
         this.avatar3d(npc,fake);npc.scale.setScalar(.85);this.anim.push({o:npc,t:'walk',k:k/nr,rx:W/2+.75,rz:H/2+.75,sp:sad?0:.012+rand()*.006});}}
-    if(st>=4){const [bx,bz]=at(2.3,R*.75);const bal=new T.Group();bal.position.set(bx,6,bz);root.add(bal);
+    if(st>=4&&!MOON){const [bx,bz]=at(2.3,R*.75);const bal=new T.Group();bal.position.set(bx,6,bz);root.add(bal);
       this.mesh(new T.SphereGeometry(1.1,14,12),this.M(0xFF6B9A),0,1.2,0,bal);this.mesh(new T.ConeGeometry(.75,.8,14),this.M(0xFFD43B),0,.25,0,bal).rotation.x=Math.PI;
       this.box(.45,.35,.45,this.M(0x8A5A2B),0,-.55,0,bal);this.anim.push({o:bal,t:'balloon',k:0,y:6,x:bx});
       const fx=px0-2.2,fz=pz+2.1;this.mesh(new T.CylinderGeometry(.75,.85,.3,16),this.M(0xEDE6D6),fx,.15,fz);const fw2=this.mesh(new T.CylinderGeometry(.6,.6,.06,16),this.M(N?0x2E6FB0:0x38A9E0,{roughness:.2}),fx,.3,fz);this.water.push(fw2);
       const jet=this.mesh(new T.CylinderGeometry(.05,.14,1.1,8),this.M(0xBDE8FA,{transparent:true,opacity:.75}),fx,.85,fz);jet.castShadow=false;this.anim.push({o:jet,t:'jet',k:0});}
     /* nuvens */
-    for(let k=0;k<4;k++){const g=new T.Group();g.position.set((rand()-.5)*R*2.4,R*.9+6+rand()*3,(rand()-.5)*R*2.4);g.scale.setScalar(.55);root.add(g);
+    if(MOON){const [fx,fz]=at(-.9,R-1.4);if(st>=1){this.box(.05,1.6,.05,this.M(0xDDDDDD),fx,0,fz);const fl=this.box(.7,.45,.02,this.M(0xFFD43B),fx+.36,1.15,fz);}
+      if(st>=2){const rv=new T.Group();root.add(rv);this.box(.6,.25,.4,this.M(0xEEF1F7),0,.15,0,rv);for(const [a,b] of [[-.22,-.22],[.22,-.22],[-.22,.22],[.22,.22]])this.mesh(new T.CylinderGeometry(.1,.1,.06,10),this.M(0x3A3F4B),a,.1,b,rv).rotation.x=Math.PI/2;this.box(.04,.35,.04,this.M(0x9AA3B2),.2,.4,0,rv);this.anim.push({o:rv,t:'rover',k:0,r:Math.hypot(W,H)/2+1.6});}
+      if(st>=3){const [ax,az]=at(.6,R-1.2);this.box(.12,2.6,.12,this.M(0x9AA3B2),ax,0,az);const dish=this.mesh(new T.SphereGeometry(1,18,8,0,Math.PI*2,0,Math.PI/3),this.M(0xFFFFFF,{side:T.DoubleSide}),ax,3.2,az);dish.rotation.x=Math.PI*.75;}}
+    if(!MOON)for(let k=0;k<4;k++){const g=new T.Group();g.position.set((rand()-.5)*R*2.4,R*.9+6+rand()*3,(rand()-.5)*R*2.4);g.scale.setScalar(.55);root.add(g);
       const cm=this.M(N?0x3A4C7E:0xFFFFFF,{flatShading:false,emissive:N?0x000000:0xFFFFFF,emissiveIntensity:N?0:.35});for(let b=0;b<4;b++){const s=.8+rand()*.7;const m=this.mesh(new T.SphereGeometry(s,10,8),cm,b*.9-1.3,(b%2)*.3,(rand()-.5)*.6,g);m.receiveShadow=false;}
       this.anim.push({o:g,t:'cloud',k:.25+rand()*.3});}
     /* construções */
@@ -1945,7 +1966,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
     if(sad&&!REDUCED){const n=600,pos=new Float32Array(n*6);for(let k=0;k<n;k++){const x=(rand()-.5)*R*2.2,z=(rand()-.5)*R*2.2,y=rand()*12;pos.set([x,y,z,x,y-.35,z],k*6);}
       const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(pos,3));const rain=new T.LineSegments(geo,new T.LineBasicMaterial({color:0xBFD4F0,transparent:true,opacity:.55}));root.add(rain);this.anim.push({o:rain,t:'rain',k:0});}
     /* avatar perto do portão */
-    const av=new T.Group();av.position.set(-W/2-1.6,.05,gz0+.5);av.rotation.y=Math.PI/2;root.add(av);this.avatar3d(av,p);this.anim.push({o:av,t:'bob',k:.05});
+    const av=new T.Group();av.position.set(-W/2-1.6,.05,gz0+.5);av.rotation.y=Math.PI/2;root.add(av);this.avatar3d(av,p);if(MOON){const hm=this.mesh(new T.SphereGeometry(.34,16,12),this.M(0xBFE6FF,{transparent:true,opacity:.35,roughness:.05}),0,1.12,0,av);hm.castShadow=false;}this.anim.push({o:av,t:'bob',k:.05});
     this.resize();this.loop();},
 
   /* boneco low-poly com as cores do avatar */
@@ -2059,6 +2080,9 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
         if(a.t==='sway')o.rotation.z=Math.sin(s*1.6+a.k)*.05;
         else if(a.t==='bob')o.position.y=a.k+Math.abs(Math.sin(s*2.2))*.06;
         else if(a.t==='hop')o.position.y=Math.abs(Math.sin(s*4))*.12;
+        else if(a.t==='jump')o.position.y=.5+Math.abs(Math.sin(s*1.6+a.k))*.9;
+        else if(a.t==='spin2')o.rotation.y+=.2;
+        else if(a.t==='rover'){const ang=s*.12+a.k;o.position.set(Math.cos(ang)*a.r,.05,Math.sin(ang)*a.r);o.rotation.y=-ang;}
         else if(a.t==='cloud'){o.position.x+=a.k*.016;if(o.position.x>this.R*1.4)o.position.x=-this.R*1.4;}
         else if(a.t==='swim'){o.position.x=Math.cos(s*.5)*a.k;o.position.z=Math.sin(s*.5)*a.k;o.rotation.y=-s*.5-Math.PI/2;}
         else if(a.t==='flag')o.rotation.y=Math.sin(s*3)*.25;
@@ -2483,7 +2507,7 @@ function pisoQ(lv){const ano=P.ano||S.ano,ids=SHAPES.filter(s=>s.minAno<=ano).ma
   const q={sid,nome:s.nome,formula:s.formula,u:'m',...g,cli:pick(CLIENTES),lugar:pick(LUGARES)};q.opts=buildOpts(q);q.pay=Math.round(PISO_PAY[sid]*(1+.25*((lv||1)-1)));return q;}
 /* encomendas do dia: o cliente paga mais que a tabela por um lote de produtos */
 const ENC_CLI=['A escola','O restaurante da Dona Rosa','A festa junina','O hotel da praia','A cantina','O mercadinho do bairro','O aniversário da Luiza','O time de futebol','A feira de ciências'];
-function encDay(){const d=dayKey();if(!P.enc||P.enc.d!==d)P.enc={d,done:[]};const r=rng('enc'+d+P.id),pool=Object.keys(GOODS).filter(g=>!['galinha','vaca','lua','marte','europa','meteoro'].includes(g)),used=new Set();
+function encDay(){const d=dayKey();if(!P.enc||P.enc.d!==d)P.enc={d,done:[]};const r=rng('enc'+d+P.id),pool=Object.keys(GOODS).filter(g=>!['galinha','vaca','lua','marte','europa','meteoro','helio'].includes(g)),used=new Set();
   return [0,1,2].map(i=>{let g;do{g=pool[Math.floor(r()*pool.length)]}while(used.has(g)&&used.size<pool.length);used.add(g);const base=GOODS[g].base,q=Math.max(3,Math.min(30,Math.round((50+r()*110)/base))),k=1.25+Math.round(r()*5)*.05;
     return {i,g,q,pay:Math.round(q*base*k),pct:Math.round((k-1)*100),cli:ENC_CLI[(Math.floor(r()*3)+i*3)%ENC_CLI.length],done:P.enc.done.includes(i)};});}
 function renderEnc(){const box=$('#mk-enc');if(!box||!P)return;const es=encDay();
@@ -2682,7 +2706,7 @@ prodAct=function(a){const it=P.world.items[PM.idx];if(!it||it.t!=='base')return 
     PM.lfb=ok?`<div class="feedback ok"><strong>Checagem certa! ${f(q.ans)} m². Lançamento com carga extra!</strong><span class="steps">${q.steps}</span></div>`:`<div class="feedback no"><strong>A área era ${f(q.ans)} m². O foguete foi, mas sem a carga extra.</strong><span class="steps">${q.steps}</span></div>`;
     sfx(ok?'ok':'no');setTimeout(()=>sfx('level'),400);saveProfile();const html=PM.lfb;PM.lq=null;renderProd();$('#prod-body').insertAdjacentHTML('afterbegin',html);
     toast(`3, 2, 1… foguete a caminho de ${M.nome}! Volta em ${M.min} min.`);if(cur==='world'&&WS.view==='3d'&&W3.ok&&!REDUCED)W3.fly(PM.idx);return}
-  if(a==='unload'){const ms=misState(it);if(!ms||!ms.back)return;const M=MISSOES.find(x=>x.id===ms.id);addGood(M.good,ms.carga);if(ms.raro)addGood('meteoro',1);delete it.mis;P.missoes=(P.missoes||0)+1;
+  if(a==='unload'){const ms=misState(it);if(!ms||!ms.back)return;const M=MISSOES.find(x=>x.id===ms.id);addGood(M.good,ms.carga);if(ms.raro)addGood('meteoro',1);delete it.mis;P.missoes=(P.missoes||0)+1;if(M.id==='lua')P.mlua=(P.mlua||0)+1;
     sfx('coin');setTimeout(()=>sfx('star'),150);const got=checkAch();saveProfile();renderProd();toast(`Descarregou ${qn(ms.carga,M.good)}${ms.raro?' e um meteorito dourado':''}! Venda no mercado.`);announceAch(got,1600);
     if(cur==='world'&&WS.view==='3d'&&W3.ok&&!REDUCED)W3.celebrate(PM.idx);}};
 const openProdR=openProd;openProd=function(i){PM.lq=null;PM.lfb=null;openProdR(i);};
@@ -2698,6 +2722,162 @@ W3.fly=function(idx){const g=this.items.children.find(c=>c.userData.idx===idx);i
   const t0=performance.now(),y0=rk.position.y;const step=t=>{const k=(t-t0)/1800;rk.position.y=y0+k*k*14;rk.rotation.y+=.05;this.draw();if(k<1)requestAnimationFrame(step);else rk.visible=false;};requestAnimationFrame(step);};
 const BD_BASE0=BD.base;BD.base=(x,y,W,H,it)=>{const m=it&&misState(it);let s=BD_BASE0(x,y,W,H);
   if(m&&!m.back)s+=`<rect x="${x+W/2-26}" y="${y+H-20}" width="52" height="16" rx="8" fill="#1B2A3A"/><text x="${x+W/2}" y="${y+H-8}" text-anchor="middle" font-size="10" font-weight="800" fill="#FFD43B" font-family="sans-serif">EM VIAGEM</text>`;return s;};
+
+/* ---------- colônia na Lua: um segundo mundo liberado pelo foguete ---------- */
+const MOON_LVL=15,MOON_MIS=3;
+Object.assign(GOODS,{batata:{nome:'Batata lunar',un:'caixa',uns:'caixas',base:12},helio:{nome:'Hélio-3',un:'cilindro de hélio-3',uns:'cilindros de hélio-3',base:120}});
+Object.assign(GART,{
+  batata:'<ellipse cx="20" cy="22" rx="14" ry="11" fill="#C9A06A" stroke="#8A6A3E" stroke-width="2"/><circle cx="14" cy="19" r="1.6" fill="#8A6A3E"/><circle cx="24" cy="25" r="1.6" fill="#8A6A3E"/><circle cx="26" cy="17" r="1.2" fill="#8A6A3E"/><path d="M28 10 q3 -6 7 -4" stroke="#9B5BFF" stroke-width="2" fill="none"/>',
+  helio:'<rect x="11" y="8" width="18" height="28" rx="8" fill="#9B5BFF" stroke="#5B2DB8" stroke-width="2"/><rect x="16" y="3" width="8" height="6" rx="2" fill="#8E99AD"/><text x="20" y="26" text-anchor="middle" font-size="9" font-weight="800" fill="#fff" font-family="sans-serif">He3</text>',
+  oxi:'<circle cx="20" cy="20" r="15" fill="#BFE6FF" stroke="#4FB3E8" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-size="13" font-weight="800" fill="#1C47C9" font-family="sans-serif">O₂</text>'});
+Object.assign(CAT,{cupula:'moradia',cupula2:'moradia',telescopio:'lazer',parque:'lazer',estufa:'fazenda',mina:'comercio',oxigenio:'servicos'});
+const DOME_R={cupula:1.5,cupula2:2};
+const moonPop=it=>DOME_R[it.t]?Math.floor(3.14*DOME_R[it.t]*DOME_R[it.t]*(it.lv||1)/2):0;
+const O2USE={mina:4,parque:2,telescopio:1};
+const moonUnlocked=p=>levelInfo(p.xp).lvl>=MOON_LVL&&((p.mlua||0)>=MOON_MIS||((p.prod||{}).lua||0)>=MOON_MIS*3);
+const inMoon=()=>!!(P&&P._earth);
+function newMoon(){return {lua:true,w:6,h:5,items:[],probs:[]};}
+function moonStats(p){const items=p.world.items;let pop=0,ou=0,op=0;const area={moradia:0,lazer:0,fazenda:0,comercio:0,servicos:0};
+  items.forEach(it=>{const m=moonPop(it);pop+=m;ou+=m+(O2USE[it.t]||0);if(CAT[it.t])area[CAT[it.t]]+=it.w*it.h;if(!it.dano){if(it.t==='oxigenio')op+=it.w*it.h*3*(it.lv||1);if(it.t==='estufa')op+=3;}});
+  const tot=Object.values(area).reduce((a,b)=>a+b,0),lazer=items.some(i=>CAT[i.t]==='lazer');
+  return {moon:true,pop,ou,op,faltaO:ou>op,area,tot,lazer,semLazer:pop>0&&!lazer,ue:0,pe:0,ua:0,pa:0,faltaE:false,faltaA:false};}
+const cityStatsT=cityStats;cityStats=function(p){return p.world&&p.world.lua?moonStats(p):cityStatsT(p);};
+const happyT=happy;happy=function(p){if(!(p.world&&p.world.lua))return happyT(p);const st=moonStats(p);let h=100-12*p.world.items.filter(i=>i.dano).length;
+  if(st.faltaO)h-=30;if(st.semLazer)h-=10;return Math.max(0,Math.min(100,h));};
+/* fases da colônia */
+const MSTAGES=[['Base lunar',0,[]],['Colônia',30,['Bandeira na cratera']],['Vila lunar',80,['Robô explorador passeando']],['Cidade lunar',150,['Antena gigante']]];
+function moonStageOf(pts){if(pts<150){let i=0;while(i<3&&pts>=MSTAGES[i+1][1])i++;return {i,nome:MSTAGES[i][0],base:MSTAGES[i][1],next:MSTAGES[i+1][1],nextNome:MSTAGES[i+1][0],novos:MSTAGES[i+1][2]};}
+  const x=Math.floor((pts-150)/120);return {i:3+x,nome:x?`Cidade lunar ${x+1}`:'Cidade lunar',base:150+x*120,next:150+(x+1)*120,nextNome:`Cidade lunar ${x+2}`,novos:['Mais colonos']};}
+const worldStageT=worldStage;worldStage=p=>p.world&&p.world.lua?moonStageOf(Math.max(worldPts(p),p.world.pmax||0)):worldStageT(p);
+/* trocar de mundo: P.world aponta para a Lua; o que é salvo continua com a Terra em P.world */
+function enterMoon(){if(inMoon()||!P)return;const fresh=!P.lua;if(fresh)P.lua=newMoon();P._earth=P.world;P.world=P.lua;M2PRICE=25;MAXW=20;MAXH=14;if(fresh)for(let k=0;k<3;k++)addProb('cratera');}
+function exitMoon(){if(!inMoon())return;P.lua=P.world;P.world=P._earth;delete P._earth;M2PRICE=12;MAXW=30;MAXH=22;}
+function withEarth(fn){if(!inMoon())return fn();const m=P.world;P.world=P._earth;delete P._earth;try{return fn()}finally{P._earth=P.world;P.lua=m;P.world=m;}}
+const saveDBT=saveDB;saveDB=function(){if(inMoon()){const m=P.world;P.world=P._earth;delete P._earth;try{saveDBT()}finally{P._earth=P.world;P.world=P.lua||m;}}else saveDBT();};
+const checkAchT=checkAch;checkAch=function(){return withEarth(()=>checkAchT());};
+const cloudPayloadT=cloudPayload;cloudPayload=function(p){const c=cloudPayloadT(p);if(c._earth){c.world=c._earth;delete c._earth;}return c;};
+const makeCodeT=makeCode;makeCode=function(p){if(p&&p._earth){const c=clone(p);c.world=c._earth;delete c._earth;return makeCodeT(c);}return makeCodeT(p);};
+const showT=show;show=function(n){if(n!=='world')exitMoon();return showT(n);};
+const openWorldT=openWorld;openWorld=function(){exitMoon();const r=openWorldT();if(WS.last==='lua'&&P&&moonUnlocked(P))goPlace('lua');return r;};
+function goPlace(pl){if(!P)return;WS.last=pl;WS.sel=null;WS.pick=null;WS.move=null;WS.rot=false;if(pl==='lua'){if(!moonUnlocked(P))return;enterMoon();WS.tab='moradia';}else exitMoon();
+  W3.userZoom=false;renderWorld();if(pl==='lua'&&!P.luaIntro){P.luaIntro=1;saveProfile();setTimeout(()=>toast('Bem-vindo à Lua! Aqui não há ar: construa um gerador de oxigênio antes das cúpulas. As construções custam moedas e pedras lunares.'),500);}}
+/* materiais: pedras lunares para construir na Lua */
+const MOON_BUILD=[{id:'cupula',nome:'Cúpula habitacional',w:3,h:3,price:500,lvl:15,mat:4},{id:'oxigenio',nome:'Gerador de oxigênio',w:2,h:2,price:350,lvl:15,mat:2},
+  {id:'telescopio',nome:'Telescópio',w:2,h:2,price:300,lvl:15,mat:2},{id:'estufa',nome:'Estufa lunar',w:3,h:2,price:450,lvl:16,mat:3},
+  {id:'mina',nome:'Mina de hélio-3',w:3,h:3,price:900,lvl:17,mat:6},{id:'parque',nome:'Parque de baixa gravidade',w:3,h:3,price:600,lvl:18,mat:4},
+  {id:'cupula2',nome:'Cúpula gigante',w:4,h:4,price:1200,lvl:20,mat:8}];
+MOON_BUILD.forEach(b=>{b.place='lua';BUILD.push(b);BMAP[b.id]=b;});
+Object.assign(UPG,{cupula:['Cúpula habitacional','Cúpula com jardim','Cúpula de 2 andares'],cupula2:['Cúpula gigante','Cúpula gigante com lago','Cúpula gigante iluminada'],
+  oxigenio:['Gerador de oxigênio','Gerador duplo','Fábrica de oxigênio'],telescopio:['Telescópio','Observatório','Radiotelescópio'],estufa:['Estufa lunar','Estufa grande','Fazenda vertical'],
+  mina:['Mina de hélio-3','Mina profunda','Megamina'],parque:['Parque de baixa gravidade','Parque com trampolins','Parque com montanha-russa']});
+Object.assign(DANO,{cupula:'Rachadura na cúpula',cupula2:'Rachadura na cúpula',oxigenio:'Filtro entupido',telescopio:'Lente suja',estufa:'Luz da estufa queimada',mina:'Broca quebrada',parque:'Trampolim rasgado'});
+PROB_N.cratera='Aterrar a cratera';
+const worldTapM=worldTap;worldTap=function(c,pickIdx,probIdx){if(inMoon()&&WS.sel&&WS.move==null&&c){const bd=BMAP[WS.sel];
+    if(bd&&bd.mat&&inv('lua')<bd.mat){toast(`Faltam pedras lunares: ${bd.nome} precisa de ${bd.mat} e você tem ${inv('lua')}. Mande o foguete à Lua!`);return}
+    const n0=P.world.items.length;const r=worldTapM(c,pickIdx,probIdx);if(bd&&bd.mat&&P.world.items.length>n0){P.inv.lua-=bd.mat;saveProfile();renderWorld();}return r;}
+  return worldTapM(c,pickIdx,probIdx);};
+/* produtores da Lua */
+PRODUCERS.add('estufa');PRODUCERS.add('mina');
+const EST_MIN=20,MINA_MIN=30;
+const estState=it=>{const e=it.est;if(!e)return null;const dur=EST_MIN*MIN/(it.lv||1),el=Date.now()-e.t0;return {k:Math.min(1,el/dur),left:Math.max(0,dur-el),ready:el>=dur,qty:it.w*it.h*(it.lv||1),dur};};
+function minaCount(it){const per=MINA_MIN*MIN/(it.lv||1),c=it.mn||{t:Date.now()};if(!it.mn)it.mn=c;return Math.min(3,Math.floor((Date.now()-c.t)/per));}
+const renderProdM=renderProd;
+renderProd=function(){const it=P.world.items[PM.idx];if(!it||(it.t!=='estufa'&&it.t!=='mina'))return renderProdM();PM.sig=prodSig(it);const lv=it.lv||1;let h='';$('#prod-title').textContent=lvName(it);
+  if(it.t==='estufa'){$('#prod-eye').textContent='Lua · estufa';const es=estState(it),a=it.w*it.h;
+    h+=`<p class="prod-info">Na estufa de <b>${it.w} m × ${it.h} m = ${a} m²</b> cada m² dá ${lv} caixa${lv>1?'s':''} de batata lunar em ${n1(EST_MIN/lv)} min. As plantas também fazem oxigênio para a colônia (+3).</p>`;
+    if(!es)h+=`<div class="prod-acts"><button type="button" class="btn ${P.coins>=a?'yellow':'ghost'}" data-pa="est-plant" ${P.coins>=a?'':'disabled'}>Plantar batatas · semente ${a} × 1 = ${COIN}${a}</button></div>`;
+    else if(!es.ready)h+=`<div class="grow">${gIcon('batata')}<div><b>Batatas crescendo</b>${bar(it.est.t0,es.dur)}<small>Prontas em <span data-end="${it.est.t0+es.dur}">${fmtLeft(es.left)}</span>: ${a} × ${lv} = ${es.qty} caixas.</small></div></div>`;
+    else h+=`<div class="grow ready">${gIcon('batata')}<div><b>Pronto para colher!</b><small>${a} m² × ${lv} = ${es.qty} caixas de batata lunar</small></div></div><div class="prod-acts"><button type="button" class="btn go" data-pa="est-take">Colher ${es.qty} caixas</button></div>`;}
+  else{$('#prod-eye').textContent='Lua · mineração';const n=minaCount(it),st=moonStats(P),per=MINA_MIN*MIN/lv,nxt=per-((Date.now()-it.mn.t)%per);
+    h+=`<p class="prod-info">A mina tira 1 cilindro de hélio-3 a cada ${n1(MINA_MIN/lv)} min e guarda até 3. Hélio-3 vale ${COIN}${GOODS.helio.base} na tabela: é o produto mais caro do jogo. Os mineiros precisam de oxigênio.</p>`;
+    h+=`<div class="grow ${n?'ready':''}">${gIcon('helio')}<div><b>${n} de 3 cilindros prontos</b>${n<3?`<small>Próximo em <span data-end="${Date.now()+nxt}">${fmtLeft(nxt)}</span>.</small>`:'<small>Cheio: colete para a mina continuar.</small>'}</div></div>`;
+    h+=st.faltaO?`<p class="note warn">Mina parada: falta oxigênio na colônia (usa ${st.ou} de ${st.op}). Construa ou melhore um gerador de oxigênio.</p>`:n?`<div class="prod-acts"><button type="button" class="btn go" data-pa="mina-take">Coletar ${qn(n,'helio')}</button></div>`:'';}
+  $('#prod-body').innerHTML=h;};
+const prodActM=prodAct;
+prodAct=function(a){const it=P.world.items[PM.idx];if(!it||(it.t!=='estufa'&&it.t!=='mina'))return prodActM(a);let msg='';
+  if(a==='est-plant'){const c=it.w*it.h;if(it.est||P.coins<c)return;P.coins-=c;it.est={t0:Date.now()};sfx('build');msg='Batatas plantadas!';}
+  else if(a==='est-take'){const es=estState(it);if(!es||!es.ready)return;addGood('batata',es.qty);delete it.est;sfx('coin');msg=`Colheu ${es.qty} caixas de batata lunar!`;}
+  else if(a==='mina-take'){const n=minaCount(it),per=MINA_MIN*MIN/(it.lv||1);if(!n||moonStats(P).faltaO)return;addGood('helio',n);it.mn.t=n>=3?Date.now():it.mn.t+n*per;sfx('coin');setTimeout(()=>sfx('star'),150);msg=`Coletou ${qn(n,'helio')}! Venda no mercado.`;}
+  const got=checkAch();saveProfile();renderProd();if(msg)toast(msg);announceAch(got,1600);};
+const readyOfM=readyOf;readyOf=function(it){if(it.t==='estufa'){const e=estState(it);return !it.dano&&e&&e.ready?1:0}if(it.t==='mina')return !it.dano&&minaCount(it)>0?1:0;return readyOfM(it);};
+const farmSigM=farmSig;farmSig=function(p){return farmSigM(p)+'#'+p.world.items.map(it=>it.t==='estufa'?(estState(it)||{}).ready:it.t==='mina'?minaCount(it):'').join('');};
+const readyBadgeM=readyBadge;readyBadge=function(it,X,Y,IW){if(it.t!=='estufa'&&it.t!=='mina')return readyBadgeM(it,X,Y,IW);if(!readyOf(it))return '';
+  return `<g class="rdy" pointer-events="none"><circle cx="${X+IW/2}" cy="${Y+17}" r="15" fill="#FFFFFF" stroke="#22B357" stroke-width="3"/><svg x="${X+IW/2-11}" y="${Y+6}" width="22" height="22" viewBox="0 0 40 40">${GART[it.t==='mina'?'helio':'batata']}</svg></g>`;};
+/* problemas na Lua: micrometeoritos abrem crateras */
+const cityEventsM=cityEvents;cityEvents=function(){if(!inMoon())return cityEventsM();const now=Date.now();if(!P.world.ev){P.world.ev=now;return}if(now-P.world.ev<90*MIN)return;P.world.ev=now;
+  if((P.world.probs||[]).length>=4||!moonStats(P).pop)return;if(addProb('cratera')){saveProfile();toast('Caiu um micrometeorito e abriu uma cratera! Toque nela para aterrar.');}};
+/* telas */
+function renderPlaces(){const el=$('#w-places');if(!el||!P)return;const un=moonUnlocked(P),lv=levelInfo(P.xp).lvl,mis=Math.max(P.mlua||0,Math.floor(((P.prod||{}).lua||0)/3)),m=inMoon();
+  el.innerHTML=`<button type="button" data-pl="terra" aria-pressed="${!m}">🌍 Terra</button><button type="button" data-pl="lua" aria-pressed="${m}" ${un?'':'disabled'}>🌕 Lua${un?'':' 🔒'}</button>`+
+    (un?'':`<small>A Lua libera no nível ${MOON_LVL} (você está no ${lv}) e depois de ${MOON_MIS} viagens do foguete à Lua (${Math.min(mis,MOON_MIS)} de ${MOON_MIS}).</small>`);}
+function renderMoonCity(){const el=$('#w-city');const st=moonStats(P),items=P.world.items,doms=items.filter(i=>DOME_R[i.t]),gens=items.filter(i=>i.t==='oxigenio'&&!i.dano);
+  const bar=(u,p)=>`<div class="cbar ${u>p?'bad':''}"><i style="width:${Math.min(100,p?u/p*100:100)}%"></i></div>`;const cats=Object.keys(st.area).filter(c=>st.area[c]>0);
+  el.innerHTML=`<div class="ccard"><b>👩‍🚀 ${st.pop} colonos</b><small>${doms.length?doms.slice(0,3).map(i=>{const r=DOME_R[i.t],A=3.14*r*r;return `${lvName(i)}: raio ${f(r)} m → 3,14 × ${f(r)} × ${f(r)} = ${f(Math.round(A*100)/100)} m²${(i.lv||1)>1?` × ${i.lv}`:''} ÷ 2 = ${moonPop(i)}`}).join('<br>'):'As cúpulas são redondas: a área é 3,14 × raio × raio. Cada 2 m² de cúpula abrigam 1 colono.'}</small></div>
+    <div class="ccard"><b>🫧 Oxigênio: usa ${st.ou} de ${st.op}</b>${bar(st.ou,st.op)}<small>${st.faltaO?'<span class="warn">Falta oxigênio! Construa ou melhore um gerador.</span>':'Todo mundo respirando.'} Na Lua não há ar.${gens.length?' '+gens.map(g=>`Gerador: ${g.w} × ${g.h} = ${g.w*g.h} m² × 3${(g.lv||1)>1?` × ${g.lv}`:''} = ${g.w*g.h*3*(g.lv||1)}`).join('; '):''}${items.some(i=>i.t==='estufa')?' Estufa: +3.':''}</small></div>
+    <div class="ccard"><b>🪨 ${inv('lua')} pedras lunares</b><small>Construir na Lua custa moedas e pedras lunares. O foguete traz as pedras da Lua (missão de 10 min).</small></div>
+    <div class="ccard"><b>🏙️ Variedade da colônia</b>${st.tot?`<div class="cstack">${cats.map(c=>`<i style="width:${st.area[c]/st.tot*100}%;background:${CATC[c]}"></i>`).join('')}</div><small>${cats.map(c=>`<span class="dot" style="background:${CATC[c]}"></span>${CATN[c]} ${st.area[c]} de ${st.tot} m² = ${Math.round(st.area[c]/st.tot*100)}%`).join('<br>')}</small>`:'<small>Nada construído ainda.</small>'}</div>`;
+  const sm=$('#w-citysum');if(sm)sm.innerHTML=`👩‍🚀 ${st.pop} · 🫧 ${st.ou}/${st.op}${st.faltaO?' ⚠️':''} · 🪨 ${inv('lua')}`;}
+const renderWorldM=renderWorld;renderWorld=function(){renderWorldM();renderPlaces();const m=inMoon();$('#sc-world').classList.toggle('moon',m);
+  const sum=$('#w-citybox summary .h2');if(sum)sum.textContent=m?'Painel da colônia':'Painel da cidade';
+  if(m){renderMoonCity();$('#w-title').textContent=`Colônia lunar de ${P.name.split(' ')[0]}`;const eb=$('#sc-world .world-top .eyebrow');if(eb)eb.textContent='Lua · cada quadradinho = 1 m²';
+    const hp=$('#w-happy');const st=moonStats(P),ex=[];if(st.faltaO)ex.push('falta oxigênio (−30)');if(st.semLazer)ex.push('colonos sem lazer (−10)');
+    hp.querySelectorAll('small').forEach(e=>{if(/Cidade feliz|Cidade triste|chove/i.test(e.textContent))e.textContent=happy(P)>=80?'Colônia feliz: todos respirando e se divertindo.':'Colônia precisando de cuidado.';});
+    const hint=$('#w-hint');if(hint)hint.innerHTML=hint.innerHTML.replace('Toque na horta, nos animais ou na loja para produzir.','Toque na estufa ou na mina para produzir.');
+    hp.querySelectorAll('small.warn').forEach(e=>e.remove());if(ex.length){const box=hp.querySelector('div');box&&box.insertAdjacentHTML('beforeend',`<small class="warn">${ex.join(' · ')}</small>`);}
+    document.querySelectorAll('#w-build .bcard').forEach(card=>{const bd=BMAP[card.dataset.id];if(!bd||!bd.mat)return;const ok=inv('lua')>=bd.mat;
+      card.querySelector('.m2')?.insertAdjacentHTML('afterend',`<small class="mat ${ok?'':'falta'}">+ ${bd.mat} pedras lunares</small>`);
+      if(!ok&&!card.classList.contains('locked')){const btn=card.querySelector('button');if(btn&&!btn.disabled){btn.disabled=true;btn.className='btn ghost';}}});}
+  else{const eb=$('#sc-world .world-top .eyebrow');if(eb)eb.textContent='Meu mundo · cada quadradinho = 1 m²';}};
+$('#w-places').addEventListener('click',e=>{const b=e.target.closest('[data-pl]');if(!b||b.disabled)return;goPlace(b.dataset.pl);});
+/* desenhos da Lua */
+PROB2D.cratera=(X,Y)=>`<ellipse cx="${X+20}" cy="${Y+21}" rx="16" ry="13" fill="#8E939E"/><ellipse cx="${X+20}" cy="${Y+22}" rx="12" ry="9" fill="#5E6370"/><ellipse cx="${X+17}" cy="${Y+19}" rx="5" ry="3" fill="#6E7380"/>`;
+PROB3D.cratera=function(g){const T=THREE;this.mesh(new T.TorusGeometry(.32,.09,6,16),this.M(0x9A9EA8),0,.03,0,g).rotation.x=Math.PI/2;this.mesh(new T.CircleGeometry(.3,16),this.M(0x4E525C),0,.02,0,g).rotation.x=-Math.PI/2;};
+const domeArt=(x,y,W,H,lv)=>{const cx=x+W/2,cy=y+H/2,r=Math.min(W,H)/2-2;return `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="#BFE6FF" fill-opacity=".55" stroke="#E4EDFF" stroke-width="3"/><path d="M${n1(cx-r)} ${n1(cy)} h${n1(2*r)} M${n1(cx)} ${n1(cy-r)} v${n1(2*r)}" stroke="#E4EDFF" stroke-width="1.5"/>`+
+  `<rect x="${n1(cx-r*.5)}" y="${n1(cy-r*.15)}" width="${n1(r*.45)}" height="${n1(r*.45)}" fill="#F5E1C0"/><polygon points="${n1(cx-r*.55)},${n1(cy-r*.12)} ${n1(cx-r*.28)},${n1(cy-r*.4)} ${n1(cx)},${n1(cy-r*.12)}" fill="#D9363E"/><circle cx="${n1(cx+r*.35)}" cy="${n1(cy+r*.3)}" r="${n1(r*.18)}" fill="#3E9B5C"/>`;};
+Object.assign(BD,{
+  cupula:(x,y,W,H)=>domeArt(x,y,W,H),cupula2:(x,y,W,H)=>domeArt(x,y,W,H),
+  oxigenio:(x,y,W,H)=>`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#DCE2EC"/><rect x="${n1(x+W*.15)}" y="${n1(y+H*.2)}" width="${n1(W*.3)}" height="${n1(H*.65)}" rx="8" fill="#4FB3E8"/><rect x="${n1(x+W*.55)}" y="${n1(y+H*.2)}" width="${n1(W*.3)}" height="${n1(H*.65)}" rx="8" fill="#4FB3E8"/><text x="${n1(x+W/2)}" y="${n1(y+H*.62)}" text-anchor="middle" font-size="14" font-weight="800" fill="#1C47C9" font-family="sans-serif">O₂</text>`,
+  telescopio:(x,y,W,H)=>`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#C4C8D0"/><path d="M${n1(x+W*.3)} ${n1(y+H*.85)} l${n1(W*.2)} ${n1(-H*.35)} l${n1(W*.2)} ${n1(H*.35)}" stroke="#3A3F4B" stroke-width="3" fill="none"/><rect x="${n1(x+W*.25)}" y="${n1(y+H*.25)}" width="${n1(W*.55)}" height="${n1(H*.18)}" rx="5" fill="#EEF1F7" stroke="#5E6878" stroke-width="2" transform="rotate(-30 ${n1(x+W/2)} ${n1(y+H*.35)})"/><circle cx="${n1(x+W*.82)}" cy="${n1(y+H*.18)}" r="4" fill="#FFD43B"/>`,
+  estufa:(x,y,W,H,it)=>{const es=it&&estState(it);let s=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#BFE6FF" fill-opacity=".7" stroke="#E4EDFF" stroke-width="3"/>`;
+    for(let r=0;r<3;r++){const ry=y+H*(.25+r*.25);s+=`<rect x="${n1(x+6)}" y="${n1(ry-3)}" width="${n1(W-12)}" height="6" rx="3" fill="#7A5230"/>`;if(es||!it)for(let c=0;c<Math.floor((W-12)/12);c++)s+=`<circle cx="${n1(x+12+c*12)}" cy="${n1(ry-3)}" r="${n1(2+(es?es.k:1)*3)}" fill="#7BC950"/>`;}
+    return s+`<rect x="${n1(x+W*.4)}" y="${n1(y+2)}" width="${n1(W*.2)}" height="6" rx="2" fill="#B07CFF"/>`;},
+  mina:(x,y,W,H)=>`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#A3A7B0"/><path d="M${n1(x+W*.2)} ${n1(y+H-4)} L${n1(x+W*.5)} ${n1(y+H*.15)} L${n1(x+W*.8)} ${n1(y+H-4)}" stroke="#5E6878" stroke-width="4" fill="none"/><path d="M${n1(x+W*.33)} ${n1(y+H*.6)} h${n1(W*.34)}" stroke="#5E6878" stroke-width="3"/><circle cx="${n1(x+W*.5)}" cy="${n1(y+H*.22)}" r="6" fill="#9B5BFF"/><rect x="${n1(x+W*.62)}" y="${n1(y+H*.62)}" width="${n1(W*.22)}" height="${n1(H*.3)}" rx="5" fill="#9B5BFF" stroke="#5B2DB8" stroke-width="2"/>`,
+  parque:(x,y,W,H)=>`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#C4C8D0"/>${[[.3,.35],[.7,.35],[.5,.72]].map(([a,b])=>`<circle cx="${n1(x+W*a)}" cy="${n1(y+H*b)}" r="${n1(Math.min(W,H)*.15)}" fill="#2F6BFF" stroke="#FFD43B" stroke-width="3"/>`).join('')}<circle cx="${n1(x+W*.3)}" cy="${n1(y+H*.2)}" r="4" fill="#FF6B9A"/>`,
+});
+Object.assign(W3.models,{
+  cupula(g,fw,fd,lv,it){const T=THREE,r=Math.min(fw,fd)/2-.05;this.mesh(new T.CylinderGeometry(r,r+.05,.1,28),this.M(0xDCE2EC),0,.05,0,g);
+    this.box(r*.6,.5+(lv>=3?.45:0),r*.6,this.M(0xF5E1C0),-r*.25,.1,-r*.1,g);this.mesh(new T.ConeGeometry(r*.45,.35,4),this.M(0xD9363E),-r*.25,.8+(lv>=3?.45:0),-r*.1,g).rotation.y=Math.PI/4;
+    if(lv>=2){this.mesh(new T.IcosahedronGeometry(.25,0),this.M(0x3E9B5C),r*.4,.35,r*.3,g);this.mesh(new T.IcosahedronGeometry(.2,0),this.M(0x5DAE3B),r*.1,.3,r*.55,g);}
+    const d=this.mesh(new T.SphereGeometry(r,24,14,0,Math.PI*2,0,Math.PI/2),this.M(0xBFE6FF,{transparent:true,opacity:.28,roughness:.05,metalness:.1,side:T.DoubleSide}),0,.1,0,g);d.castShadow=false;
+    const ring=this.mesh(new T.TorusGeometry(r,.05,6,28),this.M(0xEEF1F7),0,.12,0,g);ring.rotation.x=Math.PI/2;},
+  cupula2(g,fw,fd,lv,it){this.models.cupula.call(this,g,fw,fd,lv,it);if(lv>=2){const w=this.mesh(new THREE.CircleGeometry(.4,16),this.M(0x38A9E0),.5,.13,-.4,g);w.rotation.x=-Math.PI/2;}},
+  oxigenio(g,fw,fd,lv){const T=THREE;this.box(fw-.1,.06,fd-.1,0xDCE2EC,0,0,0,g);const n=lv>=2?3:2;for(let k=0;k<n;k++){const x=-fw/2+.35+k*(fw-.7)/(n-1);
+      this.mesh(new T.CylinderGeometry(.28,.28,1.1,14),this.M(0x4FB3E8,{metalness:.3,roughness:.3}),x,.62,0,g);this.mesh(new T.SphereGeometry(.28,14,8,0,Math.PI*2,0,Math.PI/2),this.M(0x4FB3E8),x,1.17,0,g);}
+    this.box(fw-.5,.12,.12,this.M(0x9AA3B2),0,.4,.3,g);if(lv>=3)this.box(.5,.6,.5,this.win(),fw/2-.4,.06,fd/2-.4,g);
+    for(let k=0;k<3;k++){const b=this.mesh(new T.SphereGeometry(.07,8,6),this.M(0xFFFFFF,{transparent:true,opacity:.7}),0,1.4,0,g);b.castShadow=false;this.anim.push({o:b,t:'smoke',k:k*.33,x:0});}},
+  telescopio(g,fw,fd,lv){const T=THREE;this.box(fw-.1,.06,fd-.1,0xC4C8D0,0,0,0,g);const tg=new T.Group();tg.position.set(0,.7,0);g.add(tg);
+    for(const a of [0,2.1,4.2]){const l=this.box(.05,.75,.05,this.M(0x3A3F4B),Math.sin(a)*.25,-.7,Math.cos(a)*.25,g);l.position.y=.06;l.rotation.z=Math.sin(a)*.25;l.rotation.x=-Math.cos(a)*.25;}
+    const tube=this.mesh(new T.CylinderGeometry(.12,.17,1.1,14),this.M(0xEEF1F7),0,.1,0,tg);tube.rotation.z=.9;this.anim.push({o:tg,t:'turn',k:0});
+    if(lv>=2){this.mesh(new T.SphereGeometry(.55,16,10,0,Math.PI*2,0,Math.PI/2),this.M(0xEEF1F7),-fw/2+.55,.06,-fd/2+.55,g);}
+    if(lv>=3){const dish=this.mesh(new T.SphereGeometry(.45,16,8,0,Math.PI*2,0,Math.PI/3),this.M(0xFFFFFF,{side:T.DoubleSide}),fw/2-.45,.9,fd/2-.45,g);dish.rotation.x=Math.PI*.8;this.box(.06,.8,.06,this.M(0x9AA3B2),fw/2-.45,.06,fd/2-.45,g);}},
+  estufa(g,fw,fd,lv,it){const T=THREE;this.box(fw-.1,.08,fd-.1,0x7A5230,0,0,0,g);const es=it&&estState(it);
+    if(es)for(let x=-fw/2+.4;x<fw/2-.2;x+=.45)for(let z=-fd/2+.35;z<fd/2-.2;z+=.45)this.mesh(new T.IcosahedronGeometry(.1+es.k*.1,0),this.M(0x7BC950),x,.2,z,g);
+    const gh=this.mesh(new T.CylinderGeometry(fd/2-.05,fd/2-.05,fw-.15,16,1,true,0,Math.PI),this.M(0xCFEFFF,{transparent:true,opacity:.35,side:T.DoubleSide,roughness:.1}),0,.08,0,g);gh.rotation.z=Math.PI/2;gh.castShadow=false;
+    this.box(.4,.06,.1,this.M(0xB07CFF,{emissive:0xB07CFF,emissiveIntensity:.8}),0,fd/2-.1,0,g);},
+  mina(g,fw,fd,lv){const T=THREE;this.box(fw-.1,.06,fd-.1,0xA3A7B0,0,0,0,g);const tw=new T.Group();g.add(tw);const h=1.6+(lv>=2?.5:0);
+    for(const [a,b] of [[-.4,-.4],[.4,-.4],[-.4,.4],[.4,.4]]){const l=this.box(.07,h,.07,this.M(0x5E6878),a*.7,.06,b*.7,tw);}
+    this.box(.7,.08,.7,this.M(0x5E6878),0,h,0,tw);const drill=this.mesh(new T.ConeGeometry(.18,.6,8),this.M(0xFFD43B,{metalness:.5}),0,.4,0,tw);drill.rotation.x=Math.PI;this.anim.push({o:drill,t:'spin2',k:0});
+    for(let k=0;k<(lv>=3?4:2);k++){const c=this.mesh(new T.CylinderGeometry(.13,.13,.4,10),this.M(0x9B5BFF,{emissive:0x5B2DB8,emissiveIntensity:.3}),fw/2-.3-k*.3,.26,fd/2-.3,g);}
+    this.mesh(new T.DodecahedronGeometry(.3,0),this.M(0x8E939E),-fw/2+.4,.2,fd/2-.4,g);},
+  parque(g,fw,fd,lv){const T=THREE;this.box(fw-.1,.06,fd-.1,0xC4C8D0,0,0,0,g);
+    [[-.7,-.6],[.7,-.6],[0,.6]].forEach(([a,b],k)=>{const tr=this.mesh(new T.CylinderGeometry(.42,.42,.12,18),this.M(0x2F6BFF),a,.25,b,g);this.mesh(new T.TorusGeometry(.42,.05,6,18),this.M(0xFFD43B),a,.31,b,g).rotation.x=Math.PI/2;
+      const kid=this.mesh(new T.SphereGeometry(.12,8,6),this.M([0xFF6B9A,0x22B357,0xF97316][k]),a,.6,b,g);this.anim.push({o:kid,t:'jump',k:k*.8});});
+    if(lv>=3){const rail=this.mesh(new T.TorusGeometry(fw/2-.3,.04,6,32,Math.PI),this.M(0xE5484D),0,.1,0,g);}},
+});
+
+/* planta da Lua: chão cinza */
+const worldSVGM=worldSVG;worldSVG=function(p){let s=worldSVGM(p);if(!(p.world&&p.world.lua))return s;
+  return s.replace('fill="#CFEAC6"','fill="#2A2E3D"').replace('fill="#E6D2A2"','fill="#8E939E"').replace(/fill="#90D17F"/g,'fill="#C4C8D0"').replace(/fill="#86C875"/g,'fill="#B6BAC4"').replace(/stroke="#78B567"/g,'stroke="#A3A7B0"').replace(/stroke="#5FAE55"/g,'stroke="#9A9EA8"');};
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};

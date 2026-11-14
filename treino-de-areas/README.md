@@ -75,6 +75,18 @@ Outro jeito de ganhar moedas, em tempo real (de 3 a 30 minutos): o aluno produz 
 
 A **base de foguetes** (nível 12) manda o foguete buscar tesouros para vender no Mercado: Lua (10 min, 40 moedas de combustível, 3 pedras lunares de 30), Marte (30 min, 100 moedas, 3 cristais de 80) e Europa, lua de Júpiter (base nível 2; 60 min, 200 moedas, 2 blocos de gelo de 200). Cada nível da base soma 1 na carga. Antes do lançamento vem a "checagem": a área de uma peça do foguete (asa, janela, painel solar…); acertando, o foguete traz 1 tesouro a mais. Em 20% das viagens ele volta com um meteorito dourado (150). No 3D o foguete decola e some da base até voltar.
 
+## Colônia na Lua
+
+Um segundo mundo, liberado no nível 15 depois de 3 viagens do foguete à Lua. No Meu mundo, os botões **🌍 Terra · 🌕 Lua** trocam de lugar (cada um com terreno, construções e 3D próprios: chão cinza, crateras, estrelas e a Terra no céu, avatar de capacete).
+
+- **Construções** (nível 15 a 20) custam moedas **e pedras lunares** trazidas pelo foguete: cúpula habitacional, gerador de oxigênio, telescópio, estufa lunar, mina de hélio-3, parque de baixa gravidade e cúpula gigante.
+- **Cúpulas são redondas**: colonos = 3,14 × raio × raio ÷ 2 (× nível). Ex.: raio 1,5 m → 7,07 m² → 3 colonos.
+- **Oxigênio**: na Lua não há ar. Colonos e construções gastam; o gerador produz 3 por m² × nível e a estufa ajuda (+3). Sem oxigênio: −30% de felicidade e a mina para.
+- **Produção**: a estufa dá batata lunar (área × nível, em 20 min); a mina dá hélio-3 (120 moedas na tabela, o produto mais caro do jogo).
+- **Crateras** ocupam o terreno e podem ser aterradas com uma conta de área; micrometeoritos abrem crateras novas de vez em quando.
+- Mesmas regras de variedade (50%), fases próprias (Base lunar → Colônia → Vila lunar → Cidade lunar) e terreno até 20 × 14, a 25 moedas por m².
+- Moedas e nível são os mesmos da Terra.
+
 ## Avatar e níveis
 
 - **Loja** com 49 itens em raridades (comum, raro, épico, lendário), oferta do dia com 40% de desconto, provador antes de comprar, efeitos animados (brilho, estrelas, fogo), asas e 5 conjuntos com prêmio. Itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
