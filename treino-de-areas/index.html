@@ -637,6 +637,16 @@ details.fold.big[open] > summary{margin-bottom:10px}
 .chip small{opacity:.65;font-weight:700}
 .vbtn{white-space:nowrap}
 @media (max-width:560px){.rank li{grid-template-columns:26px 40px minmax(0,1fr) auto}.rank li .vbtn{grid-column:3/-1;justify-self:start}}
+.emg-card{border:4px solid var(--bad)}
+.emg-head{display:flex;align-items:center;gap:10px}
+.emg-head h2{margin:0}.emg-head .eyebrow{margin:0;color:var(--bad)}
+.emg-ic{font-size:2.6rem;line-height:1;animation:bob 1s ease-in-out infinite}
+.emg-time{margin-left:auto;font-family:var(--f-display);font-weight:800;font-size:1.4rem;font-variant-numeric:tabular-nums;color:var(--bad)}
+.emg-bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.emg-bar i{display:block;height:100%;width:100%;background:var(--marker);transition:width .2s linear}
+.emg-bar.low i{background:var(--bad)}
+.emg-txt{margin:0;font-weight:700;color:var(--ink-2);line-height:1.35}
+.emg-card .qcard{min-height:120px}
 /* fliperama */
 .pill.ticket svg{width:22px;height:22px}
 .ticketline{display:flex;gap:6px;align-items:center;color:var(--ink)!important}
@@ -932,6 +942,12 @@ details.fold.big[open] > summary{margin-bottom:10px}
   <div class="modal-card fix-card"><p class="eyebrow" id="fix-eye">Resolva a conta para consertar</p><h2 id="fix-title"></h2><div class="fig-wrap" id="fix-fig"></div><p class="fix-q" id="fix-q"></p>
     <div class="opts" id="fix-opts"></div><div class="feedback" id="fix-fb" hidden></div>
     <div class="actions"><button class="btn ghost" type="button" id="fix-close">Depois</button><button class="btn go" type="button" id="fix-next" hidden>Outra conta</button></div></div>
+</div>
+<div class="modal" id="emg-modal" hidden role="alertdialog" aria-modal="true" aria-labelledby="emg-title">
+  <div class="modal-card fix-card emg-card"><div class="emg-head"><span class="emg-ic" id="emg-ic" aria-hidden="true"></span><div><p class="eyebrow">Emergência na cidade</p><h2 id="emg-title"></h2></div><span class="emg-time" id="emg-time"></span></div>
+    <div class="emg-bar" id="emg-bar"><i></i></div><p class="emg-txt" id="emg-txt"></p><div class="fig-wrap" id="emg-fig"></div><p class="fix-q" id="emg-q"></p>
+    <div class="opts" id="emg-opts"></div><div class="feedback" id="emg-fb" hidden></div>
+    <div class="actions"><button class="btn go" type="button" id="emg-go" hidden>Continuar</button></div></div>
 </div>
 <div class="modal" id="code-modal" hidden role="dialog" aria-modal="true" aria-labelledby="code-title">
   <div class="modal-card prod-card"><p class="eyebrow">Jogar em outro computador</p><h2 id="code-title"></h2><div class="prod-body" id="code-body"></div><p class="code-msg" id="code-msg" role="status"></p>
@@ -1600,6 +1616,7 @@ const ACH=[
  {id:'colon10',nome:'Colônia lunar',desc:'Tenha 10 colonos na Lua',r:120,ok:p=>!!p.lua&&p.lua.items.reduce((t,i)=>t+moonPop(i),0)>=10},
  {id:'helio1',nome:'Mineiro espacial',desc:'Colete hélio-3 na Lua',r:80,ok:p=>((p.prod||{}).helio||0)>=1},
  {id:'curte5',nome:'Bom vizinho',desc:'Curta a cidade de 5 colegas',r:30,ok:p=>(p.curtiu||0)>=5},
+ {id:'heroi5',nome:'Herói da cidade',desc:'Resolva 5 emergências a tempo',r:50,ok:p=>(p.herois||0)>=5},
  {id:'piso10',nome:'Mestre de obras',desc:'Atenda 10 clientes na loja de pisos',r:40,ok:p=>(p.pisos||0)>=10},
  {id:'enc5',nome:'Entregador',desc:'Entregue 5 encomendas',r:50,ok:p=>(p.encN||0)>=5},
  {id:'pizza1',nome:'Pizzaiolo',desc:'Asse uma pizza',r:30,ok:p=>((p.prod||{}).pizza||0)>=1},
@@ -3057,6 +3074,49 @@ const worldTapV=worldTap;worldTap=function(c,pi,pb){if(cur==='visit'){if(c&&W3.a
 const showV=show;show=function(n){if(n!=='visit')park3D();return showV(n);};
 /* curtidas recebidas neste computador */
 const openWorldV=openWorld;openWorld=function(){const r=openWorldV();if(P&&P.likesNew){const n=P.likesNew;P.likesNew=0;saveProfile();setTimeout(()=>toast(`Seus colegas curtiram sua cidade ${n} vez${n>1?'es':''}! Você ganhou ${n*LIKE} moedas.`),700);}return r;};
+
+/* ---------- emergências na cidade: uma conta contra o relógio; errar causa perdas ---------- */
+const EMG_GAP=2*60*MIN,EMG_T=40;
+const EMG_KINDS=[
+  {id:'fogo',ic:'🔥',tit:t=>`Incêndio: ${t}!`,txt:'Os bombeiros precisam da resposta para apagar o fogo.',perda:'a construção pega fogo e precisa de conserto',ok:it=>!it.dano},
+  {id:'chuva',ic:'⛈️',tit:()=>'Tempestade chegando!',txt:'Responda para cobrir a plantação e o celeiro a tempo.',perda:'perde metade das verduras do celeiro e a plantação da horta'},
+  {id:'raposa',ic:'🦊',tit:()=>'Raposa no galinheiro!',txt:'Responda rápido para fechar a cerca.',perda:'a raposa leva uma galinha',need:p=>p.world.items.some(i=>i.t==='galinheiro'&&(i.an||[]).length)},
+  {id:'ladrao',ic:'🦹',tit:()=>'Ladrão no celeiro!',txt:'Responda para a polícia chegar a tempo.',perda:'o ladrão leva o produto mais caro do celeiro',need:p=>Object.values(p.inv||{}).some(v=>v>0)},
+  {id:'multa',ic:'🧾',tit:()=>'Fiscalização da prefeitura!',txt:'O fiscal quer conferir uma conta da cidade.',perda:'a cidade paga uma multa'}];
+const EM={on:false,k:null,q:null,idx:null,t0:0,timer:0,done:false};
+function emgQ(){const ano=P.ano||S.ano;let ids=[...S.shapes].filter(id=>SH[id]&&(!SH[id].minAno||SH[id].minAno<=ano));if(!ids.length)ids=[...defaultShapes(ano)];const q=makeQ(pick(ids),ano,true);q.opts=buildOpts(q);return q;}
+function maybeEmergency(force){if(!P||inMoon()||cur!=='world'||EM.on)return;const items=P.world.items;if(items.length<3&&!force)return;const now=Date.now();
+  if(!force){if(!P.emg){P.emg=now;saveProfile();return}if(now-P.emg<EMG_GAP||Math.random()<.4)return;}
+  if(document.querySelector('.modal:not([hidden])'))return;
+  const pool=EMG_KINDS.filter(k=>!k.need||k.need(P));const k=typeof force==='string'?EMG_KINDS.find(x=>x.id===force):pick(pool);let idx=null;
+  if(k.id==='fogo'){const cand=items.map((it,i)=>[it,i]).filter(([it])=>!it.dano&&!PROB_N[it.t]);if(!cand.length)return;idx=pick(cand)[1];}
+  P.emg=now;saveProfile();Object.assign(EM,{on:true,k,q:emgQ(),idx,t0:Date.now(),done:false});renderEmg();$('#emg-modal').hidden=false;sfx('no');
+  clearInterval(EM.timer);EM.timer=setInterval(tickEmg,200);setTimeout(()=>{const b=$('#emg-opts .opt');b&&b.focus()},60);}
+function renderEmg(){const {k,q}=EM;const it=EM.idx!=null?P.world.items[EM.idx]:null;$('#emg-ic').textContent=k.ic;$('#emg-title').textContent=k.tit(it?lvName(it):'');
+  $('#emg-txt').textContent=`${k.txt} Se errar ou o tempo acabar, ${k.perda}. Acertando, você ganha 10 moedas.`;
+  $('#emg-fig').innerHTML=q.topic?`<div class="qcard"><svg class="qic" viewBox="0 0 24 24" aria-hidden="true">${SH[q.sid].icon}</svg><div class="big">${q.big}</div></div>`:primsSVG(q.prims);
+  $('#emg-q').textContent=q.txt;$('#emg-opts').innerHTML=q.opts.map((v,i)=>`<button type="button" class="opt" data-i="${i}">${LAB(q,v)}</button>`).join('');
+  $('#emg-fb').hidden=true;$('#emg-go').hidden=true;}
+function tickEmg(){if(!EM.on||EM.done){clearInterval(EM.timer);return}const left=EMG_T-(Date.now()-EM.t0)/1000;$('#emg-bar i').style.width=Math.max(0,left/EMG_T*100)+'%';$('#emg-time').textContent=Math.max(0,Math.ceil(left))+' s';
+  $('#emg-bar').classList.toggle('low',left<10);if(left<=0)emgAnswer(null);}
+function emgLoss(){const k=EM.k,p=P;let msg='';
+  if(k.id==='fogo'){const it=p.world.items[EM.idx];if(it){it.dano=1;msg=`Fogo em: ${lvName(it)}. Agora precisa de conserto: toque na construção com "!" no mapa.`;}}
+  else if(k.id==='chuva'){const veg=['alface','cenoura','tomate','morango','batata'];let lost=0;veg.forEach(g=>{const n=Math.floor((p.inv[g]||0)/2);if(n){p.inv[g]-=n;lost+=n;}});
+    let crop=0;p.world.items.forEach(it=>{if(it.t==='horta'&&it.crop){delete it.crop;crop++;}});msg=lost||crop?`A chuva estragou ${lost} caixa${lost===1?'':'s'} de verdura${crop?` e a plantação de ${crop} horta${crop>1?'s':''}`:''}.`:'Por sorte não havia plantação para estragar, mas a cidade ficou toda molhada.';}
+  else if(k.id==='raposa'){const g=p.world.items.find(i=>i.t==='galinheiro'&&(i.an||[]).length);if(g){g.an.pop();msg='A raposa levou uma galinha do galinheiro.';}}
+  else if(k.id==='ladrao'){const ids=Object.keys(p.inv||{}).filter(g=>p.inv[g]>0&&GOODS[g]).sort((a,b)=>GOODS[b].base-GOODS[a].base);if(ids.length){const g=ids[0],n=Math.min(2,p.inv[g]);p.inv[g]-=n;msg=`O ladrão levou ${qn(n,g)}.`;}}
+  else{const v=Math.min(p.coins,20+2*cityStats(p).pop,80);p.coins-=v;msg=`A cidade pagou ${v} moedas de multa.`;}
+  return msg||'A cidade levou um susto, mas nada se perdeu.';}
+function emgAnswer(i){if(!EM.on||EM.done)return;EM.done=true;clearInterval(EM.timer);const q=EM.q,v=i==null?null:q.opts[i],ok=v!=null&&f(v)===f(q.ans);
+  document.querySelectorAll('#emg-opts .opt').forEach((b,j)=>{b.disabled=true;if(f(q.opts[j])===f(q.ans))b.classList.add('right');});if(i!=null&&!ok)$(`#emg-opts .opt[data-i="${i}"]`).classList.add('wrong');
+  const fb=$('#emg-fb');fb.hidden=false;
+  if(ok){P.coins+=10;P.xp+=10;P.herois=(P.herois||0)+1;sfx('ok');setTimeout(()=>sfx('cash'),300);fb.className='feedback ok';fb.innerHTML=`<strong>Você salvou a cidade! +10 moedas</strong><span class="steps">${q.steps}</span>`;if(!REDUCED)confetti(60);}
+  else{const msg=emgLoss();P.perdas=(P.perdas||0)+1;sfx('no');fb.className='feedback no';fb.innerHTML=`<strong>${i==null?'O tempo acabou!':`Não era ${LAB(q,v)}.`} ${msg}</strong><span class="steps">A resposta era ${LAB(q,q.ans)}. ${q.steps}</span>`;}
+  const got=checkAch();saveProfile();$('#emg-go').hidden=false;$('#emg-go').focus();announceAch(got,1600);}
+$('#emg-opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||b.disabled)return;emgAnswer(+b.dataset.i);});
+$('#emg-go').onclick=()=>{$('#emg-modal').hidden=true;EM.on=false;if(cur==='world')renderWorld();};
+const showE=show;show=function(n){if(EM.on&&!EM.done&&n!=='world'){emgAnswer(null);$('#emg-modal').hidden=true;EM.on=false;}return showE(n);};
+const openWorldE=openWorld;openWorld=function(){const r=openWorldE();setTimeout(()=>maybeEmergency(),1500);return r;};
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};

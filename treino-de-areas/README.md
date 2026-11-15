@@ -45,6 +45,7 @@ As alternativas erradas são os erros mais comuns (fazer a conta da esquerda par
 
 - **Mato**: cada erro numa partida faz nascer um matinho no terreno (ocupa 1 m²). No fim da partida vem a **revanche** com as figuras erradas (números novos): cada acerto vale metade das moedas e limpa um matinho.
 - **Dias sem jogar**: a cada dia longe (até 4), aparece lixo no terreno ou uma construção estraga (goteira, praga na horta, água suja na piscina, rede rasgada…). Construção quebrada não conta pontos do mundo.
+- **Emergências** (a cada 2 horas, no máximo, ao abrir o Meu mundo com 3 ou mais construções): incêndio, tempestade, raposa no galinheiro, ladrão no celeiro ou fiscalização. Aparece uma conta (das figuras e conteúdos que o aluno escolheu) com 40 segundos. Acertando: +10 moedas. Errando ou deixando o tempo acabar, a cidade perde: a construção pega fogo e precisa de conserto, metade das verduras e a plantação estragam, a raposa leva uma galinha, o ladrão leva o produto mais caro (até 2) ou a cidade paga multa (até 80 moedas).
 - **Felicidade da cidade** (0 a 100%): com 80% ou mais, cada acerto vale +1 moeda; abaixo de 50%, chove na ilha e os moradores param de passear.
 - **Conserto**: tocar no mato, no lixo ou na construção com "!" abre uma conta de área. Nas construções, a conta usa as medidas reais do piso (e os andares). Cada conserto vale 4 moedas.
 - **Resposta rápida**: até 6 s no modo fácil (15 s no difícil) vale +2 moedas.
