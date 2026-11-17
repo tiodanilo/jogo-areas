@@ -691,6 +691,46 @@ details.fold.big[open] > summary{margin-bottom:10px}
 .arc-end{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;padding:10px}
 .arc-end h2{font-size:2rem;color:var(--blue)}
 .arc-end .actions{justify-content:center}
+
+.home-links{grid-template-columns:repeat(7,minmax(0,1fr));max-width:900px}
+@media (max-width:600px){.home-links{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.cl-tabs{display:flex;flex-wrap:wrap;gap:8px}
+.cl-tabs button{border:2px solid var(--line);background:var(--card);border-radius:99px;padding:8px 14px;font-family:var(--f-display);font-weight:800;font-size:1rem;color:var(--ink);cursor:pointer}
+.cl-tabs button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
+.pk-hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.pk-hero>div:last-child{flex:1;min-width:0;display:grid;gap:10px}
+.pk-box{font-size:4.2rem;line-height:1;animation:pkbob 2.4s ease-in-out infinite}
+@keyframes pkbob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.prod-acts{display:flex;gap:10px;flex-wrap:wrap}
+.odds{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:14px;padding:12px;border-radius:14px;background:var(--paper);font-weight:700;color:var(--ink-2)}
+.odds b{width:100%;color:var(--ink)}.odds small{width:100%}
+.odds i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px;margin-top:12px}
+.pcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:26px 8px 10px;border-radius:14px;background:var(--card);border:3px solid #8E99AD;box-shadow:0 4px 0 var(--card-edge);color:var(--ink);font:inherit;min-width:0}
+.pcard svg{width:64px;height:64px}.pcard b{font-family:var(--f-display);font-size:1.02rem;line-height:1.1}.pcard small{font-size:.78rem;color:var(--ink-2);line-height:1.25}
+.pcard .rar{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.pcard.r-raro{border-color:#2F6BFF}.pcard.r-epico{border-color:#9B5BFF;box-shadow:0 4px 0 var(--card-edge),0 0 14px rgba(155,91,255,.35)}
+.pcard.r-lendario{border-color:#F2B705;box-shadow:0 4px 0 var(--card-edge),0 0 18px rgba(242,183,5,.55);background:linear-gradient(160deg,var(--card),rgba(242,183,5,.18))}
+.pcard.vazio{opacity:.55;border-style:dashed;box-shadow:none}
+.pcard .bigic{font-size:2.6rem;line-height:64px;height:64px}
+.skprev{width:64px;height:64px}.skprev svg{width:64px;height:64px}
+.skbtn{cursor:pointer}.skbtn.sel{outline:4px solid var(--blue);outline-offset:2px}
+#pack-slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+@media (max-width:600px){#pack-slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pslot{perspective:700px;min-height:190px;display:grid}
+.pslot>div{grid-area:1/1;backface-visibility:hidden;transition:transform .55s ease;transition-delay:var(--d)}
+.pback{display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--blue),#9B5BFF);color:#fff;font:800 2.6rem var(--f-display);transform:rotateY(0)}
+.pfront{transform:rotateY(180deg)}.pfront .pcard{height:100%}
+#pack-modal:not([hidden]) .pback{animation:flipA .55s ease forwards;animation-delay:calc(var(--d) + .35s)}
+#pack-modal:not([hidden]) .pfront{animation:flipB .55s ease forwards;animation-delay:calc(var(--d) + .35s)}
+@keyframes flipA{to{transform:rotateY(-180deg)}}@keyframes flipB{to{transform:rotateY(0)}}
+@media (prefers-reduced-motion:reduce){.pback{display:none!important}.pfront{transform:none!important;animation:none!important}.pk-box{animation:none}}
+.pack-card{max-width:680px}#skin-body,#pack-slots{width:100%}
+.pass-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.pass-top>div{flex:1;min-width:0}
+.pass-lv{font:800 1.6rem var(--f-display);color:var(--blue)}
+.pass-list{display:grid;gap:8px;margin-top:12px}
+.prw{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;background:var(--paper);font-weight:700;color:var(--ink-2)}
+.prw>span:nth-child(2){flex:1;min-width:0}.prw.ok{background:var(--good-soft);color:var(--ink)}.prw.got{opacity:.6}
+.prw .pn{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--card);font:800 .95rem var(--f-display);color:var(--ink);flex:none}
 </style>
 </head>
 <body>
@@ -724,6 +764,7 @@ details.fold.big[open] > summary{margin-bottom:10px}
     <nav class="home-links" aria-label="Outras opções">
       <button class="tilebtn" type="button" id="go-arcade"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 14h36v6a4 4 0 0 0 0 8v6H6v-6a4 4 0 0 0 0-8z" fill="#FF6B9A" stroke="#C2185B" stroke-width="2.5"/><path d="M18 14v20" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/><polygon points="30,18 32,23 37,23 33,26 35,31 30,28 25,31 27,26 23,23 28,23" fill="#FFD43B"/></svg>Fliperama</button>
       <button class="tilebtn" type="button" id="go-market"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="20" width="34" height="22" fill="#F5E1C0" stroke="#A0703C" stroke-width="2"/><path d="M4 12h40l-3 10H7z" fill="#FF6B9A"/><path d="M12 12l-2 10M20 12l-1 10M28 12l1 10M36 12l2 10" stroke="#FFFFFF" stroke-width="3"/><rect x="11" y="28" width="26" height="6" rx="2" fill="#8A5A2B"/><circle cx="16" cy="27" r="4" fill="#E5484D"/><circle cx="24" cy="27" r="4" fill="#7BC950"/><polygon points="29,24 37,25 31,31" fill="#FF8A3D"/></svg>Mercado</button>
+      <button class="tilebtn" type="button" id="go-collect"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="18" width="34" height="25" rx="3" fill="#9B5BFF"/><rect x="5" y="12" width="38" height="9" rx="3" fill="#B98CFF"/><rect x="21" y="12" width="6" height="31" fill="#FFD43B"/><path d="M24 12c-4-8-13-6-9 0M24 12c4-8 13-6 9 0" fill="none" stroke="#FFD43B" stroke-width="3"/></svg>Coleção</button>
       <button class="tilebtn" type="button" id="go-world"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="30" width="44" height="14" rx="5" fill="#8DCF7B"/><rect x="10" y="20" width="16" height="14" fill="#F4E3C3"/><polygon points="7,22 18,11 29,22" fill="#D9363E"/><rect x="16" y="26" width="5" height="8" fill="#7A4B25"/><circle cx="36" cy="22" r="8" fill="#2E8B57"/><rect x="35" y="28" width="3" height="7" fill="#7A4B25"/></svg>Meu mundo</button>
       <button class="tilebtn" type="button" id="go-shop"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 8 L4 16 L9 24 L13 21 V42 H35 V21 L39 24 L44 16 L34 8 Q24 16 14 8Z" fill="#3A6FF7"/><path d="M19 9 Q24 14 29 9" fill="none" stroke="#1C47C9" stroke-width="3"/><polygon points="24,22 26,27 31,27 27,30 29,35 24,32 19,35 21,30 17,27 22,27" fill="#FFD43B"/></svg>Loja do avatar</button>
       <button class="tilebtn" type="button" id="go-rank"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 6h22v10a11 11 0 0 1-22 0z" fill="#F2B705"/><path d="M13 10H6a7 7 0 0 0 8 9M35 10h7a7 7 0 0 1-8 9" fill="none" stroke="#C99400" stroke-width="3"/><rect x="21" y="26" width="6" height="9" fill="#C99400"/><rect x="14" y="35" width="20" height="7" rx="2" fill="#8A6500"/></svg>Quadro de honra</button>
@@ -871,6 +912,14 @@ details.fold.big[open] > summary{margin-bottom:10px}
   </section>
 
   <!-- MERCADO -->
+  <section id="sc-collect" class="screen" hidden>
+    <div class="panel mk-top">
+      <div><p class="eyebrow">Sorte e estilo</p><h1>Coleção</h1><p class="note">Pacotinhos de cards, skins para as construções e o passe do mês.</p></div>
+      <div class="actions"><span class="pill" id="cl-coins"></span><button class="btn ghost small" type="button" id="cl-back">Voltar</button></div>
+    </div>
+    <div class="panel"><div class="cl-tabs" id="cl-tabs" role="group" aria-label="Partes da coleção"></div><div id="cl-body" style="margin-top:14px"></div></div>
+  </section>
+
   <section id="sc-market" class="screen" hidden>
     <div class="panel mk-top">
       <div><p class="eyebrow">Fazenda e comércio</p><h1>Mercado</h1><p class="note">Venda o que você plantou, criou e fez. Antes de receber, faça a conta: acertando, ganha 10% a mais.</p></div>
@@ -952,6 +1001,14 @@ details.fold.big[open] > summary{margin-bottom:10px}
 <div class="modal" id="code-modal" hidden role="dialog" aria-modal="true" aria-labelledby="code-title">
   <div class="modal-card prod-card"><p class="eyebrow">Jogar em outro computador</p><h2 id="code-title"></h2><div class="prod-body" id="code-body"></div><p class="code-msg" id="code-msg" role="status"></p>
     <div class="actions"><button class="btn ghost" type="button" id="code-close">Fechar</button><button class="btn go" type="button" id="code-go"></button></div></div>
+</div>
+<div class="modal" id="pack-modal" hidden role="dialog" aria-modal="true" aria-labelledby="pack-title">
+  <div class="modal-card pack-card"><p class="eyebrow">Pacotinho de sorte</p><h2 id="pack-title">Veja o que veio!</h2><div id="pack-slots"></div>
+    <div class="actions"><button class="btn go" type="button" id="pack-ok">Guardar</button></div></div>
+</div>
+<div class="modal" id="skin-modal" hidden role="dialog" aria-modal="true" aria-labelledby="skin-title">
+  <div class="modal-card pack-card"><p class="eyebrow">Skin da construção</p><h2 id="skin-title"></h2><div id="skin-body"></div>
+    <div class="actions"><button class="btn ghost small" type="button" id="skin-go">Ganhar mais skins</button><button class="btn go small" type="button" id="skin-close">Fechar</button></div></div>
 </div>
 <div class="modal" id="prod-modal" hidden role="dialog" aria-modal="true" aria-labelledby="prod-title">
   <div class="modal-card prod-card"><p class="eyebrow" id="prod-eye"></p><h2 id="prod-title"></h2><div class="prod-body" id="prod-body"></div>
@@ -1840,7 +1897,7 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
         :`<button class="btn ${P.coins>=c?'yellow':'ghost'} small" type="button" data-w="up" ${P.coins>=c?'':'disabled'}>Melhorar para ${esc(nx)} · ${COIN}${c}</button>`;}
     else up='<span class="note">Nível máximo!</span>';
     box=`<div class="selbox"><span>${esc(lvName(it))}<span class="lvtag">nível ${lv}/${LVMAX}</span><small>Piso: ${it.w} × ${it.h} = ${a} m²${fl>1?` · ${fl} andares: ${a} × ${fl} = ${a*fl} m² de área construída`:''} · vale ${a*lv} pontos</small></span>
-      <span class="actions">${isProd(it)&&!it.dano?'<button class="btn go small" type="button" data-w="open">Abrir</button>':''}${up}<button class="btn ghost small" type="button" data-w="move">Mudar de lugar</button><button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
+      <span class="actions">${isProd(it)&&!it.dano?'<button class="btn go small" type="button" data-w="open">Abrir</button>':''}${up}<button class="btn ghost small" type="button" data-w="skin">Skin</button><button class="btn ghost small" type="button" data-w="move">Mudar de lugar</button><button class="btn ghost small" type="button" data-w="remove">Remover (devolve ${back})</button><button class="btn ghost small" type="button" data-w="close">Fechar</button></span></div>`;}
   $('#w-sel').innerHTML=box;
   const TABS=['moradia','lazer','fazenda','comercio','servicos'];if(!WS.tab)WS.tab='moradia';if(WS.sel&&CAT[WS.sel]&&WS.move==null)WS.tab=CAT[WS.sel];
   $('#w-btabs').innerHTML=TABS.map(c=>`<button type="button" data-tab="${c}" aria-pressed="${WS.tab===c}" style="--c:${CATC[c]}">${CATN[c][0].toUpperCase()+CATN[c].slice(1)} <small>${BUILD.filter(b=>CAT[b.id]===c&&(b.place||'terra')===(P.world.lua?'lua':'terra')).length}</small></button>`).join('');
@@ -1856,6 +1913,7 @@ $('#w-btabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]'
 $('#w-build').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;WS.sel=WS.sel===b.dataset.b&&WS.move==null?null:b.dataset.b;WS.move=null;WS.rot=false;WS.pick=null;renderWorld();});
 $('#w-sel').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;const a=b.dataset.w;
   if(a==='open'&&WS.pick!==null){openProd(WS.pick);return}
+  if(a==='skin'&&WS.pick!==null){openSkinPick(WS.pick);return}
   if(a==='move'&&WS.pick!==null){const it=P.world.items[WS.pick],bd=BMAP[it.t];if(!bd)return;WS.move=WS.pick;WS.sel=it.t;WS.rot=it.w!==bd.w;WS.pick=null;renderWorld();return}
   if(a==='rot')WS.rot=!WS.rot;else if(a==='cancel'){WS.sel=null;WS.move=null}else if(a==='close')WS.pick=null;
   else if(a==='up'&&WS.pick!==null){const it=P.world.items[WS.pick],bd=BMAP[it.t],lv=it.lv||1;if(!bd||lv>=LVMAX)return;const c=upCost(bd,lv);
@@ -2084,7 +2142,7 @@ const W3={ok:false,failed:false,theta:.75,phi:.95,dist:16,anim:[],water:[],raf:0
       this.anim.push({o:g,t:'cloud',k:.25+rand()*.3});}
     /* construções */
     wd.items.forEach((it,idx)=>{const g=new T.Group();g.position.set(it.x+it.w/2-W/2,.12,it.y+it.h/2-H/2);g.userData.idx=idx;this.items.add(g);
-      (this.models[it.t]||this.models.arvore).call(this,g,it.w,it.h,it.lv||1,it);g.userData.base=g.position.y;this.readyMark(g,it);if(WS.move===idx)g.traverse(o=>{if(o.material){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.35;o.castShadow=false}});
+      (this.models[it.t]||this.models.arvore).call(this,g,it.w,it.h,it.lv||1,it);if(it.skin&&typeof SKMAP!=='undefined'&&SKMAP[it.skin])applySkin3D(g,SKMAP[it.skin]);g.userData.base=g.position.y;this.readyMark(g,it);if(WS.move===idx)g.traverse(o=>{if(o.material){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.35;o.castShadow=false}});
       if(it.dano){const sm=this.M(0x8A8F99,{transparent:true,opacity:.7});for(let k=0;k<3;k++){const pf=this.mesh(new T.SphereGeometry(.22,8,6),sm,0,1.2,0,g);pf.castShadow=false;this.anim.push({o:pf,t:'smoke',k:k*.33,x:(k-1)*.25});}
         const wn=new T.Group();g.add(wn);this.mesh(new T.OctahedronGeometry(.28,0),this.M(0xD9363E,{emissive:0xD9363E,emissiveIntensity:.5}),0,0,0,wn).scale.y=1.4;
         this.box(.07,.24,.08,this.M(0xFFFFFF),0,-.06,.2,wn);this.anim.push({o:wn,t:'warn',k:2.3+(it.lv||1)*.5});}
@@ -3162,6 +3220,125 @@ const codeGoV=$('#code-go').onclick;
 $('#code-go').onclick=async()=>{if(CM.mode!=='visit')return codeGoV();let p;try{p=await readCode($('#code-txt').value)}catch(e){codeMsg('Código inválido. Ele começa com TD1. e deve ser colado inteiro.',0);return}
   $('#code-modal').hidden=true;openVisit(p,{publico:pubName(p.name),key:'c:'+p.id,curtidas:null,me:!!(P&&P.id===p.id),code:true});};
 const renderVisitC=renderVisit;renderVisit=function(){renderVisitC();if(VIS.meta&&VIS.meta.code){const lb=$('#v-like');lb.hidden=false;lb.disabled=true;lb.textContent='Curtidas só com o servidor ligado';$('#v-back').textContent='Voltar';}else $('#v-back').textContent='Voltar ao quadro';};
+
+/* ---------- coleção: skins de construções, álbum de cards, pacotinho de sorte e passe do jogo ---------- */
+const RC={comum:['Comum','#8E99AD'],raro:['Raro','#2F6BFF'],epico:['Épico','#9B5BFF'],lendario:['Lendário','#F2B705']};
+const SKINS=[
+  {id:'pastel',nome:'Pastel',r:'comum',f:'saturate(.55) brightness(1.15)',h:0,s:.55,l:.1},
+  {id:'noturno',nome:'Noturno',r:'comum',f:'brightness(.72) saturate(1.2)',h:0,s:1.2,l:-.15},
+  {id:'oceano',nome:'Oceano',r:'raro',f:'hue-rotate(180deg)',h:.5,s:1,l:0},
+  {id:'floresta',nome:'Floresta',r:'raro',f:'hue-rotate(90deg) saturate(1.2)',h:.25,s:1.2,l:0},
+  {id:'doce',nome:'Doce',r:'epico',f:'hue-rotate(300deg) saturate(1.5) brightness(1.08)',h:.83,s:1.5,l:.05},
+  {id:'neon',nome:'Neon',r:'epico',f:'saturate(2) brightness(1.1) drop-shadow(0 0 4px #22E5FF)',h:0,s:2,l:0,glow:1},
+  {id:'dourado',nome:'Dourado',r:'lendario',f:'sepia(1) saturate(3) hue-rotate(-12deg) brightness(1.05)',gold:1},
+  {id:'cristal',nome:'Cristal',r:'lendario',f:'hue-rotate(160deg) saturate(.7) brightness(1.3) opacity(.85)',crystal:1},
+  {id:'galaxia',nome:'Galáxia',r:'lendario',f:'hue-rotate(250deg) saturate(1.6) drop-shadow(0 0 4px #B07CFF)',h:.72,s:1.6,l:-.05,glow:1,passe:1}];
+const SKMAP=Object.fromEntries(SKINS.map(k=>[k.id,k]));
+function applySkin3D(g,sk){const T=THREE;g.traverse(o=>{if(!o.isMesh||!o.material||!o.material.color)return;const m=o.material.clone();
+  if(sk.gold){m.color.setHex(0xF2C14E);m.metalness=.75;m.roughness=.28;}
+  else if(sk.crystal){m.color.setHSL(.55,.55,.78);m.transparent=true;m.opacity=.78;m.emissive=new T.Color(0x3FA9FF);m.emissiveIntensity=.22;}
+  else{const h={};m.color.getHSL(h);m.color.setHSL((h.h+sk.h+1)%1,Math.min(1,h.s*sk.s),Math.max(0,Math.min(1,h.l+sk.l)));if(sk.glow){m.emissive=m.color.clone();m.emissiveIntensity=.35;}}
+  o.material=m;});}
+/* álbum: 24 cards */
+const sv=(b)=>`<svg viewBox="0 0 40 40" aria-hidden="true">${b}</svg>`;
+const CARDS=[
+ ['quad','Quadrado','comum','4 lados iguais e 4 ângulos retos. Área = lado × lado.',sv('<rect x="9" y="9" width="22" height="22" fill="#FFD43B" stroke="#B8790F" stroke-width="2"/>')],
+ ['ret','Retângulo','comum','Lados opostos iguais. Área = base × altura.',sv('<rect x="5" y="12" width="30" height="16" fill="#7FC8F8" stroke="#2F6BFF" stroke-width="2"/>')],
+ ['tri','Triângulo','comum','A soma dos 3 ângulos é sempre 180°.',sv('<polygon points="20,6 35,33 5,33" fill="#FF9EC3" stroke="#C2185B" stroke-width="2"/>')],
+ ['circ','Círculo','comum','Todos os pontos da borda ficam à mesma distância do centro.',sv('<circle cx="20" cy="20" r="14" fill="#9BE3C8" stroke="#14866B" stroke-width="2"/><circle cx="20" cy="20" r="1.8" fill="#14866B"/>')],
+ ['trap','Trapézio','comum','Tem um par de lados paralelos: a base maior e a base menor.',sv('<polygon points="12,10 28,10 36,30 4,30" fill="#FFB27A" stroke="#C4621A" stroke-width="2"/>')],
+ ['los','Losango','comum','4 lados iguais. Área = diagonal maior × diagonal menor ÷ 2.',sv('<polygon points="20,4 34,20 20,36 6,20" fill="#C9B6FF" stroke="#6B47D6" stroke-width="2"/>')],
+ ['para','Paralelogramo','comum','Lados opostos paralelos. Área = base × altura.',sv('<polygon points="12,10 36,10 28,30 4,30" fill="#A8E07A" stroke="#4A8F2C" stroke-width="2"/>')],
+ ['hex','Hexágono','comum','6 lados. As abelhas usam hexágonos nos favos de mel!',sv('<polygon points="20,5 33,12.5 33,27.5 20,35 7,27.5 7,12.5" fill="#FFD43B" stroke="#B8790F" stroke-width="2"/>')],
+ ['pent','Pentágono','comum','5 lados. A soma dos ângulos internos é 540°.',sv('<polygon points="20,5 34,16 29,33 11,33 6,16" fill="#7FC8F8" stroke="#2F6BFF" stroke-width="2"/>')],
+ ['cubo','Cubo','comum','6 faces quadradas, 12 arestas e 8 vértices.',sv('<polygon points="10,14 22,8 34,14 22,20" fill="#FFE38A" stroke="#B8790F" stroke-width="1.5"/><polygon points="10,14 22,20 22,34 10,28" fill="#F2B705" stroke="#B8790F" stroke-width="1.5"/><polygon points="34,14 22,20 22,34 34,28" fill="#D99A00" stroke="#B8790F" stroke-width="1.5"/>')],
+ ['pi','Número π','raro','π ≈ 3,14: quantas vezes o diâmetro cabe na volta do círculo.',sv('<text x="20" y="29" text-anchor="middle" font-size="26" font-weight="800" fill="#2F6BFF" font-family="serif">π</text>')],
+ ['zero','O zero','raro','Os matemáticos da Índia usaram o zero como número há mais de 1.300 anos.',sv('<text x="20" y="30" text-anchor="middle" font-size="28" font-weight="800" fill="#9B5BFF" font-family="sans-serif">0</text>')],
+ ['frac','Fração','raro','Uma parte de um inteiro: 3/4 é 3 de 4 partes iguais.',sv('<circle cx="20" cy="20" r="14" fill="#EEF1F7" stroke="#5E6878" stroke-width="2"/><path d="M20 20 L20 6 A14 14 0 1 1 6 20 Z" fill="#FF9EC3"/>')],
+ ['pct','Porcentagem','raro','"Por cento" quer dizer "a cada cem": 25% = 25 de cada 100.',sv('<text x="20" y="29" text-anchor="middle" font-size="24" font-weight="800" fill="#22B357" font-family="sans-serif">%</text>')],
+ ['plano','Plano cartesiano','raro','Dois eixos, x e y, para localizar qualquer ponto.',sv('<path d="M6 34 V6 M6 34 H34" stroke="#3A3F4B" stroke-width="2.5"/><circle cx="24" cy="14" r="3" fill="#E5484D"/><path d="M24 14 V34 M24 14 H6" stroke="#E5484D" stroke-dasharray="2 2"/>')],
+ ['angulo','Ângulo reto','raro','Mede 90°: o canto de uma folha de caderno.',sv('<path d="M8 32 V8 M8 32 H32" stroke="#2F6BFF" stroke-width="3"/><rect x="8" y="24" width="8" height="8" fill="none" stroke="#E5484D" stroke-width="2"/>')],
+ ['sim','Simetria','raro','Dobrando no eixo de simetria, as duas metades se encaixam.',sv('<path d="M20 4 V36" stroke="#5E6878" stroke-dasharray="3 2"/><path d="M20 10 Q8 4 6 16 Q8 28 20 30 Q32 28 34 16 Q32 4 20 10Z" fill="#FF9EC3"/>')],
+ ['pita','Pitágoras','epico','Grécia antiga: num triângulo retângulo, a² + b² = c².',sv('<polygon points="12,28 28,28 12,14" fill="#FFD43B" stroke="#B8790F" stroke-width="1.5"/><rect x="12" y="28" width="16" height="8" fill="#7FC8F8"/><rect x="4" y="14" width="8" height="14" fill="#FF9EC3"/>')],
+ ['hipa','Hipátia','epico','Matemática e astrônoma de Alexandria, no Egito, há cerca de 1.600 anos.',sv('<circle cx="20" cy="20" r="14" fill="none" stroke="#9B5BFF" stroke-width="2"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#9B5BFF" stroke-width="1.5"/><circle cx="20" cy="20" r="3" fill="#FFD43B"/>')],
+ ['arqui','Arquimedes','epico','"Dê-me uma alavanca e um ponto de apoio e moverei o mundo."',sv('<path d="M4 26 L36 16" stroke="#8A5A2B" stroke-width="3"/><polygon points="16,22 22,22 19,30" fill="#5E6878"/><circle cx="33" cy="11" r="5" fill="#22B357"/>')],
+ ['fibo','Fibonacci','epico','1, 1, 2, 3, 5, 8, 13… cada número é a soma dos dois anteriores.',sv('<path d="M20 20 a2 2 0 0 1 2 2 a4 4 0 0 1 -4 4 a6 6 0 0 1 -6 -6 a10 10 0 0 1 10 -10 a16 16 0 0 1 16 16" fill="none" stroke="#F97316" stroke-width="2.5"/>')],
+ ['ada','Ada Lovelace','epico','Escreveu o primeiro programa de computador, em 1843.',sv('<rect x="7" y="9" width="26" height="22" rx="2" fill="#EEF1F7" stroke="#5E6878" stroke-width="2"/>'+[0,1,2].map(r=>[0,1,2,3].map(c=>(r+c)%2?`<circle cx="${12+c*5.5}" cy="${15+r*5.5}" r="1.8" fill="#3A3F4B"/>`:'').join('')).join(''))],
+ ['mirza','Maryam Mirzakhani','lendario','Primeira mulher a ganhar a Medalha Fields, o "Nobel da Matemática", em 2014.',sv('<circle cx="20" cy="17" r="11" fill="#F2B705" stroke="#B8790F" stroke-width="2"/><path d="M14 27 l-3 9 l9 -4 l9 4 l-3 -9" fill="#E5484D"/><text x="20" y="21" text-anchor="middle" font-size="10" font-weight="800" fill="#7A5200" font-family="sans-serif">F</text>')],
+ ['malba','Malba Tahan','lendario','Autor brasileiro de "O Homem que Calculava". O Dia da Matemática, 6 de maio, homenageia ele.',sv('<rect x="9" y="6" width="22" height="28" rx="2" fill="#2F6BFF"/><rect x="12" y="9" width="16" height="22" fill="#FFF6E5"/><text x="20" y="24" text-anchor="middle" font-size="11" font-weight="800" fill="#2F6BFF" font-family="sans-serif">6/5</text>')]];
+const CMAP=Object.fromEntries(CARDS.map(c=>[c[0],c]));
+const DUP={comum:5,raro:15,epico:40,lendario:100};
+const PACK_PRICE=120,PACK_ODDS={comum:65,raro:25,epico:8,lendario:2};
+function rollRar(odds){let r=Math.random()*100;for(const k of ['lendario','epico','raro','comum']){if(r<odds[k])return k;r-=odds[k];}return 'comum';}
+function cardOf(rar){return pick(CARDS.filter(c=>c[2]===rar));}
+function openPackItems(){const out=[];for(let i=0;i<3;i++)out.push({t:'card',c:cardOf(rollRar(PACK_ODDS))});
+  if(!out.some(o=>o.c[2]!=='comum'))out[2]={t:'card',c:cardOf('raro')};/* garantia: pelo menos 1 raro ou melhor */
+  const r=Math.random()*100;
+  if(r<60)out.push({t:'moedas',v:rnd(2,6)*10});else if(r<80)out.push({t:'fichas',v:rnd(1,2)});
+  else if(r<95){const rar=rollRar({comum:55,raro:30,epico:12,lendario:3});out.push({t:'skin',s:pick(SKINS.filter(k=>k.r===rar&&!k.passe))});}else out.push({t:'lua',v:3});
+  return out;}
+function grant(o){P.album=P.album||{};P.skins=P.skins||{};let txt='';
+  if(o.t==='card'){const id=o.c[0];if(P.album[id]){const v=DUP[o.c[2]];P.coins+=v;P.xp+=v;txt=`Repetida: virou ${v} moedas`;o.dup=v;}else{P.album[id]=1;txt='Nova no álbum!';}}
+  else if(o.t==='moedas'){P.coins+=o.v;P.xp+=o.v;txt=`+${o.v} moedas`;}
+  else if(o.t==='fichas'){P.fichas=(P.fichas||0)+o.v;txt=`+${o.v} ficha${o.v>1?'s':''} do Fliperama`;}
+  else if(o.t==='skin'){if(P.skins[o.s.id]){const v=DUP[o.s.r]*2;P.coins+=v;P.xp+=v;txt=`Skin repetida: virou ${v} moedas`;}else{P.skins[o.s.id]=1;txt='Skin nova para as construções!';}}
+  else if(o.t==='lua'){addGood('lua',o.v);txt=`+${o.v} pedras lunares`;}
+  return txt;}
+function slotHTML(o,txt){if(o.t==='card'){const c=o.c;return `<div class="pcard r-${c[2]}"><span class="rar" style="background:${RC[c[2]][1]}">${RC[c[2]][0]}</span>${c[4]}<b>${c[1]}</b><small>${txt}</small></div>`;}
+  if(o.t==='skin')return `<div class="pcard r-${o.s.r}"><span class="rar" style="background:${RC[o.s.r][1]}">${RC[o.s.r][0]}</span><div class="skprev" style="filter:${o.s.f}"><svg viewBox="0 0 60 60">${BD.casa(4,4,52,52)}</svg></div><b>Skin ${o.s.nome}</b><small>${txt}</small></div>`;
+  const ic={moedas:'🪙',fichas:'🎟️',lua:'🪨'}[o.t];return `<div class="pcard r-comum"><span class="rar" style="background:#8E99AD">Bônus</span><div class="bigic">${ic}</div><b>${txt}</b></div>`;}
+function openPack(){if(!P||!(P.packs>0))return;P.packs--;const items=openPackItems(),txts=items.map(grant);P.packsOpen=(P.packsOpen||0)+1;const got=checkAch();saveProfile();
+  $('#pack-slots').innerHTML=items.map((o,i)=>`<div class="pslot" style="--d:${i*.45}s"><div class="pback">?</div><div class="pfront">${slotHTML(o,txts[i])}</div></div>`).join('');
+  $('#pack-modal').hidden=false;sfx('level');items.forEach((o,i)=>setTimeout(()=>{const best=o.t==='card'?o.c[2]:o.t==='skin'?o.s.r:'comum';sfx(best==='lendario'||best==='epico'?'star':'coin');if(best==='lendario'&&!REDUCED)confetti(140);},450*i+500));
+  setTimeout(()=>$('#pack-ok').focus(),400);announceAch(got,2600);renderCollect();}
+$('#pack-ok').onclick=()=>{$('#pack-modal').hidden=true;renderCollect();};
+/* passe do jogo: temporada do mês, 20 níveis */
+const PASS_LV=80;
+const PASS_RW=[[1,'moedas',50],[2,'fichas',1],[3,'pack',1],[4,'moedas',80],[5,'skin','pastel'],[6,'fichas',2],[7,'pack',1],[8,'moedas',120],[9,'pack',1],[10,'skin','neon'],
+  [11,'moedas',150],[12,'pack',1],[13,'fichas',2],[14,'moedas',200],[15,'pack',2],[16,'skin','oceano'],[17,'moedas',250],[18,'pack',1],[19,'moedas',300],[20,'skin','galaxia']];
+const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function passState(p){const d=new Date(),s=d.getFullYear()+'-'+(d.getMonth()+1);if(!p.pass||p.pass.s!==s)p.pass={s,xp0:p.xp,got:[]};const pts=Math.max(0,p.xp-p.pass.xp0);
+  return {pts,lv:Math.min(20,Math.floor(pts/PASS_LV)),into:pts%PASS_LV,mes:MESES[d.getMonth()],fim:new Date(d.getFullYear(),d.getMonth()+1,1)};}
+function rwTxt(r){return r[1]==='moedas'?`${r[2]} moedas`:r[1]==='fichas'?`${r[2]} ficha${r[2]>1?'s':''}`:r[1]==='pack'?`${r[2]} pacotinho${r[2]>1?'s':''}`:`Skin ${SKMAP[r[2]].nome}${SKMAP[r[2]].passe?' (exclusiva)':''}`;}
+function claimPass(n){const ps=passState(P),r=PASS_RW[n-1];if(!r||ps.lv<n||P.pass.got.includes(n))return;P.pass.got.push(n);
+  if(r[1]==='moedas'){P.coins+=r[2];P.xp+=r[2];}else if(r[1]==='fichas')P.fichas=(P.fichas||0)+r[2];else if(r[1]==='pack')P.packs=(P.packs||0)+r[2];
+  else{P.skins=P.skins||{};if(P.skins[r[2]]){P.coins+=100;P.xp+=100;}else P.skins[r[2]]=1;}
+  sfx('cash');toast(`Prêmio do passe: ${rwTxt(r)}!`);const got=checkAch();saveProfile();renderCollect();announceAch(got,1500);}
+/* tela da coleção */
+const CL={tab:'pack'};
+function openCollect(tab){if(tab)CL.tab=tab;show('collect');renderCollect();}
+function renderCollect(){if(!P)return;P.album=P.album||{};P.skins=P.skins||{};P.packs=P.packs||0;const ps=passState(P);
+  $('#cl-coins').innerHTML=`${COIN} ${P.coins} moedas`;updateWho();const nA=Object.keys(P.album).length;
+  $('#cl-tabs').innerHTML=[['pack',`Pacotinhos${P.packs?` (${P.packs})`:''}`],['album',`Álbum ${nA}/${CARDS.length}`],['skins','Skins'],['pass',`Passe · nível ${ps.lv}`]].map(([k,l])=>`<button type="button" data-cl="${k}" aria-pressed="${CL.tab===k}">${l}</button>`).join('');
+  let h='';
+  if(CL.tab==='pack'){h=`<div class="pk-hero"><div class="pk-box" aria-hidden="true">🎁</div><div><h2 class="h2">Pacotinho de sorte</h2><p class="prod-info">Cada pacotinho tem <b>3 cards</b> do álbum (pelo menos 1 raro ou melhor) e <b>1 bônus</b>: moedas, fichas, uma skin para as construções ou pedras lunares. Card repetido vira moedas.</p>
+      <div class="prod-acts"><button type="button" class="btn yellow" id="cl-buy" ${P.coins>=PACK_PRICE?'':'disabled'}>Comprar · ${COIN}${PACK_PRICE}</button><button type="button" class="btn go" id="cl-open" ${P.packs?'':'disabled'}>Abrir pacotinho${P.packs?` (${P.packs})`:''}</button></div></div></div>
+      <div class="odds"><b>Chances de cada card</b>${Object.entries(PACK_ODDS).map(([k,v])=>`<span><i style="background:${RC[k][1]}"></i>${RC[k][0]}: ${v}%</span>`).join('')}<small>Bônus: moedas 60%, fichas 20%, skin 15%, pedras lunares 5%. Os pacotinhos só usam moedas do jogo.</small></div>`;}
+  else if(CL.tab==='album'){h=`<p class="prod-info">${nA} de ${CARDS.length} cards. Complete o álbum para ganhar 500 moedas e a skin Cristal.</p><div class="album">${CARDS.map(c=>P.album[c[0]]?`<div class="pcard r-${c[2]}"><span class="rar" style="background:${RC[c[2]][1]}">${RC[c[2]][0]}</span>${c[4]}<b>${c[1]}</b><small>${c[3]}</small></div>`:`<div class="pcard vazio"><span class="rar" style="background:${RC[c[2]][1]}">${RC[c[2]][0]}</span><div class="bigic">?</div><b>???</b></div>`).join('')}</div>`;
+    if(nA===CARDS.length&&!P.albumOk){P.albumOk=1;P.coins+=500;P.xp+=500;P.skins.cristal=1;saveProfile();setTimeout(()=>{toast('Álbum completo! +500 moedas e a skin Cristal!');if(!REDUCED)confetti(200);},300);}}
+  else if(CL.tab==='skins'){h=`<p class="prod-info">Skins mudam a cor das construções no seu mundo. Para usar: no Meu mundo, toque numa construção e depois em <b>Skin</b>.</p><div class="album">${SKINS.map(k=>`<div class="pcard r-${k.r} ${P.skins[k.id]?'':'vazio'}"><span class="rar" style="background:${RC[k.r][1]}">${RC[k.r][0]}</span><div class="skprev" style="filter:${P.skins[k.id]?k.f:'grayscale(1) opacity(.4)'}"><svg viewBox="0 0 60 60">${BD.casa(4,4,52,52)}</svg></div><b>${k.nome}</b><small>${P.skins[k.id]?'Você tem':k.passe?'Só no passe do jogo':'Vem nos pacotinhos'}</small></div>`).join('')}</div>`;}
+  else{const dias=Math.max(1,Math.ceil((ps.fim-Date.now())/864e5));h=`<div class="pass-top"><div><h2 class="h2">Passe de ${ps.mes}</h2><p class="prod-info">Cada ${PASS_LV} pontos de experiência ganhos neste mês sobem 1 nível do passe. Termina em ${dias} dia${dias>1?'s':''}. Tudo grátis!</p></div><b class="pass-lv">Nível ${ps.lv}</b></div>
+    <div class="xpbar"><i style="width:${ps.lv>=20?100:ps.into/PASS_LV*100}%"></i></div><small class="note">${ps.lv>=20?'Passe completo!':`${ps.into} de ${PASS_LV} pontos para o nível ${ps.lv+1}`}</small>
+    <div class="pass-list">${PASS_RW.map(r=>{const n=r[0],got=P.pass.got.includes(n),ok=ps.lv>=n;return `<div class="prw ${got?'got':ok?'ok':''}"><span class="pn">${n}</span><span>${r[1]==='skin'?'🎨':r[1]==='pack'?'🎁':r[1]==='fichas'?'🎟️':'🪙'} ${rwTxt(r)}</span>${got?'<span class="note">Pego ✓</span>':ok?`<button type="button" class="btn go small" data-claim="${n}">Pegar</button>`:'<span class="note">🔒</span>'}</div>`}).join('')}</div>`;}
+  $('#cl-body').innerHTML=h;const b1=$('#cl-buy');if(b1)b1.onclick=()=>{if(P.coins<PACK_PRICE)return;P.coins-=PACK_PRICE;P.packs=(P.packs||0)+1;saveProfile();openPack();};
+  const b2=$('#cl-open');if(b2)b2.onclick=openPack;}
+$('#cl-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-cl]');if(!b)return;CL.tab=b.dataset.cl;renderCollect();});
+$('#cl-body').addEventListener('click',e=>{const b=e.target.closest('[data-claim]');if(b)claimPass(+b.dataset.claim);});
+$('#cl-back').onclick=()=>goHome();
+$('#go-collect').onclick=()=>beginLogin('collect');
+/* skin nas construções */
+const worldSVGS=worldSVG;worldSVG=function(p){let s=worldSVGS(p);(p.world.items||[]).forEach((it,i)=>{if(it.skin&&SKMAP[it.skin])s=s.replace(`data-i="${i}">`,`data-i="${i}" style="filter:${SKMAP[it.skin].f}">`);});return s;};
+function openSkinPick(i){const it=P.world.items[i];if(!it)return;P.skins=P.skins||{};const own=SKINS.filter(k=>P.skins[k.id]);
+  $('#skin-title').textContent=lvName(it);
+  $('#skin-body').innerHTML=own.length?`<div class="album">${[{id:'',nome:'Original',r:'comum',f:'none'},...own].map(k=>`<button type="button" class="pcard skbtn r-${k.r} ${(it.skin||'')===k.id?'sel':''}" data-sk="${k.id}" aria-pressed="${(it.skin||'')===k.id}"><div class="skprev" style="filter:${k.f}"><svg viewBox="0 0 60 60">${(BD[it.t]||BD.casa)(4,4,52,52)}</svg></div><b>${k.nome}</b></button>`).join('')}</div>`:`<p class="prod-info">Você ainda não tem skins. Elas vêm nos pacotinhos de sorte e no passe do jogo (tela Coleção).</p>`;
+  $('#skin-body').onclick=e=>{const b=e.target.closest('[data-sk]');if(!b)return;const k=b.dataset.sk;if(k)it.skin=k;else delete it.skin;saveProfile();sfx('build');$('#skin-modal').hidden=true;WS.pick=null;renderWorld();};
+  $('#skin-modal').hidden=false;}
+$('#skin-close').onclick=()=>{$('#skin-modal').hidden=true;};
+$('#skin-go').onclick=()=>{$('#skin-modal').hidden=true;openCollect('pack');};
+SCREENS.push('collect');
+const goAfterC=goAfter;goAfter=function(){if(LG.after==='collect'&&P){saveProfile();backTo='home';openCollect('pack');return}goAfterC();};
+ACH.push({id:'album',nome:'Álbum completo',desc:'Complete o álbum de cards',r:100,ok:p=>Object.keys(p.album||{}).length>=CARDS.length},
+  {id:'pack1',nome:'Que sorte!',desc:'Abra seu primeiro pacotinho',r:15,ok:p=>(p.packsOpen||0)>=1});
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};
