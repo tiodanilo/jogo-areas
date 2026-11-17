@@ -107,6 +107,13 @@ Um segundo mundo, liberado no nível 15 depois de 3 viagens do foguete à Lua. N
 - Mesmas regras de variedade (50%), fases próprias (Base lunar → Colônia → Vila lunar → Cidade lunar) e terreno até 20 × 14, a 25 moedas por m².
 - Moedas e nível são os mesmos da Terra.
 
+## Coleção: pacotinhos, álbum, skins e passe
+Tela **Coleção** na página inicial, tudo com moedas do jogo (sem dinheiro de verdade).
+- **Pacotinho de sorte** (120 moedas): 3 cards do álbum, sempre pelo menos 1 raro ou melhor, e 1 bônus (moedas, fichas, skin ou pedras lunares). As chances ficam à mostra: comum 65%, raro 25%, épico 8%, lendário 2%. Card repetido vira moedas.
+- **Álbum** de 24 cards: figuras, ideias da matemática (π, zero, fração, porcentagem…) e matemáticos (Pitágoras, Hipátia, Arquimedes, Fibonacci, Ada Lovelace, Maryam Mirzakhani, Malba Tahan). Completo: 500 moedas e a skin Cristal.
+- **Skins** de construções em 4 raridades (Pastel, Noturno, Oceano, Floresta, Doce, Neon, Dourado, Cristal e Galáxia, a exclusiva do passe). No Meu mundo: toque na construção → **Skin**. Funciona na planta e no 3D.
+- **Passe do mês**: 20 níveis, 1 nível a cada 80 pontos de experiência ganhos no mês, com prêmios grátis para pegar. Recomeça todo mês.
+
 ## Avatar e níveis
 
 - **Loja** com 49 itens em raridades (comum, raro, épico, lendário), oferta do dia com 40% de desconto, provador antes de comprar, efeitos animados (brilho, estrelas, fogo), asas e 5 conjuntos com prêmio. Itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
