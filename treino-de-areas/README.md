@@ -45,7 +45,7 @@ As alternativas erradas são os erros mais comuns (fazer a conta da esquerda par
 
 - **Mato**: cada erro numa partida faz nascer um matinho no terreno (ocupa 1 m²). No fim da partida vem a **revanche** com as figuras erradas (números novos): cada acerto vale metade das moedas e limpa um matinho.
 - **Dias sem jogar**: a cada dia longe (até 4), aparece lixo no terreno ou uma construção estraga (goteira, praga na horta, água suja na piscina, rede rasgada…). Construção quebrada não conta pontos do mundo.
-- **Emergências** (a cada 2 horas, no máximo, ao abrir o Meu mundo com 3 ou mais construções): incêndio, tempestade, raposa no galinheiro, ladrão no celeiro ou fiscalização. Aparece uma conta (das figuras e conteúdos que o aluno escolheu) com 40 segundos. Acertando: +10 moedas. Errando ou deixando o tempo acabar, a cidade perde: a construção pega fogo e precisa de conserto, metade das verduras e a plantação estragam, a raposa leva uma galinha, o ladrão leva o produto mais caro (até 2) ou a cidade paga multa (até 80 moedas).
+- **Emergências** (na tempestade a conta é sempre a área de um quadrado ou retângulo com números pequenos) (a cada 2 horas, no máximo, ao abrir o Meu mundo com 3 ou mais construções): incêndio, tempestade, raposa no galinheiro, ladrão no celeiro ou fiscalização. Aparece uma conta (das figuras e conteúdos que o aluno escolheu) com 40 segundos. Acertando: +10 moedas. Errando ou deixando o tempo acabar, a cidade perde: a construção pega fogo e precisa de conserto, metade das verduras e a plantação estragam, a raposa leva uma galinha, o ladrão leva o produto mais caro (até 2) ou a cidade paga multa (até 80 moedas).
 - **Felicidade da cidade** (0 a 100%): com 80% ou mais, cada acerto vale +1 moeda; abaixo de 50%, chove na ilha e os moradores param de passear.
 - **Conserto**: tocar no mato, no lixo ou na construção com "!" abre uma conta de área. Nas construções, a conta usa as medidas reais do piso (e os andares). Cada conserto vale 4 moedas.
 - **Resposta rápida**: até 6 s no modo fácil (15 s no difícil) vale +2 moedas.
@@ -70,7 +70,11 @@ Passatempos que custam 1 ficha. O aluno ganha fichas terminando partidas de áre
 - **Problemas na cidade**: a cada hora e meia pode aparecer um buraco na rua, um cano vazando (−5 de água) ou um poste apagado (−5 de energia). Tocar neles abre uma conta de área para consertar.
 - **Variedade**: nenhum tipo de construção (moradia, lazer, fazenda, comércio) pode passar de 50% da área construída, depois de 16 m². O painel mostra a porcentagem de cada tipo; serviços (escola, usina, caixa d'água, base) não entram no limite.
 - **Impostos**: 1 moeda por morador a cada hora, vezes a felicidade (20 moradores × 85% = 17 moedas), guardando até 3 horas.
-- **Terreno** pode crescer até 30 × 22 = 660 m².
+- **Terreno** pode crescer até 40 × 30 = 1200 m².
+- **Moradores vão embora** quando a felicidade fica abaixo de 50% (moradores presentes = moradores × felicidade ÷ 50).
+- **Variedade**: além do limite de 50% por tipo, depois de 20 m² a cidade precisa de pelo menos 3 tipos de construção, senão perde 10% de felicidade.
+- **Meio ambiente**: curral (3), galinheiro (1), padaria (1), pizzaria (2), sorveteria (1), loja de pisos (1), escola (1) e base de foguetes (5) poluem; árvores (1), flores (1) e lagos (3) limpam. A poluição que sobra gera multa de 2 moedas por ponto por hora e tira felicidade.
+- **Prefeitura**: a cada hora, impostos (moradores × felicidade) menos a conta de luz e de água (o que a cidade compra da vizinha ÷ 2) e a multa ambiental. O saldo guarda até 3 horas; se for negativo, é cobrado sozinho ao abrir o mundo (no máximo 40 moedas por hora).
 - **Menos rolagem**: as construções ficam em abas por tipo (moradia, lazer, fazenda, comércio, serviços); o painel da cidade, a compra de terreno e as conquistas abrem e fecham com um toque.
 
 ## Fazenda e mercado
@@ -115,7 +119,7 @@ Um segundo mundo, liberado no nível 15 depois de 3 viagens do foguete à Lua. N
 
 ## Visitar a cidade dos colegas
 
-No **Quadro de honra**, o botão **Visitar** abre a cidade (e a colônia na Lua, se houver) de um colega, em 3D ou na planta, só para olhar e passear com o personagem dele. Uma vez por dia, cada cidade visitada pode receber uma **curtida**: quem curte e quem é curtido ganham 5 moedas (quem foi curtido recebe as moedas e um aviso na próxima vez que entrar). Sem o servidor, dá para visitar quem joga no mesmo computador; com o servidor, a turma toda. Aparece só o primeiro nome e a inicial do sobrenome.
+No **Quadro de honra**, o botão **Visitar** abre a cidade (e a colônia na Lua, se houver) de um colega, em 3D ou na planta, só para olhar e passear com o personagem dele. Uma vez por dia, cada cidade visitada pode receber uma **curtida**: quem curte e quem é curtido ganham 5 moedas (quem foi curtido recebe as moedas e um aviso na próxima vez que entrar). Sem o servidor, dá para visitar quem joga no mesmo computador ou um amigo que mandar o código da cidade dele ("Visitar um amigo com código"); com o servidor, a turma toda. Aparece só o primeiro nome e a inicial do sobrenome.
 
 ## Onde fica o progresso
 

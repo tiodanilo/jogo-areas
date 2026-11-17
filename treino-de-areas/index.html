@@ -771,7 +771,7 @@ details.fold.big[open] > summary{margin-bottom:10px}
       <div><p class="eyebrow">Todos que jogam no site</p><h1>Quadro de honra</h1></div>
       <div class="tabs" id="rank-tabs"></div>
       <ol class="rank" id="rank"></ol>
-      <div class="actions"><button class="btn ghost" type="button" id="rank-back">Voltar</button></div>
+      <div class="actions"><button class="btn ghost" type="button" id="rk-code">Visitar um amigo com código</button><button class="btn ghost" type="button" id="rank-back">Voltar</button></div>
     </div>
   </section>
 
@@ -1749,7 +1749,7 @@ function stageOf(pts){if(pts<160){let i=0;while(i<4&&pts>=STAGES[i+1][1])i++;ret
 let worldStage=p=>stageOf(Math.max(worldPts(p),(p.world&&p.world.pmax)||0));
 function trackStage(before){const now=worldPts(P);P.world.pmax=Math.max(P.world.pmax||0,now);const st=worldStage(P);
   if(st.i>before){const got=checkAch();saveProfile();setTimeout(()=>showStage(st),900);announceAch(got,3600);}}
-let M2PRICE=12,MAXW=30,MAXH=22;const TS=40,WPAD=8,WLEFT=84;
+let M2PRICE=12,MAXW=40,MAXH=30;const TS=40,WPAD=8,WLEFT=84;
 const n1=v=>Math.round(v*10)/10;
 const BD={
  arvore:(x,y,W,H)=>{const cx=x+W/2,cy=y+H/2,r=Math.min(W,H)*.44;return `<circle cx="${n1(cx+2)}" cy="${n1(cy+3)}" r="${n1(r)}" fill="#1F6B43" opacity=".35"/><circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="#2E8B57"/><circle cx="${n1(cx-r*.3)}" cy="${n1(cy-r*.3)}" r="${n1(r*.5)}" fill="#46B06E"/><circle cx="${n1(cx+r*.35)}" cy="${n1(cy+r*.3)}" r="2.6" fill="#E5484D"/>`},
@@ -2615,7 +2615,7 @@ function openCode(mode){CM.mode=mode;CM.p=null;const body=$('#code-body');$('#co
   if(mode==='out'){const p=findProfile(S.nome)||P;if(!p)return;$('#code-title').textContent='Levar para outro computador';
     body.innerHTML=`<p class="prod-info">Código de <b>${esc(p.name)}</b> · ${p.ano}º ano · nível ${levelInfo(p.xp).lvl} · ${p.coins} moedas</p>
       <textarea id="code-txt" class="code-txt" readonly rows="5" aria-label="Seu código">Gerando…</textarea>
-      <ol class="code-steps"><li>Copie o código e envie para você mesmo: e-mail, WhatsApp ou Google Sala de Aula.</li><li>No outro computador, abra o jogo, toque em <b>Tenho um código</b> e cole.</li><li>Ao voltar para este computador, gere um código novo lá: o código guarda o progresso de agora.</li></ol>`;
+      <ol class="code-steps"><li>Copie o código e envie para você mesmo: e-mail, WhatsApp ou Google Sala de Aula.</li><li>No outro computador, abra o jogo, toque em <b>Tenho um código</b> e cole.</li><li>Ao voltar para este computador, gere um código novo lá: o código guarda o progresso de agora.</li><li>Mande o código para um amigo: no Quadro de honra, em "Visitar um amigo com código", ele vê a sua cidade.</li></ol>`;
     $('#code-go').textContent='Copiar código';$('#code-go').hidden=false;
     makeCode(p).then(c=>{CM.code=c;$('#code-txt').value=c;});}
   else{$('#code-title').textContent='Tenho um código';
@@ -2900,7 +2900,7 @@ function moonStageOf(pts){if(pts<150){let i=0;while(i<3&&pts>=MSTAGES[i+1][1])i+
 const worldStageT=worldStage;worldStage=p=>p.world&&p.world.lua?moonStageOf(Math.max(worldPts(p),p.world.pmax||0)):worldStageT(p);
 /* trocar de mundo: P.world aponta para a Lua; o que é salvo continua com a Terra em P.world */
 function enterMoon(){if(inMoon()||!P)return;const fresh=!P.lua;if(fresh)P.lua=newMoon();P._earth=P.world;P.world=P.lua;M2PRICE=25;MAXW=20;MAXH=14;if(fresh)for(let k=0;k<3;k++)addProb('cratera');}
-function exitMoon(){if(!inMoon())return;P.lua=P.world;P.world=P._earth;delete P._earth;M2PRICE=12;MAXW=30;MAXH=22;}
+function exitMoon(){if(!inMoon())return;P.lua=P.world;P.world=P._earth;delete P._earth;M2PRICE=12;MAXW=40;MAXH=30;}
 function withEarth(fn){if(!inMoon())return fn();const m=P.world;P.world=P._earth;delete P._earth;try{return fn()}finally{P._earth=P.world;P.lua=m;P.world=m;}}
 const saveDBT=saveDB;saveDB=function(){if(inMoon()){const m=P.world;P.world=P._earth;delete P._earth;try{saveDBT()}finally{P._earth=P.world;P.world=P.lua||m;}}else saveDBT();};
 const checkAchT=checkAch;checkAch=function(){return withEarth(()=>checkAchT());};
@@ -3084,13 +3084,13 @@ const EMG_KINDS=[
   {id:'ladrao',ic:'🦹',tit:()=>'Ladrão no celeiro!',txt:'Responda para a polícia chegar a tempo.',perda:'o ladrão leva o produto mais caro do celeiro',need:p=>Object.values(p.inv||{}).some(v=>v>0)},
   {id:'multa',ic:'🧾',tit:()=>'Fiscalização da prefeitura!',txt:'O fiscal quer conferir uma conta da cidade.',perda:'a cidade paga uma multa'}];
 const EM={on:false,k:null,q:null,idx:null,t0:0,timer:0,done:false};
-function emgQ(){const ano=P.ano||S.ano;let ids=[...S.shapes].filter(id=>SH[id]&&(!SH[id].minAno||SH[id].minAno<=ano));if(!ids.length)ids=[...defaultShapes(ano)];const q=makeQ(pick(ids),ano,true);q.opts=buildOpts(q);return q;}
+function emgQ(k){if(k&&k.id==='chuva'){const q=makeQ(pick(['quadrado','retangulo']),4,false);q.opts=buildOpts(q);return q;}const ano=P.ano||S.ano;let ids=[...S.shapes].filter(id=>SH[id]&&(!SH[id].minAno||SH[id].minAno<=ano));if(!ids.length)ids=[...defaultShapes(ano)];const q=makeQ(pick(ids),ano,true);q.opts=buildOpts(q);return q;}
 function maybeEmergency(force){if(!P||inMoon()||cur!=='world'||EM.on)return;const items=P.world.items;if(items.length<3&&!force)return;const now=Date.now();
   if(!force){if(!P.emg){P.emg=now;saveProfile();return}if(now-P.emg<EMG_GAP||Math.random()<.4)return;}
   if(document.querySelector('.modal:not([hidden])'))return;
   const pool=EMG_KINDS.filter(k=>!k.need||k.need(P));const k=typeof force==='string'?EMG_KINDS.find(x=>x.id===force):pick(pool);let idx=null;
   if(k.id==='fogo'){const cand=items.map((it,i)=>[it,i]).filter(([it])=>!it.dano&&!PROB_N[it.t]);if(!cand.length)return;idx=pick(cand)[1];}
-  P.emg=now;saveProfile();Object.assign(EM,{on:true,k,q:emgQ(),idx,t0:Date.now(),done:false});renderEmg();$('#emg-modal').hidden=false;sfx('no');
+  P.emg=now;saveProfile();Object.assign(EM,{on:true,k,q:emgQ(k),idx,t0:Date.now(),done:false});renderEmg();$('#emg-modal').hidden=false;sfx('no');
   clearInterval(EM.timer);EM.timer=setInterval(tickEmg,200);setTimeout(()=>{const b=$('#emg-opts .opt');b&&b.focus()},60);}
 function renderEmg(){const {k,q}=EM;const it=EM.idx!=null?P.world.items[EM.idx]:null;$('#emg-ic').textContent=k.ic;$('#emg-title').textContent=k.tit(it?lvName(it):'');
   $('#emg-txt').textContent=`${k.txt} Se errar ou o tempo acabar, ${k.perda}. Acertando, você ganha 10 moedas.`;
@@ -3117,6 +3117,51 @@ $('#emg-opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(
 $('#emg-go').onclick=()=>{$('#emg-modal').hidden=true;EM.on=false;if(cur==='world')renderWorld();};
 const showE=show;show=function(n){if(EM.on&&!EM.done&&n!=='world'){emgAnswer(null);$('#emg-modal').hidden=true;EM.on=false;}return showE(n);};
 const openWorldE=openWorld;openWorld=function(){const r=openWorldE();setTimeout(()=>maybeEmergency(),1500);return r;};
+
+/* ---------- fase 1: poluição, contas da cidade, moradores que vão embora e variedade ---------- */
+const POL={curral:3,galinheiro:1,padaria:1,pizzaria:2,sorveteria:1,base:5,pisos:1,escola:1};
+const LIMPA={arvore:1,flores:1,lago:3};
+function envStats(p){let pol=0,lim=0;p.world.items.forEach(it=>{pol+=POL[it.t]||0;lim+=LIMPA[it.t]||0;});const net=Math.max(0,pol-lim);return {pol,lim,net,multa:net*2};}
+function presentes(p,st,h){return h<50?Math.floor(st.pop*h/50):st.pop;}
+const happyR=happy;happy=function(p){if(p.world&&p.world.lua)return happyR(p);let h=happyR(p);const st=cityStats(p),env=envStats(p),cats=Object.values(st.area).filter(v=>v>0).length;
+  if(st.tot>=20&&cats<3)h-=10;if(env.net>0)h-=Math.min(20,2*env.net);return Math.max(0,Math.min(100,h));};
+function bills(p){const st=cityStats(p),own_e=st.pe-REDE.e,own_a=st.pa-REDE.a,ce=Math.max(0,st.ue-own_e),ca=Math.max(0,st.ua-own_a);
+  return {ce,ca,luz:Math.ceil(ce/2),agua:Math.ceil(ca/2),own_e,own_a};}
+taxState=function(p){if(!p.tax)p.tax={t:Date.now()};const n=Math.min(3,Math.floor((Date.now()-p.tax.t)/TAXH)),st=cityStats(p),h=happy(p),pres=presentes(p,st,h),env=envStats(p),b=bills(p);
+  const imp=Math.floor(pres*h/100),conta=b.luz+b.agua+env.multa,net=Math.max(-40,imp-conta);
+  return {n,per:net,imp,conta,pop:st.pop,pres,h,total:n*net,next:TAXH-((Date.now()-p.tax.t)%TAXH),b,env};};
+collectTax=function(auto){const ts=taxState(P);if(ts.n<1||!ts.total)return;P.tax.t=ts.n>=3?Date.now():P.tax.t+ts.n*TAXH;
+  if(ts.total>0){P.coins+=ts.total;P.xp+=ts.total;P.taxN=(P.taxN||0)+ts.total;sfx('cash');toast(`Contas da cidade fechadas: +${ts.total} moedas!`);}
+  else{const v=Math.min(P.coins,-ts.total);P.coins-=v;sfx('no');toast(`${auto?'A prefeitura cobrou as contas: ':'Contas pagas: '}−${v} moedas. Gaste menos energia e água, plante árvores e deixe a cidade feliz!`);}
+  const got=checkAch();saveProfile();if(cur==='world')renderWorld();announceAch(got,1500);};
+renderCity=function(){const el=$('#w-city');if(!el||!P)return;const st=cityStats(P),ts=taxState(P),items=P.world.items,env=ts.env,b=ts.b;
+  const houses=items.filter(i=>CAT[i.t]==='moradia');const bar=(u,p)=>`<div class="cbar ${u>p?'bad':''}"><i style="width:${Math.min(100,p?u/p*100:100)}%"></i></div>`;
+  const usinas=items.filter(i=>i.t==='usina'&&!i.dano),aguas=items.filter(i=>i.t==='agua'&&!i.dano),cats=Object.keys(st.area).filter(c=>st.area[c]>0);
+  const foram=st.pop-ts.pres;
+  el.innerHTML=`<div class="ccard"><b>👪 ${ts.pres} moradores${foram?` <span class="warn">(${foram} foram embora)</span>`:''}</b><small>${houses.length?houses.map(i=>`${lvName(i)}: ${i.w} × ${i.h}${floorsOf(i)>1?` × ${floorsOf(i)} andares`:''} = ${i.w*i.h*floorsOf(i)} m² ÷ 2 = ${moradores(i)}`).slice(0,3).join('<br>')+(houses.length>3?'<br>…':''):'Construa casas para ter moradores. Cada 2 m² construídos de casa abrigam 1 morador.'}</small>${foram?`<small class="warn">Cidade com ${ts.h}% de felicidade: abaixo de 50%, moradores vão embora (${st.pop} × ${ts.h} ÷ 50 = ${ts.pres}).</small>`:''}</div>
+    <div class="ccard"><b>⚡ Energia: usa ${st.ue} de ${st.pe}</b>${bar(st.ue,st.pe)}<small>${st.faltaE?'<span class="warn">Falta energia! Construa ou melhore uma usina solar.</span>':'Tudo aceso.'} Suas usinas geram ${b.own_e}${usinas.length?` (${usinas.map(u=>`${u.w*u.h} m² × 4${(u.lv||1)>1?` × ${u.lv}`:''}`).join(' + ')})`:''}; a cidade vizinha empresta até ${REDE.e}.</small></div>
+    <div class="ccard"><b>💧 Água: usa ${st.ua} de ${st.pa}</b>${bar(st.ua,st.pa)}<small>${st.faltaA?'<span class="warn">Falta água! Construa ou melhore uma caixa d’água.</span>':'Torneiras funcionando.'} Suas caixas geram ${b.own_a}${items.some(i=>i.t==='lago')?' (o lago ajuda +6)':''}; a cidade vizinha empresta até ${REDE.a}.</small></div>
+    <div class="ccard"><b>🌳 Meio ambiente: poluição ${env.pol}, limpeza ${env.lim}</b>${bar(env.pol,Math.max(1,env.lim))}<small>${env.net?`<span class="warn">Poluição de sobra: ${env.pol} − ${env.lim} = ${env.net}. Multa de ${env.net} × 2 = ${env.multa} moedas por hora e a felicidade cai.</span> Plante árvores (limpa 1), flores (1) ou faça um lago (3).`:'Ar limpo! As árvores, flores e lagos dão conta da poluição.'} Poluem: curral 3, galinheiro 1, padaria 1, pizzaria 2, base de foguetes 5…</small></div>
+    <div class="ccard"><b>🏛️ Prefeitura: ${ts.per>=0?'+':'−'}${Math.abs(ts.per)} moedas por hora</b><small>Impostos: ${ts.pres} moradores × ${ts.h}% = ${ts.imp}<br>Conta de luz: compra ${b.ce} da vizinha ÷ 2 = ${b.luz}<br>Conta de água: compra ${b.ca} da vizinha ÷ 2 = ${b.agua}${env.multa?`<br>Multa ambiental: ${env.multa}`:''}<br><b>Saldo: ${ts.imp} − ${ts.conta} = ${sg(ts.imp-ts.conta)}</b>${ts.imp-ts.conta<-40?' (a prefeitura cobra no máximo 40 por hora)':''} (guarda até 3 h)</small>
+      ${ts.n&&ts.total?`<button type="button" class="btn ${ts.total>0?'go':'ghost'} small" id="c-tax">${ts.total>0?`Fechar as contas: +${ts.total}`:`Pagar as contas: −${Math.min(P.coins,-ts.total)}`}</button>`:`<small>Próximo fechamento em ${fmtLeft(ts.next)}.</small>`}</div>
+    <div class="ccard"><b>🏙️ Variedade da cidade</b>${st.tot?`<div class="cstack">${cats.map(c=>`<i style="width:${st.area[c]/st.tot*100}%;background:${CATC[c]}"></i>`).join('')}</div><small>${cats.map(c=>`<span class="dot" style="background:${CATC[c]}"></span>${CATN[c]} ${st.area[c]} de ${st.tot} m² = ${Math.round(st.area[c]/st.tot*100)}%`).join('<br>')}</small>`:'<small>Nada construído ainda.</small>'}<small>Regras: nenhum tipo passa de 50% da área (serviços não contam) e, depois de 20 m², a cidade precisa de pelo menos 3 tipos${st.tot>=20&&cats.length<3?' <span class="warn">(agora: −10% de felicidade)</span>':''}.</small></div>`;
+  const bt=$('#c-tax');if(bt)bt.onclick=()=>collectTax(false);
+  const sm=$('#w-citysum');if(sm)sm.innerHTML=`👪 ${ts.pres} · ⚡ ${st.ue}/${st.pe}${st.faltaE?' ⚠️':''} · 💧 ${st.ua}/${st.pa}${st.faltaA?' ⚠️':''} · 🌳 ${env.net?'⚠️':'ok'} · 🏛️ ${ts.per>=0?'+':'−'}${Math.abs(ts.per)}/h`;
+  const ac=$('#ach-count');if(ac)ac.textContent=`${ACH.filter(a=>P.ach&&P.ach[a.id]).length} de ${ACH.length}`;};
+const renderHappyR=renderHappy;renderHappy=function(){renderHappyR();if(inMoon())return;const st=cityStats(P),env=envStats(P),cats=Object.values(st.area).filter(v=>v>0).length,ex=[];
+  if(st.tot>=20&&cats<3)ex.push('pouca variedade (−10)');if(env.net>0)ex.push(`poluição (−${Math.min(20,2*env.net)})`);
+  if(ex.length){const box=$('#w-happy div');if(box)box.insertAdjacentHTML('beforeend',`<small class="warn">${ex.join(' · ')}</small>`);}};
+/* contas negativas são cobradas sozinhas ao abrir o mundo */
+const openWorldR=openWorld;openWorld=function(){const r=openWorldR();if(P&&!inMoon()){const ts=taxState(P);if(ts.n>=1&&ts.total<0)setTimeout(()=>collectTax(true),900);}return r;};
+
+/* visitar um amigo de outro computador com o código dele (sem servidor) */
+$('#rk-code').onclick=()=>{openCode('in');CM.mode='visit';$('#code-title').textContent='Visitar um amigo';
+  $('#code-body').innerHTML=`<p class="prod-info">Peça ao seu amigo o código da cidade dele (na tela inicial: "Levar meu progresso para outro computador" → Copiar). Cole aqui para visitar. Nada muda no seu progresso.</p><textarea id="code-txt" class="code-txt" rows="5" aria-label="Código do amigo" placeholder="TD1.…"></textarea>`;
+  $('#code-go').textContent='Visitar';setTimeout(()=>$('#code-txt').focus(),60);};
+const codeGoV=$('#code-go').onclick;
+$('#code-go').onclick=async()=>{if(CM.mode!=='visit')return codeGoV();let p;try{p=await readCode($('#code-txt').value)}catch(e){codeMsg('Código inválido. Ele começa com TD1. e deve ser colado inteiro.',0);return}
+  $('#code-modal').hidden=true;openVisit(p,{publico:pubName(p.name),key:'c:'+p.id,curtidas:null,me:!!(P&&P.id===p.id),code:true});};
+const renderVisitC=renderVisit;renderVisit=function(){renderVisitC();if(VIS.meta&&VIS.meta.code){const lb=$('#v-like');lb.hidden=false;lb.disabled=true;lb.textContent='Curtidas só com o servidor ligado';$('#v-back').textContent='Voltar';}else $('#v-back').textContent='Voltar ao quadro';};
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};
