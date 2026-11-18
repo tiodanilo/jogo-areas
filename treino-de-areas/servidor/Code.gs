@@ -7,7 +7,7 @@
  */
 const PLANILHA_ID = '1JouLmAOOjlO9q5mhMLXhL27FFCfLMStuOi104A01rtU';
 const ABA = 'jogadores';
-const COLS = ['id', 'nome', 'publico', 'ano', 'senha', 'xp', 'moedas', 'nivel', 'm2', 'avatar', 'dados', 'atualizado', 'curtidas', 'presentes'];
+const COLS = ['id', 'nome', 'publico', 'ano', 'senha', 'xp', 'moedas', 'nivel', 'm2', 'avatar', 'dados', 'atualizado', 'curtidas', 'presentes', 'avisos'];
 const ABA_CURTIDAS = 'curtidas';
 const PRESENTE = 5; // moedas para quem curte e para quem é curtido
 const C = Object.fromEntries(COLS.map((c, i) => [c, i]));
@@ -111,7 +111,8 @@ function grava_(s, row, id, b, perfil) {
     JSON.stringify({ eq: perfil.eq || {}, look: perfil.look || {} }),
     JSON.stringify(perfil).slice(0, 45000), new Date(),
     row ? Number(s.getRange(row, C.curtidas + 1).getValue()) || 0 : 0,
-    row ? Number(s.getRange(row, C.presentes + 1).getValue()) || 0 : 0
+    row ? Number(s.getRange(row, C.presentes + 1).getValue()) || 0 : 0,
+    row ? String(s.getRange(row, C.avisos + 1).getValue() || '') : ''
   ];
   if (row) s.getRange(row, 1, 1, COLS.length).setValues([vals]);
   else s.appendRow(vals);
@@ -138,6 +139,7 @@ function doPost(e) {
     if (b.acao === 'entrar') return json_(entrar_(b));
     if (b.acao === 'salvar') return json_(salvar_(b));
     if (b.acao === 'curtir') return json_(curtir_(b));
+    if (b.acao === 'desafio') return json_(desafio_(b));
     return json_({ ok: false, erro: 'acao' });
   } finally {
     lock.releaseLock();
@@ -184,7 +186,10 @@ function salvar_(b) {
   grava_(s, row, id, b, novo);
   const presentes = Number(s.getRange(row, C.presentes + 1).getValue()) || 0;
   if (presentes > 0) s.getRange(row, C.presentes + 1).setValue(0); // o jogo do aluno soma as moedas dos presentes
-  return { ok: true, presentes: presentes };
+  let avisos = [];
+  try { avisos = JSON.parse(s.getRange(row, C.avisos + 1).getValue() || '[]'); } catch (e) {}
+  if (avisos.length) s.getRange(row, C.avisos + 1).setValue('');
+  return { ok: true, presentes: presentes, avisos: avisos };
 }
 
 function ranking_(ano) {
@@ -233,7 +238,9 @@ function visitar_(vid) {
     ok: true, vid: vid, publico: r[C.publico], ano: r[C.ano], xp: Number(r[C.xp]) || 0, nivel: r[C.nivel], m2: r[C.m2],
     curtidas: Number(r[C.curtidas]) || 0, eq: p.eq || {}, look: p.look || {},
     world: { w: w.w, h: w.h, items: (w.items || []).slice(0, 300), probs: (w.probs || []).slice(0, 20) },
-    lua: p.lua ? { w: p.lua.w, h: p.lua.h, items: (p.lua.items || []).slice(0, 300), probs: (p.lua.probs || []).slice(0, 20) } : null
+    lua: p.lua ? { w: p.lua.w, h: p.lua.h, items: (p.lua.items || []).slice(0, 300), probs: (p.lua.probs || []).slice(0, 20) } : null,
+    marte: p.marte ? { w: p.marte.w, h: p.marte.h, items: (p.marte.items || []).slice(0, 300), probs: (p.marte.probs || []).slice(0, 20) } : null,
+    arena: { rec: Math.max(0, Math.floor(Number(p.arena && p.arena.rec) || 0)) }
   };
 }
 
@@ -267,4 +274,27 @@ function curtir_(b) {
   s.getRange(alvo, C.curtidas + 1, 1, 2).setValues([[cur + 1, pre + 1]]);
   CacheService.getScriptCache().removeAll(['rk_all', 'rk_' + Number(s.getRange(alvo, C.ano + 1).getValue())]);
   return { ok: true, moedas: PRESENTE, curtidas: cur + 1 };
+}
+
+// arena: quem desafia avisa o dono da cidade (o dono nunca perde moedas, só recebe o aviso)
+function desafio_(b) {
+  const er = valida_(b);
+  if (er) return { ok: false, erro: er };
+  const s = aba_();
+  const id = chave_(b.nome, b.ano);
+  const row = linha_(s, id);
+  if (!row) return { ok: false, erro: 'naoexiste' };
+  if (s.getRange(row, C.senha + 1).getValue() !== hash_(id, b.senha)) return { ok: false, erro: 'senha' };
+  const vid = String(b.vid || '');
+  if (vid === vid_(id)) return { ok: false, erro: 'propria' };
+  const alvo = linhaVid_(s, vid);
+  if (!alvo) return { ok: false, erro: 'naoexiste' };
+  let dados = {};
+  try { dados = JSON.parse(s.getRange(alvo, C.dados + 1).getValue() || '{}'); } catch (e) {}
+  let avisos = [];
+  try { avisos = JSON.parse(s.getRange(alvo, C.avisos + 1).getValue() || '[]'); } catch (e) {}
+  avisos.push({ quem: publico_(b.nome), venceu: !!b.venceu, pts: Math.max(0, Math.floor(Number(b.pts) || 0)),
+    rec: Math.floor(Number(dados.arena && dados.arena.rec) || 0), t: Date.now() });
+  s.getRange(alvo, C.avisos + 1).setValue(JSON.stringify(avisos.slice(-10)));
+  return { ok: true };
 }

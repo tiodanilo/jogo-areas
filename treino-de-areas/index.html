@@ -731,6 +731,26 @@ details.fold.big[open] > summary{margin-bottom:10px}
 .prw{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;background:var(--paper);font-weight:700;color:var(--ink-2)}
 .prw>span:nth-child(2){flex:1;min-width:0}.prw.ok{background:var(--good-soft);color:var(--ink)}.prw.got{opacity:.6}
 .prw .pn{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--card);font:800 .95rem var(--f-display);color:var(--ink);flex:none}
+
+.qz-card{border:4px solid var(--blue)}.qz-card .emg-head .eyebrow{color:var(--blue)}.qz-time{color:var(--blue)}
+#qz-bar i{background:var(--blue)}#qz-bar.low i{background:var(--bad)}
+.mn-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}.mn-en{font-weight:700;color:var(--ink-2)}.mn-en b{color:var(--ink)}
+.mn-wrap{overflow-x:auto;padding-bottom:4px}
+.mn-grid{display:grid;grid-template-columns:minmax(78px,auto) repeat(9,minmax(34px,1fr));gap:3px;min-width:420px;max-width:760px}
+.mn-lab{display:flex;flex-direction:column;justify-content:center;padding:0 6px;font-size:.78rem;line-height:1.1;color:var(--ink-2)}.mn-lab b{font-family:var(--f-display);font-size:.98rem;color:var(--ink);font-variant-numeric:tabular-nums}.mn-lab.lock{opacity:.6}
+.mn-sky b{display:none}.mn-c{aspect-ratio:1;border-radius:6px;display:grid;place-items:center;min-width:0;border:0;padding:0;font:inherit}
+.mn-c svg{width:80%;height:80%}.mn-grass{background:linear-gradient(#9BD4F5 0 45%,#5FAE55 45%)}.mn-grass svg{width:100%;height:100%}
+.mn-c.shut{background:var(--lc);background-image:radial-gradient(circle at 30% 30%,rgba(255,255,255,.18) 0 12%,transparent 13%),radial-gradient(circle at 70% 65%,rgba(0,0,0,.18) 0 10%,transparent 11%);cursor:not-allowed;opacity:.72}
+.mn-c.shut.can{cursor:pointer;opacity:1;box-shadow:inset 0 0 0 3px #FFD43B}.mn-c.shut.can:hover{filter:brightness(1.15)}.mn-c.shut.can:focus-visible{outline:3px solid var(--blue);outline-offset:1px}
+.mn-c.shut:disabled.can{cursor:not-allowed;box-shadow:inset 0 0 0 2px rgba(255,212,59,.5)}
+.mn-c.open{background:#2B1D12}.mn-c.got{background:#3D2A18;box-shadow:inset 0 0 0 2px #FFD43B}.mn-e{font-size:1.25rem}
+.mn-n{font:800 1.1rem var(--f-display);color:#FFD43B}.mn-n.n0{color:transparent}.mn-n.n2{color:#FF9F43}.mn-n.n3,.mn-n.n4,.mn-n.n5{color:#FF6B6B}
+.mn-legend{margin-top:12px;max-width:70ch}
+.mn-veic{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
+.mn-v{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;background:var(--paper)}.mn-v svg{width:46px;height:46px;flex:none}.mn-v>div{flex:1;min-width:0;display:grid}.mn-v small{color:var(--ink-2)}.mn-v.has{box-shadow:inset 0 0 0 2px var(--go)}
+.ar-bets{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.ar-rec{font-size:1.1rem}.ar-big{font:800 2.4rem var(--f-display);color:var(--blue);margin:4px 0;font-variant-numeric:tabular-nums}
+.note.warn{color:var(--bad);font-weight:700}
+#sc-world.mars .world-top{background:linear-gradient(135deg,var(--card),rgba(208,122,78,.22))}
 </style>
 </head>
 <body>
@@ -812,7 +832,7 @@ details.fold.big[open] > summary{margin-bottom:10px}
       <div><p class="eyebrow">Todos que jogam no site</p><h1>Quadro de honra</h1></div>
       <div class="tabs" id="rank-tabs"></div>
       <ol class="rank" id="rank"></ol>
-      <div class="actions"><button class="btn ghost" type="button" id="rk-code">Visitar um amigo com código</button><button class="btn ghost" type="button" id="rank-back">Voltar</button></div>
+      <div class="actions"><button class="btn yellow" type="button" id="rk-arena">⚔️ Arena: treinar meu recorde</button><button class="btn ghost" type="button" id="rk-code">Visitar um amigo com código</button><button class="btn ghost" type="button" id="rank-back">Voltar</button></div>
     </div>
   </section>
 
@@ -820,7 +840,7 @@ details.fold.big[open] > summary{margin-bottom:10px}
   <section id="sc-visit" class="screen" hidden>
     <div class="panel world-top">
       <div><p class="eyebrow">Visitando a cidade de um colega</p><h1 id="v-title"></h1><p class="w-stats" id="v-stats"></p><div class="places" id="v-places"></div></div>
-      <div class="actions"><button class="btn go small" type="button" id="v-like">❤ Curtir</button><button class="btn ghost small" type="button" id="v-back">Voltar ao quadro</button></div>
+      <div class="actions"><button class="btn yellow small" type="button" id="v-arena" hidden>⚔️ Arena</button><button class="btn go small" type="button" id="v-like">❤ Curtir</button><button class="btn ghost small" type="button" id="v-back">Voltar ao quadro</button></div>
     </div>
     <div class="panel"><div class="w-bar"><p class="w-hint" id="v-hint"></p><div class="seg2" id="v-view" role="group" aria-label="Visão da cidade"><button type="button" data-v="3d" aria-pressed="true">3D</button><button type="button" data-v="2d" aria-pressed="false">Planta</button></div></div>
       <div id="v-3dbox"></div><div class="w-scroll" id="v-map" hidden></div></div>
@@ -920,6 +940,15 @@ details.fold.big[open] > summary{margin-bottom:10px}
     <div class="panel"><div class="cl-tabs" id="cl-tabs" role="group" aria-label="Partes da coleção"></div><div id="cl-body" style="margin-top:14px"></div></div>
   </section>
 
+  <section id="sc-mina" class="screen" hidden>
+    <div class="panel mk-top">
+      <div><p class="eyebrow">Debaixo da sua cidade</p><h1>Mina</h1><p class="note">Escave para achar carvão, ferro, prata, ouro e pedras preciosas. Cada escavação é uma conta de área. Nova mina todo dia!</p></div>
+      <div class="actions"><span class="pill" id="mn-coins"></span><button class="btn ghost small" type="button" id="mn-world">Meu mundo</button><button class="btn ghost small" type="button" id="mn-back">Voltar</button></div>
+    </div>
+    <div class="panel"><div class="mn-bar" id="mn-bar"></div><div class="mn-wrap"><div class="mn-grid" id="mn-grid"></div></div><p class="note mn-legend" id="mn-legend"></p></div>
+    <div class="panel"><h2 class="h2">Veículos de escavação</h2><p class="note">Quanto melhor o veículo, mais fundo você cava. Lá embaixo ficam os tesouros mais valiosos.</p><div class="mn-veic" id="mn-veic"></div></div>
+  </section>
+
   <section id="sc-market" class="screen" hidden>
     <div class="panel mk-top">
       <div><p class="eyebrow">Fazenda e comércio</p><h1>Mercado</h1><p class="note">Venda o que você plantou, criou e fez. Antes de receber, faça a conta: acertando, ganha 10% a mais.</p></div>
@@ -1001,6 +1030,16 @@ details.fold.big[open] > summary{margin-bottom:10px}
 <div class="modal" id="code-modal" hidden role="dialog" aria-modal="true" aria-labelledby="code-title">
   <div class="modal-card prod-card"><p class="eyebrow">Jogar em outro computador</p><h2 id="code-title"></h2><div class="prod-body" id="code-body"></div><p class="code-msg" id="code-msg" role="status"></p>
     <div class="actions"><button class="btn ghost" type="button" id="code-close">Fechar</button><button class="btn go" type="button" id="code-go"></button></div></div>
+</div>
+<div class="modal" id="qz-modal" hidden role="dialog" aria-modal="true" aria-labelledby="qz-title">
+  <div class="modal-card fix-card qz-card"><div class="emg-head"><span class="emg-ic" id="qz-ic" aria-hidden="true"></span><div><p class="eyebrow" id="qz-eye"></p><h2 id="qz-title"></h2></div><span class="emg-time qz-time" id="qz-time"></span></div>
+    <div class="emg-bar" id="qz-bar" hidden><i></i></div><p class="emg-txt" id="qz-txt"></p><div class="fig-wrap" id="qz-fig"></div><p class="fix-q" id="qz-q"></p>
+    <div class="opts" id="qz-opts"></div><div class="feedback" id="qz-fb" hidden></div>
+    <div class="actions"><button class="btn ghost small" type="button" id="qz-x">Sair</button><button class="btn go" type="button" id="qz-go" hidden>Continuar</button></div></div>
+</div>
+<div class="modal" id="ar-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ar-title">
+  <div class="modal-card prod-card"><p class="eyebrow">⚔️ Arena</p><h2 id="ar-title"></h2><div class="prod-body" id="ar-body"></div>
+    <div class="actions"><button class="btn ghost small" type="button" id="ar-close">Fechar</button><button class="btn go" type="button" id="ar-go">Começar</button></div></div>
 </div>
 <div class="modal" id="pack-modal" hidden role="dialog" aria-modal="true" aria-labelledby="pack-title">
   <div class="modal-card pack-card"><p class="eyebrow">Pacotinho de sorte</p><h2 id="pack-title">Veja o que veio!</h2><div id="pack-slots"></div>
@@ -1428,7 +1467,7 @@ function scheduleCloud(now=false){if(!P)return;if(!API||!SESSION.pw||SESSION.id!
   clearTimeout(syncT);setSync('busy');syncT=setTimeout(pushCloud,now?0:1200);}
 async function pushCloud(){if(!P||!SESSION.pw)return;
   try{const r=await api('salvar',{nome:P.name,ano:P.ano,senha:SESSION.pw,perfil:cloudPayload(P)});
-    if(r.ok){setSync('ok');if(r.presentes>0){const g=r.presentes*LIKE;P.coins+=g;P.xp+=g;P.curt=(P.curt||0)+r.presentes;saveProfile();toast(`Seus colegas curtiram sua cidade ${r.presentes} vez${r.presentes>1?'es':''}! Você ganhou ${g} moedas.`);}}
+    if(r.ok){setSync('ok');if(r.avisos&&r.avisos.length&&typeof showAvisos==='function')showAvisos(r.avisos);if(r.presentes>0){const g=r.presentes*LIKE;P.coins+=g;P.xp+=g;P.curt=(P.curt||0)+r.presentes;saveProfile();toast(`Seus colegas curtiram sua cidade ${r.presentes} vez${r.presentes>1?'es':''}! Você ganhou ${g} moedas.`);}}
     else if(r.erro==='antigo'&&r.perfil){adoptProfile(r.perfil);setSync('ok');}
     else setSync('local');}catch(e){setSync('local');}}
 function adoptProfile(srv){const keep={id:P.id,name:P.name,ano:P.ano};Object.assign(P,normalize(srv),keep);db.profiles[P.id]=P;saveDB();refreshViews();}
@@ -1901,7 +1940,7 @@ function renderWorld(){if(!P)return;renderAch();renderHappy();const wd=P.world,a
   $('#w-sel').innerHTML=box;
   const TABS=['moradia','lazer','fazenda','comercio','servicos'];if(!WS.tab)WS.tab='moradia';if(WS.sel&&CAT[WS.sel]&&WS.move==null)WS.tab=CAT[WS.sel];
   $('#w-btabs').innerHTML=TABS.map(c=>`<button type="button" data-tab="${c}" aria-pressed="${WS.tab===c}" style="--c:${CATC[c]}">${CATN[c][0].toUpperCase()+CATN[c].slice(1)} <small>${BUILD.filter(b=>CAT[b.id]===c&&(b.place||'terra')===(P.world.lua?'lua':'terra')).length}</small></button>`).join('');
-  $('#w-build').innerHTML=BUILD.filter(bd=>CAT[bd.id]===WS.tab&&(bd.place||'terra')===(P.world.lua?'lua':'terra')).map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id&&WS.move==null;
+  $('#w-build').innerHTML=BUILD.filter(bd=>CAT[bd.id]===WS.tab&&placeOk(bd)).map(bd=>{const locked=bd.lvl>lvl,on=WS.sel===bd.id&&WS.move==null;
     const btn=locked?`<span class="m2">Libera no nível ${bd.lvl}</span>`:P.coins>=bd.price?`<button type="button" class="btn ${on?'primary':'yellow'}" data-b="${bd.id}">${on?'Escolhida':`${COIN}${bd.price}`}</button>`:`<button type="button" class="btn ghost" disabled>${COIN}${bd.price}</button>`;
     return `<div class="bcard ${on?'sel':''} ${locked?'locked':''}" data-id="${bd.id}"><svg viewBox="0 0 ${bd.w*TS} ${bd.h*TS}" aria-hidden="true">${BD[bd.id](3,3,bd.w*TS-6,bd.h*TS-6)}</svg><h4>${bd.nome}</h4><span class="m2">${bd.w} × ${bd.h} = ${bd.w*bd.h} m²</span>${btn}</div>`}).join('');
   const cCost=wd.h*M2PRICE,rCost=wd.w*M2PRICE;
@@ -2714,7 +2753,7 @@ function pisoQ(lv){const ano=P.ano||S.ano,ids=SHAPES.filter(s=>s.minAno<=ano).ma
   const q={sid,nome:s.nome,formula:s.formula,u:'m',...g,cli:pick(CLIENTES),lugar:pick(LUGARES)};q.opts=buildOpts(q);q.pay=Math.round(PISO_PAY[sid]*(1+.25*((lv||1)-1)));return q;}
 /* encomendas do dia: o cliente paga mais que a tabela por um lote de produtos */
 const ENC_CLI=['A escola','O restaurante da Dona Rosa','A festa junina','O hotel da praia','A cantina','O mercadinho do bairro','O aniversário da Luiza','O time de futebol','A feira de ciências'];
-function encDay(){const d=dayKey();if(!P.enc||P.enc.d!==d)P.enc={d,done:[]};const r=rng('enc'+d+P.id),pool=Object.keys(GOODS).filter(g=>!['galinha','vaca','lua','marte','europa','meteoro','helio'].includes(g)),used=new Set();
+function encDay(){const d=dayKey();if(!P.enc||P.enc.d!==d)P.enc={d,done:[]};const r=rng('enc'+d+P.id),pool=Object.keys(GOODS).filter(g=>!['galinha','vaca','lua','marte','europa','meteoro','helio','carvao','ferro','prata','ouro','rubi','esmeralda','diamante'].includes(g)),used=new Set();
   return [0,1,2].map(i=>{let g;do{g=pool[Math.floor(r()*pool.length)]}while(used.has(g)&&used.size<pool.length);used.add(g);const base=GOODS[g].base,q=Math.max(3,Math.min(30,Math.round((50+r()*110)/base))),k=1.25+Math.round(r()*5)*.05;
     return {i,g,q,pay:Math.round(q*base*k),pct:Math.round((k-1)*100),cli:ENC_CLI[(Math.floor(r()*3)+i*3)%ENC_CLI.length],done:P.enc.done.includes(i)};});}
 function renderEnc(){const box=$('#mk-enc');if(!box||!P)return;const es=encDay();
@@ -2913,7 +2952,7 @@ prodAct=function(a){const it=P.world.items[PM.idx];if(!it||it.t!=='base')return 
     PM.lfb=ok?`<div class="feedback ok"><strong>Checagem certa! ${f(q.ans)} m². Lançamento com carga extra!</strong><span class="steps">${q.steps}</span></div>`:`<div class="feedback no"><strong>A área era ${f(q.ans)} m². O foguete foi, mas sem a carga extra.</strong><span class="steps">${q.steps}</span></div>`;
     sfx(ok?'ok':'no');setTimeout(()=>sfx('level'),400);saveProfile();const html=PM.lfb;PM.lq=null;renderProd();$('#prod-body').insertAdjacentHTML('afterbegin',html);
     toast(`3, 2, 1… foguete a caminho de ${M.nome}! Volta em ${M.min} min.`);if(cur==='world'&&WS.view==='3d'&&W3.ok&&!REDUCED)W3.fly(PM.idx);return}
-  if(a==='unload'){const ms=misState(it);if(!ms||!ms.back)return;const M=MISSOES.find(x=>x.id===ms.id);addGood(M.good,ms.carga);if(ms.raro)addGood('meteoro',1);delete it.mis;P.missoes=(P.missoes||0)+1;if(M.id==='lua')P.mlua=(P.mlua||0)+1;
+  if(a==='unload'){const ms=misState(it);if(!ms||!ms.back)return;const M=MISSOES.find(x=>x.id===ms.id);addGood(M.good,ms.carga);if(ms.raro)addGood('meteoro',1);delete it.mis;P.missoes=(P.missoes||0)+1;if(M.id==='lua')P.mlua=(P.mlua||0)+1;if(M.id==='marte')P.mmarte=(P.mmarte||0)+1;
     sfx('coin');setTimeout(()=>sfx('star'),150);const got=checkAch();saveProfile();renderProd();toast(`Descarregou ${qn(ms.carga,M.good)}${ms.raro?' e um meteorito dourado':''}! Venda no mercado.`);announceAch(got,1600);
     if(cur==='world'&&WS.view==='3d'&&W3.ok&&!REDUCED)W3.celebrate(PM.idx);}};
 const openProdR=openProd;openProd=function(i){PM.lq=null;PM.lfb=null;openProdR(i);};
@@ -2943,7 +2982,7 @@ const moonPop=it=>DOME_R[it.t]?Math.floor(3.14*DOME_R[it.t]*DOME_R[it.t]*(it.lv|
 const O2USE={mina:4,parque:2,telescopio:1};
 const moonUnlocked=p=>levelInfo(p.xp).lvl>=MOON_LVL&&((p.mlua||0)>=MOON_MIS||((p.prod||{}).lua||0)>=MOON_MIS*3);
 const inMoon=()=>!!(P&&P._earth);
-function newMoon(){return {lua:true,w:6,h:5,items:[],probs:[]};}
+function newMoon(pl){return Object.assign({lua:true,w:6,h:5,items:[],probs:[]},pl==='marte'?{marte:true}:{});}
 function moonStats(p){const items=p.world.items;let pop=0,ou=0,op=0;const area={moradia:0,lazer:0,fazenda:0,comercio:0,servicos:0};
   items.forEach(it=>{const m=moonPop(it);pop+=m;ou+=m+(O2USE[it.t]||0);if(CAT[it.t])area[CAT[it.t]]+=it.w*it.h;if(!it.dano){if(it.t==='oxigenio')op+=it.w*it.h*3*(it.lv||1);if(it.t==='estufa')op+=3;}});
   const tot=Object.values(area).reduce((a,b)=>a+b,0),lazer=items.some(i=>CAT[i.t]==='lazer');
@@ -2957,10 +2996,10 @@ function moonStageOf(pts){if(pts<150){let i=0;while(i<3&&pts>=MSTAGES[i+1][1])i+
   const x=Math.floor((pts-150)/120);return {i:3+x,nome:x?`Cidade lunar ${x+1}`:'Cidade lunar',base:150+x*120,next:150+(x+1)*120,nextNome:`Cidade lunar ${x+2}`,novos:['Mais colonos']};}
 const worldStageT=worldStage;worldStage=p=>p.world&&p.world.lua?moonStageOf(Math.max(worldPts(p),p.world.pmax||0)):worldStageT(p);
 /* trocar de mundo: P.world aponta para a Lua; o que é salvo continua com a Terra em P.world */
-function enterMoon(){if(inMoon()||!P)return;const fresh=!P.lua;if(fresh)P.lua=newMoon();P._earth=P.world;P.world=P.lua;M2PRICE=25;MAXW=20;MAXH=14;if(fresh)for(let k=0;k<3;k++)addProb('cratera');}
-function exitMoon(){if(!inMoon())return;P.lua=P.world;P.world=P._earth;delete P._earth;M2PRICE=12;MAXW=40;MAXH=30;}
-function withEarth(fn){if(!inMoon())return fn();const m=P.world;P.world=P._earth;delete P._earth;try{return fn()}finally{P._earth=P.world;P.lua=m;P.world=m;}}
-const saveDBT=saveDB;saveDB=function(){if(inMoon()){const m=P.world;P.world=P._earth;delete P._earth;try{saveDBT()}finally{P._earth=P.world;P.world=P.lua||m;}}else saveDBT();};
+function enterMoon(pl='lua'){if(inMoon()||!P)return;const fresh=!P[pl];if(fresh)P[pl]=newMoon(pl);P._slot=pl;P._earth=P.world;P.world=P[pl];M2PRICE=pl==='marte'?30:25;MAXW=20;MAXH=14;if(fresh)for(let k=0;k<3;k++)addProb('cratera');}
+function exitMoon(){if(!inMoon())return;P[P._slot||'lua']=P.world;P.world=P._earth;delete P._earth;delete P._slot;M2PRICE=12;MAXW=40;MAXH=30;}
+function withEarth(fn){if(!inMoon())return fn();const m=P.world;P.world=P._earth;delete P._earth;try{return fn()}finally{P._earth=P.world;P[P._slot||'lua']=m;P.world=m;}}
+const saveDBT=saveDB;saveDB=function(){if(inMoon()){const m=P.world;P.world=P._earth;delete P._earth;try{saveDBT()}finally{P._earth=P.world;P.world=P[P._slot||'lua']||m;}}else saveDBT();};
 const checkAchT=checkAch;checkAch=function(){return withEarth(()=>checkAchT());};
 const cloudPayloadT=cloudPayload;cloudPayload=function(p){const c=cloudPayloadT(p);if(c._earth){c.world=c._earth;delete c._earth;}return c;};
 const makeCodeT=makeCode;makeCode=function(p){if(p&&p._earth){const c=clone(p);c.world=c._earth;delete c._earth;return makeCodeT(c);}return makeCodeT(p);};
@@ -2980,8 +3019,8 @@ Object.assign(UPG,{cupula:['Cúpula habitacional','Cúpula com jardim','Cúpula 
 Object.assign(DANO,{cupula:'Rachadura na cúpula',cupula2:'Rachadura na cúpula',oxigenio:'Filtro entupido',telescopio:'Lente suja',estufa:'Luz da estufa queimada',mina:'Broca quebrada',parque:'Trampolim rasgado'});
 PROB_N.cratera='Aterrar a cratera';
 const worldTapM=worldTap;worldTap=function(c,pickIdx,probIdx){if(!WS.sel&&c&&pickIdx==null&&probIdx==null&&WS.view==='3d'&&W3.ok&&W3.av&&cur==='world'&&W3.av.free.has(c.x+','+c.y)){if(WS.pick!=null){WS.pick=null;renderWorld();}avWalkTo(c.x,c.y);return}if(inMoon()&&WS.sel&&WS.move==null&&c){const bd=BMAP[WS.sel];
-    if(bd&&bd.mat&&inv('lua')<bd.mat){toast(`Faltam pedras lunares: ${bd.nome} precisa de ${bd.mat} e você tem ${inv('lua')}. Mande o foguete à Lua!`);return}
-    const n0=P.world.items.length;const r=worldTapM(c,pickIdx,probIdx);if(bd&&bd.mat&&P.world.items.length>n0){P.inv.lua-=bd.mat;saveProfile();renderWorld();}return r;}
+    if(bd&&bd.mat&&inv(MATG())<bd.mat){toast(`Faltam ${GOODS[MATG()].uns}: ${bd.nome} precisa de ${bd.mat} e você tem ${inv(MATG())}. Mande o foguete ${MATG()==='marte'?'a Marte':'à Lua'}!`);return}
+    const n0=P.world.items.length;const r=worldTapM(c,pickIdx,probIdx);if(bd&&bd.mat&&P.world.items.length>n0){P.inv[MATG()]-=bd.mat;saveProfile();renderWorld();}return r;}
   return worldTapM(c,pickIdx,probIdx);};
 /* produtores da Lua */
 PRODUCERS.add('estufa');PRODUCERS.add('mina');
@@ -3031,8 +3070,8 @@ const renderWorldM=renderWorld;renderWorld=function(){renderWorldM();renderPlace
     hp.querySelectorAll('small').forEach(e=>{if(/Cidade feliz|Cidade triste|chove/i.test(e.textContent))e.textContent=happy(P)>=80?'Colônia feliz: todos respirando e se divertindo.':'Colônia precisando de cuidado.';});
     const hint=$('#w-hint');if(hint)hint.innerHTML=hint.innerHTML.replace('Toque na horta, nos animais ou na loja para produzir.','Toque na estufa ou na mina para produzir.');
     hp.querySelectorAll('small.warn').forEach(e=>e.remove());if(ex.length){const box=hp.querySelector('div');box&&box.insertAdjacentHTML('beforeend',`<small class="warn">${ex.join(' · ')}</small>`);}
-    document.querySelectorAll('#w-build .bcard').forEach(card=>{const bd=BMAP[card.dataset.id];if(!bd||!bd.mat)return;const ok=inv('lua')>=bd.mat;
-      card.querySelector('.m2')?.insertAdjacentHTML('afterend',`<small class="mat ${ok?'':'falta'}">+ ${bd.mat} pedras lunares</small>`);
+    document.querySelectorAll('#w-build .bcard').forEach(card=>{const bd=BMAP[card.dataset.id];if(!bd||!bd.mat)return;const ok=inv(MATG())>=bd.mat;
+      card.querySelector('.m2')?.insertAdjacentHTML('afterend',`<small class="mat ${ok?'':'falta'}">+ ${bd.mat} ${GOODS[MATG()].uns}</small>`);
       if(!ok&&!card.classList.contains('locked')){const btn=card.querySelector('button');if(btn&&!btn.disabled){btn.disabled=true;btn.className='btn ghost';}}});}
   else{const eb=$('#sc-world .world-top .eyebrow');if(eb)eb.textContent='Meu mundo · cada quadradinho = 1 m²';}};
 $('#w-places').addEventListener('click',e=>{const b=e.target.closest('[data-pl]');if(!b||b.disabled)return;goPlace(b.dataset.pl);});
@@ -3093,11 +3132,11 @@ function visitLocal(id){const src=db.profiles[id];if(!src)return null;const c=cl
 function likedToday(key){const d=dayKey();if(!P)return false;if(!P.likes||P.likes.d!==d)P.likes={d,ids:[]};return P.likes.ids.includes(key);}
 function openVisit(vp,meta){VIS.p=vp;VIS.meta=meta;VIS.place='terra';show('visit');renderVisit();}
 function park3D(){const box=$('#w-3d');if(!VIS.home){VIS.home={parent:box.parentNode,next:box.nextSibling};}if(box.parentNode!==VIS.home.parent)VIS.home.parent.insertBefore(box,VIS.home.next);}
-function renderVisit(){const m=VIS.meta,base=VIS.p,lua=VIS.place==='lua'&&base.lua;const vp=lua?{...base,world:base.lua}:base;VIS.wd=vp.world;WS.sel=null;WS.pick=null;WS.move=null;
+function renderVisit(){const m=VIS.meta,base=VIS.p,lua=(VIS.place==='lua'&&base.lua)||(VIS.place==='marte'&&base.marte);const vp=lua?{...base,world:VIS.place==='marte'?base.marte:base.lua}:base;VIS.wd=vp.world;WS.sel=null;WS.pick=null;WS.move=null;
   const st=cityStats(vp),stg=worldStage(vp),li=levelInfo(vp.xp||0);
-  $('#v-title').textContent=(lua?'Colônia lunar de ':'Cidade de ')+m.publico;
+  $('#v-title').textContent=(lua?(VIS.place==='marte'?'Colônia marciana de ':'Colônia lunar de '):'Cidade de ')+m.publico;
   $('#v-stats').textContent=`${base.ano}º ano · nível ${li.lvl} · ${stg.nome} · ${lua?st.pop+' colonos':st.pop+' moradores'} · ${built(vp)} m² construídos · ${happy(vp)}% feliz${m.curtidas!=null?` · ❤ ${m.curtidas}`:''}`;
-  $('#v-places').innerHTML=base.lua&&base.lua.items&&base.lua.items.length?`<button type="button" data-vp="terra" aria-pressed="${!lua}">🌍 Terra</button><button type="button" data-vp="lua" aria-pressed="${!!lua}">🌕 Lua</button>`:'';
+  {const hl=base.lua&&base.lua.items&&base.lua.items.length,hm=base.marte&&base.marte.items&&base.marte.items.length;$('#v-places').innerHTML=hl||hm?`<button type="button" data-vp="terra" aria-pressed="${!lua}">🌍 Terra</button>${hl?`<button type="button" data-vp="lua" aria-pressed="${VIS.place==='lua'}">🌕 Lua</button>`:''}${hm?`<button type="button" data-vp="marte" aria-pressed="${VIS.place==='marte'}">🔴 Marte</button>`:''}`:'';}
   const lb=$('#v-like'),key=m.key;
   if(!P){lb.disabled=true;lb.textContent='Entre na sua conta para curtir';}
   else if(m.me){lb.hidden=true;}
@@ -3124,7 +3163,7 @@ $('#v-view').addEventListener('click',e=>{const b=e.target.closest('button');if(
 $('#rank').addEventListener('click',async e=>{const b=e.target.closest('[data-vi]');if(!b)return;const r=(RK.rows||[])[+b.dataset.vi];if(!r)return;
   if(r.lid){const vp=visitLocal(r.lid);if(vp)openVisit(vp,{local:true,lid:r.lid,key:'l:'+r.lid,publico:r.publico,curtidas:db.profiles[r.lid].curt||0,me:!!(P&&P.id===r.lid)});return}
   if(r.vid){b.disabled=true;b.textContent='Abrindo…';try{const d=await api('visitar',{vid:r.vid});if(!d.ok)throw 0;
-      const vp=normalize({id:'v|'+d.vid,name:d.publico,ano:d.ano,xp:d.xp,eq:d.eq,look:d.look,world:d.world,lua:d.lua&&d.lua.items?Object.assign({lua:true},d.lua):undefined});
+      const vp=normalize({id:'v|'+d.vid,name:d.publico,ano:d.ano,xp:d.xp,eq:d.eq,look:d.look,world:d.world,lua:d.lua&&d.lua.items?Object.assign({lua:true},d.lua):undefined,marte:d.marte&&d.marte.items?Object.assign({lua:true,marte:true},d.marte):undefined,arena:d.arena||undefined});
       openVisit(vp,{vid:d.vid,key:'v:'+d.vid,publico:d.publico,curtidas:d.curtidas,me:!!r.me});}
     catch(err){b.disabled=false;b.textContent='Visitar';toast('Não deu para abrir essa cidade agora.');}}});
 /* passear na cidade visitada e voltar o 3D para o Meu mundo ao sair */
@@ -3339,6 +3378,194 @@ SCREENS.push('collect');
 const goAfterC=goAfter;goAfter=function(){if(LG.after==='collect'&&P){saveProfile();backTo='home';openCollect('pack');return}goAfterC();};
 ACH.push({id:'album',nome:'Álbum completo',desc:'Complete o álbum de cards',r:100,ok:p=>Object.keys(p.album||{}).length>=CARDS.length},
   {id:'pack1',nome:'Que sorte!',desc:'Abra seu primeiro pacotinho',r:15,ok:p=>(p.packsOpen||0)>=1});
+
+/* ---------- janela de pergunta reutilizável (mina e arena) ---------- */
+const QZ={q:null,cb:null,done:false};
+function qzFig(q){return q.topic?`<div class="qcard"><svg class="qic" viewBox="0 0 24 24" aria-hidden="true">${SH[q.sid].icon}</svg><div class="big">${q.big}</div></div>`:primsSVG(q.prims);}
+function quizOpen(o){QZ.q=o.q;QZ.cb=o.cb;QZ.done=false;QZ.auto=!!o.auto;$('#qz-ic').textContent=o.ic||'❓';$('#qz-eye').textContent=o.eye||'';$('#qz-title').textContent=o.title||'';
+  $('#qz-txt').textContent=o.txt||'';$('#qz-txt').hidden=!o.txt;$('#qz-time').textContent=o.time||'';$('#qz-bar').hidden=!o.bar;
+  $('#qz-fig').innerHTML=qzFig(o.q);$('#qz-q').textContent=o.q.txt;$('#qz-opts').innerHTML=o.q.opts.map((v,i)=>`<button type="button" class="opt" data-i="${i}">${LAB(o.q,v)}</button>`).join('');
+  $('#qz-fb').hidden=true;$('#qz-go').hidden=true;$('#qz-x').hidden=!!o.noClose;$('#qz-modal').hidden=false;setTimeout(()=>{const b=$('#qz-opts .opt');b&&b.focus()},60);}
+function quizAnswer(i){if(QZ.done)return;QZ.done=true;const q=QZ.q,v=i==null?null:q.opts[i],ok=v!=null&&f(v)===f(q.ans);
+  document.querySelectorAll('#qz-opts .opt').forEach((b,j)=>{b.disabled=true;if(f(q.opts[j])===f(q.ans))b.classList.add('right');});if(i!=null&&!ok)$(`#qz-opts .opt[data-i="${i}"]`).classList.add('wrong');
+  sfx(ok?'ok':'no');const r=QZ.cb?QZ.cb(ok,v):null;if(QZ.auto)return;const fb=$('#qz-fb');fb.hidden=false;fb.className='feedback '+(ok?'ok':'no');
+  fb.innerHTML=`<strong>${r&&r.msg?r.msg:ok?'Acertou!':'Não foi dessa vez.'}</strong><span class="steps">${ok?'':`A resposta era ${LAB(q,q.ans)}. `}${q.steps}</span>`;$('#qz-go').hidden=false;$('#qz-go').focus();}
+$('#qz-opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||b.disabled)return;quizAnswer(+b.dataset.i);});
+$('#qz-go').onclick=()=>{$('#qz-modal').hidden=true;if(QZ.after)QZ.after();QZ.after=null;};
+$('#qz-x').onclick=()=>{$('#qz-modal').hidden=true;QZ.done=true;if(ARN.on)arenaEnd(true);};
+function easyQ(ano){const q=makeQ(pick(['quadrado','retangulo']),Math.min(ano||5,5),false);q.opts=buildOpts(q);return q;}
+function shapeQ(ids,ano,ctx){const q=makeQ(pick(ids),ano,ctx);q.opts=buildOpts(q);return q;}
+
+/* ---------- mina: explorar o fundo da terra com veículos ---------- */
+const MINE_LVL=4,MINE_COLS=9,MINE_EN=10,MINE_REFILL=12*MIN;
+Object.assign(GOODS,{carvao:{nome:'Carvão',un:'saco de carvão',uns:'sacos de carvão',base:6},ferro:{nome:'Ferro',un:'pedra de ferro',uns:'pedras de ferro',base:14},
+  prata:{nome:'Prata',un:'pepita de prata',uns:'pepitas de prata',base:28},ouro:{nome:'Ouro',un:'pepita de ouro',uns:'pepitas de ouro',base:60},
+  rubi:{nome:'Rubi',un:'rubi',uns:'rubis',base:110},esmeralda:{nome:'Esmeralda',un:'esmeralda',uns:'esmeraldas',base:140},diamante:{nome:'Diamante',un:'diamante',uns:'diamantes',base:260}});
+const gem=(c,d)=>`<polygon points="20,6 32,15 20,35 8,15" fill="${c}" stroke="${d}" stroke-width="2"/><polyline points="8,15 32,15" stroke="${d}" stroke-width="1.5"/><polyline points="14,15 20,6 26,15 20,35 14,15" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.2"/>`;
+Object.assign(GART,{carvao:'<path d="M9 30 L13 14 L22 9 L32 15 L33 29 L20 34Z" fill="#2B2B33" stroke="#111" stroke-width="2"/><path d="M15 17 L21 13" stroke="#5A5A66" stroke-width="2"/>',
+  ferro:'<path d="M7 28 L12 13 L24 9 L34 17 L31 31 L17 34Z" fill="#8E939E" stroke="#5E6878" stroke-width="2"/><circle cx="17" cy="20" r="2.4" fill="#C2410C"/><circle cx="26" cy="25" r="2" fill="#C2410C"/><circle cx="23" cy="16" r="1.6" fill="#C2410C"/>',
+  prata:'<path d="M10 27 Q8 16 18 12 Q30 9 32 20 Q34 31 21 32 Q12 33 10 27Z" fill="#D9DEE8" stroke="#8E99AD" stroke-width="2"/><path d="M15 18 Q19 14 24 15" stroke="#fff" stroke-width="2" fill="none"/>',
+  ouro:'<path d="M10 27 Q8 16 18 12 Q30 9 32 20 Q34 31 21 32 Q12 33 10 27Z" fill="#F2B705" stroke="#B8790F" stroke-width="2"/><path d="M15 18 Q19 14 24 15" stroke="#FFF3B0" stroke-width="2" fill="none"/>',
+  rubi:gem('#E5484D','#9B1C1C'),esmeralda:gem('#22B357','#14662F'),diamante:gem('#BFE6FF','#4FB3E8')});
+const LAYERS=[null,
+  {nome:'Terra',m:5,cor:'#A0703C',p:[['vazio',55],['carvao',30],['ferro',5],['bau',5],['agua',5]]},
+  {nome:'Argila',m:10,cor:'#B5651D',p:[['vazio',45],['carvao',25],['ferro',18],['prata',4],['bau',4],['agua',4]]},
+  {nome:'Pedra',m:20,cor:'#8E939E',p:[['vazio',40],['ferro',25],['prata',18],['ouro',5],['fossil',4],['bau',4],['agua',4]]},
+  {nome:'Rocha dura',m:35,cor:'#6B7280',p:[['vazio',38],['prata',22],['ouro',20],['rubi',6],['fossil',4],['bau',5],['agua',5]]},
+  {nome:'Rocha profunda',m:50,cor:'#4B5563',p:[['vazio',35],['ouro',25],['rubi',14],['esmeralda',12],['bau',6],['agua',8]]},
+  {nome:'Perto do magma',m:80,cor:'#7F1D1D',p:[['vazio',32],['ouro',20],['rubi',14],['esmeralda',14],['diamante',10],['bau',5],['lava',5]]}];
+const VSVG={
+  pa:'<path d="M30 6 L16 24" stroke="#8A5A2B" stroke-width="4" stroke-linecap="round"/><path d="M8 26 L16 20 L22 27 L14 34 Q6 34 8 26Z" fill="#8E99AD" stroke="#5E6878" stroke-width="2"/>',
+  furadeira:'<rect x="6" y="12" width="20" height="12" rx="3" fill="#F97316" stroke="#9A3412" stroke-width="2"/><rect x="11" y="23" width="7" height="12" rx="2" fill="#3A3F4B"/><path d="M26 16 L36 18 L26 20Z" fill="#8E99AD" stroke="#5E6878" stroke-width="1.5"/>',
+  escavadeira:'<rect x="4" y="27" width="22" height="7" rx="3.5" fill="#3A3F4B"/><rect x="6" y="17" width="18" height="10" rx="2" fill="#F2B705" stroke="#B8790F" stroke-width="2"/><rect x="8" y="10" width="9" height="8" rx="1.5" fill="#BFE6FF" stroke="#B8790F" stroke-width="2"/><path d="M22 19 L31 11 L36 20" stroke="#F2B705" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M33 20 L38 20 L36 27 L31 25Z" fill="#8E99AD" stroke="#5E6878" stroke-width="1.5"/>',
+  tuneladora:'<rect x="10" y="12" width="26" height="16" rx="4" fill="#2F6BFF" stroke="#1C47C9" stroke-width="2"/><circle cx="9" cy="20" r="9" fill="#8E99AD" stroke="#5E6878" stroke-width="2"/><path d="M9 11 V29 M0 20 H18 M3 14 L15 26 M15 14 L3 26" stroke="#5E6878" stroke-width="1.5"/><rect x="14" y="30" width="20" height="5" rx="2.5" fill="#3A3F4B"/>'};
+const VEIC=[{id:'pa',nome:'Pá',prof:2,preco:0,lvl:1},{id:'furadeira',nome:'Furadeira',prof:3,preco:300,lvl:6},{id:'escavadeira',nome:'Escavadeira',prof:4,preco:800,lvl:9},{id:'tuneladora',nome:'Tuneladora',prof:6,preco:1800,lvl:12}];
+function seedRand(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}
+  return ()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return (h>>>0)/4294967296;};}
+function mineMap(p,d){const r=seedRand(p.id+'#'+d),cells=[];for(let row=1;row<=6;row++)for(let c=0;c<MINE_COLS;c++){const L=LAYERS[row];let x=r()*100,k='vazio';for(const [id,w] of L.p){if(x<w){k=id;break}x-=w;}
+    let n=1;if(k==='carvao')n=2+Math.floor(r()*3);else if(k==='ferro')n=1+Math.floor(r()*3);else if(k==='prata')n=1+Math.floor(r()*2);else if(k==='ouro')n=row>=5?2:1;else if(k==='bau')n=Math.round((3+Math.floor(r()*8))*(1+row/4))*10;
+    cells.push({row,c,k,n});}return cells;}
+const isTreasure=k=>k!=='vazio'&&k!=='agua'&&k!=='lava';
+function mineState(p){const d=dayKey();if(!p.mina||p.mina.d!==d)p.mina={d,open:[],en:Math.max(MINE_EN,(p.mina&&p.mina.en)||0),et:Date.now(),buy:0,achou:0};const m=p.mina;
+  const add=Math.floor((Date.now()-m.et)/MINE_REFILL);if(m.en>=MINE_EN)m.et=Date.now();else if(add>0){m.en=Math.min(MINE_EN,m.en+add);m.et+=add*MINE_REFILL;if(m.en>=MINE_EN)m.et=Date.now();}
+  if(!p.veic)p.veic=['pa'];return m;}
+const maxProf=p=>Math.max(...(p.veic||['pa']).map(id=>VEIC.find(v=>v.id===id).prof));
+const mineUnlocked=p=>levelInfo(p.xp).lvl>=MINE_LVL;
+const MNS={map:null,from:'world'};
+function openMine(from){if(!P)return;MNS.from=from||'world';exitMoon();show('mina');renderMine();}
+function canDig(m,i){const cell=MNS.map[i];if(m.open.includes(i))return false;if(cell.row===1)return true;const nb=[[-1,0],[1,0],[0,-1],[0,1]];
+  return nb.some(([dr,dc])=>{const r=cell.row+dr,c=cell.c+dc;if(r<1||r>6||c<0||c>=MINE_COLS)return false;return m.open.includes((r-1)*MINE_COLS+c);});}
+function nearCount(i){const cell=MNS.map[i];let n=0;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const r=cell.row+dr,c=cell.c+dc;if(r<1||r>6||c<0||c>=MINE_COLS)continue;const j=(r-1)*MINE_COLS+c;if(isTreasure(MNS.map[j].k)&&!P.mina.open.includes(j))n++;}return n;}
+function renderMine(){if(!P)return;const m=mineState(P);MNS.map=mineMap(P,m.d);const prof=maxProf(P),nxt=m.en<MINE_EN?MINE_REFILL-(Date.now()-m.et):0;
+  $('#mn-coins').innerHTML=`${COIN} ${P.coins} moedas`;updateWho();
+  $('#mn-bar').innerHTML=`<span class="mn-en"><b>⚡ ${m.en} de ${MINE_EN}</b> escavações${nxt?` · +1 em <span data-end="${Date.now()+nxt}">${fmtLeft(nxt)}</span>`:''}</span>
+    <button type="button" class="btn ghost small" id="mn-buy" ${P.coins>=40&&m.buy<2&&m.en<MINE_EN?'':'disabled'}>Lanche do mineiro: +5 · ${COIN}40${m.buy?` (${2-m.buy} hoje)`:''}</button>`;
+  let h=`<div class="mn-lab mn-sky">Superfície</div>`;for(let c=0;c<MINE_COLS;c++)h+=`<div class="mn-c mn-grass">${c===4?`<svg viewBox="0 0 40 40" aria-hidden="true">${VSVG[[...P.veic].sort((a,b)=>VEIC.findIndex(v=>v.id===b)-VEIC.findIndex(v=>v.id===a))[0]]}</svg>`:''}</div>`;
+  for(let row=1;row<=6;row++){const L=LAYERS[row],lock=row>prof;h+=`<div class="mn-lab${lock?' lock':''}"><b>${MN}${L.m} m</b><small>${L.nome}${lock?' 🔒':''}</small></div>`;
+    for(let c=0;c<MINE_COLS;c++){const i=(row-1)*MINE_COLS+c,cell=MNS.map[i],op=m.open.includes(i);
+      if(op){const t=isTreasure(cell.k);h+=`<div class="mn-c open${t?' got':''}" title="${t?(cell.k==='bau'?'Baú':cell.k==='fossil'?'Fóssil':GOODS[cell.k].nome):cell.k==='agua'?'Água':cell.k==='lava'?'Lava':'Túnel'}">${t?(cell.k==='bau'?'<span class="mn-e">🧰</span>':cell.k==='fossil'?'<span class="mn-e">🦴</span>':`<svg viewBox="0 0 40 40" aria-hidden="true">${GART[cell.k]}</svg>`):cell.k==='agua'?'<span class="mn-e">💧</span>':cell.k==='lava'?'<span class="mn-e">🔥</span>':`<b class="mn-n n${nearCount(i)}">${nearCount(i)||''}</b>`}</div>`;}
+      else{const ok=!lock&&canDig(m,i);h+=`<button type="button" class="mn-c shut${ok?' can':''}" style="--lc:${L.cor}" data-dig="${i}" ${ok&&m.en>0?'':'disabled'} aria-label="Escavar a ${L.m} metros, coluna ${c+1}${lock?' (precisa de veículo melhor)':''}"></button>`;}}}
+  $('#mn-grid').innerHTML=h;
+  $('#mn-legend').innerHTML=`Comece pela linha de cima e vá descendo: só dá para escavar ao lado de um túnel aberto. <b>O número num túnel mostra quantos tesouros estão escondidos nos 8 quadradinhos em volta.</b> Profundidades são números negativos: ${MN}5 m fica acima de ${MN}20 m. A mina muda todo dia.`;
+  $('#mn-veic').innerHTML=VEIC.map(v=>{const has=P.veic.includes(v.id),lv=levelInfo(P.xp).lvl,can=!has&&lv>=v.lvl&&P.coins>=v.preco;
+    return `<div class="mn-v ${has?'has':''}"><svg viewBox="0 0 40 40" aria-hidden="true">${VSVG[v.id]}</svg><div><b>${v.nome}</b><small>Cava até ${MN}${LAYERS[v.prof].m} m (${LAYERS[v.prof].nome.toLowerCase()})</small></div>${has?'<span class="note">Você tem ✓</span>':lv<v.lvl?`<span class="note">Nível ${v.lvl}</span>`:`<button type="button" class="btn ${can?'yellow':'ghost'} small" data-veic="${v.id}" ${can?'':'disabled'}>${COIN}${v.preco}</button>`}</div>`;}).join('');
+  const b=$('#mn-buy');if(b)b.onclick=()=>{const m=mineState(P);if(P.coins<40||m.buy>=2)return;P.coins-=40;m.buy++;m.en=Math.min(MINE_EN+5,m.en+5);saveProfile();sfx('coin');renderMine();};}
+function digCell(i){const m=mineState(P),cell=MNS.map[i];if(!canDig(m,i)||m.en<1||cell.row>maxProf(P))return;m.en--;if(m.en<MINE_EN&&m.et>Date.now()-1000)m.et=Date.now();saveProfile();
+  const ano=P.ano||S.ano;let ids=[...S.shapes].filter(id=>SH[id]&&!SH[id].topic&&(!SH[id].minAno||SH[id].minAno<=ano));if(!ids.length)ids=[...defaultShapes(ano)];
+  const q=cell.row<=2?easyQ(ano):shapeQ(ids,ano,false),L=LAYERS[cell.row];
+  quizOpen({ic:'⛏️',eye:`Mina · ${MN}${L.m} m · ${L.nome}`,title:'Escavar este quadradinho',txt:'Acertando a conta, a máquina abre o túnel e você vê o que tem dentro. Errando, a broca trava e gasta a escavação.',q,
+    cb:(ok)=>{if(!ok){saveProfile();return {msg:'A broca travou! O quadradinho continua fechado.'}}m.open.push(i);let msg='';
+      if(cell.k==='vazio')msg=`Túnel aberto. Tem ${nearCount(i)} tesouro${nearCount(i)===1?'':'s'} escondido${nearCount(i)===1?'':'s'} em volta.`;
+      else if(cell.k==='agua')msg='Água subterrânea! O túnel encheu e não achou nada aqui.';
+      else if(cell.k==='lava')msg='Calor de magma! Nada para pegar aqui.';
+      else if(cell.k==='bau'){P.coins+=cell.n;P.xp+=cell.n;msg=`Um baú antigo! Dentro tinha ${cell.n} moedas.`;}
+      else if(cell.k==='fossil'){P.packs=(P.packs||0)+1;P.fosseis=(P.fosseis||0)+1;msg='Um fóssil de dinossauro! O museu trocou por um pacotinho de sorte (abra na Coleção).';}
+      else{addGood(cell.k,cell.n);m.achou++;msg=`Achou ${qn(cell.n,cell.k)}! Venda no mercado: ${COIN}${GOODS[cell.k].base} cada na tabela.`;if(GOODS[cell.k].base>=100&&!REDUCED)confetti(80);}
+      if(isTreasure(cell.k))sfx('cash');const got=checkAch();saveProfile();setTimeout(()=>announceAch(got,0),900);return {msg};}});
+  QZ.after=renderMine;}
+$('#mn-grid').addEventListener('click',e=>{const b=e.target.closest('[data-dig]');if(!b||b.disabled)return;digCell(+b.dataset.dig);});
+$('#mn-veic').addEventListener('click',e=>{const b=e.target.closest('[data-veic]');if(!b||b.disabled)return;const v=VEIC.find(x=>x.id===b.dataset.veic);if(!v||P.veic.includes(v.id)||P.coins<v.preco)return;
+  P.coins-=v.preco;P.veic.push(v.id);saveProfile();sfx('level');toast(`Você comprou: ${v.nome}! Agora dá para cavar até ${MN}${LAYERS[v.prof].m} m.`);renderMine();});
+$('#mn-back').onclick=()=>{if(MNS.from==='home')goHome();else{backTo='home';openWorld();}};
+$('#mn-world').onclick=()=>{backTo='home';openWorld();};
+SCREENS.push('mina');
+setInterval(()=>{if(cur!=='mina'||!P||!P.mina)return;if(P.mina.en<MINE_EN&&Date.now()-P.mina.et>=MINE_REFILL&&$('#qz-modal').hidden)return renderMine();document.querySelectorAll('#mn-bar [data-end]').forEach(el=>{el.textContent=fmtLeft(Math.max(0,+el.dataset.end-Date.now()))});},1000);
+
+/* ---------- Marte: a segunda colônia ---------- */
+const MARS_LVL=22,MARS_MIS=3;
+const marsUnlocked=p=>levelInfo(p.xp).lvl>=MARS_LVL&&((p.mmarte||0)>=MARS_MIS||((p.prod||{}).marte||0)>=MARS_MIS*3);
+const inMars=()=>!!(inMoon()&&P.world.marte);
+const MATG=()=>P&&P.world&&P.world.marte?'marte':'lua';
+function placeOk(bd){const p=bd.place||'terra';if(P.world.marte)return p==='lua'||p==='marte';return p===(P.world.lua?'lua':'terra');}
+const MARS_BUILD=[{id:'gelo',nome:'Extrator de gelo',w:2,h:2,price:500,lvl:22,mat:3,place:'marte'},{id:'rover',nome:'Garagem de rovers',w:3,h:2,price:700,lvl:23,mat:4,place:'marte'}];
+MARS_BUILD.forEach(b=>{BUILD.push(b);BMAP[b.id]=b;});
+Object.assign(BD,{gelo:(x,y,W,H)=>`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#DCE2EC"/><rect x="${n1(x+W*.2)}" y="${n1(y+H*.3)}" width="${n1(W*.6)}" height="${n1(H*.55)}" rx="6" fill="#E6E9EF" stroke="#8E99AD" stroke-width="2"/><ellipse cx="${n1(x+W/2)}" cy="${n1(y+H*.3)}" rx="${n1(W*.3)}" ry="${n1(H*.16)}" fill="#BFE6FF" stroke="#4FB3E8" stroke-width="2"/><text x="${n1(x+W/2)}" y="${n1(y+H*.72)}" text-anchor="middle" font-size="12" font-weight="800" fill="#1C47C9" font-family="sans-serif">H₂O</text>`,
+  rover:(x,y,W,H)=>`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" fill="#C56E44"/><rect x="${n1(x+W*.06)}" y="${n1(y+H*.12)}" width="${n1(W*.4)}" height="${n1(H*.76)}" rx="4" fill="#E6E9EF"/><rect x="${n1(x+W*.1)}" y="${n1(y+H*.55)}" width="${n1(W*.32)}" height="${n1(H*.3)}" fill="#3A3F4B"/><rect x="${n1(x+W*.55)}" y="${n1(y+H*.38)}" width="${n1(W*.35)}" height="${n1(H*.22)}" rx="3" fill="#F2F4F8" stroke="#5E6878" stroke-width="1.5"/><circle cx="${n1(x+W*.6)}" cy="${n1(y+H*.66)}" r="${n1(H*.09)}" fill="#3A3F4B"/><circle cx="${n1(x+W*.85)}" cy="${n1(y+H*.66)}" r="${n1(H*.09)}" fill="#3A3F4B"/>`});
+Object.assign(CAT,{gelo:'servicos',rover:'lazer'});
+Object.assign(UPG,{gelo:['Extrator de gelo','Extrator duplo','Usina de água e oxigênio'],rover:['Garagem de rovers','Pista de rovers','Rali marciano']});
+Object.assign(DANO,{gelo:'Cano congelado',rover:'Pneu furado'});
+const moonStatsX=moonStats;moonStats=function(p){const st=moonStatsX(p);p.world.items.forEach(it=>{if(it.t==='gelo'&&!it.dano)st.op+=it.w*it.h*4*(it.lv||1);});st.faltaO=st.ou>st.op;return st;};
+const worldStageX=worldStage;worldStage=p=>{const s=worldStageX(p);if(p.world&&p.world.marte){const r=x=>x&&x.replace('Base lunar','Base marciana').replace('Vila lunar','Vila marciana').replace('Cidade lunar','Cidade marciana').replace('lunar','marciana');s.nome=r(s.nome);s.nextNome=r(s.nextNome);}return s;};
+goPlace=function(pl){if(!P)return;if(pl==='mina'){if(mineUnlocked(P))openMine('world');return}
+  if(pl==='lua'&&!moonUnlocked(P))return;if(pl==='marte'&&!marsUnlocked(P))return;WS.last=pl;WS.sel=null;WS.pick=null;WS.move=null;WS.rot=false;exitMoon();
+  if(pl==='lua'||pl==='marte'){enterMoon(pl);WS.tab='moradia';}W3.userZoom=false;renderWorld();
+  if(pl==='lua'&&!P.luaIntro){P.luaIntro=1;saveProfile();setTimeout(()=>toast('Bem-vindo à Lua! Aqui não há ar: construa um gerador de oxigênio antes das cúpulas. As construções custam moedas e pedras lunares.'),500);}
+  if(pl==='marte'&&!P.marteIntro){P.marteIntro=1;saveProfile();setTimeout(()=>toast('Bem-vindo a Marte! O ar não dá para respirar e faz muito frio. Construa oxigênio (ou um extrator de gelo) antes das cúpulas. Aqui as construções custam moedas e cristais de Marte.'),500);}};
+const openWorldX=openWorld;openWorld=function(){const r=openWorldX();if(WS.last==='marte'&&P&&marsUnlocked(P)&&!inMars())goPlace('marte');return r;};
+renderPlaces=function(){const el=$('#w-places');if(!el||!P)return;const lv=levelInfo(P.xp).lvl,ml=moonUnlocked(P),ms=marsUnlocked(P),mu=mineUnlocked(P),pl=inMars()?'marte':inMoon()?'lua':'terra';
+  const misM=Math.max(P.mlua||0,Math.floor(((P.prod||{}).lua||0)/3)),misR=Math.max(P.mmarte||0,Math.floor(((P.prod||{}).marte||0)/3));
+  el.innerHTML=`<button type="button" data-pl="terra" aria-pressed="${pl==='terra'}">🌍 Terra</button><button type="button" data-pl="mina" ${mu?'':'disabled'}>⛏️ Mina${mu?'':' 🔒'}</button><button type="button" data-pl="lua" aria-pressed="${pl==='lua'}" ${ml?'':'disabled'}>🌕 Lua${ml?'':' 🔒'}</button><button type="button" data-pl="marte" aria-pressed="${pl==='marte'}" ${ms?'':'disabled'}>🔴 Marte${ms?'':' 🔒'}</button>`+
+    (!mu?`<small>A mina libera no nível ${MINE_LVL}.</small>`:!ml?`<small>A Lua libera no nível ${MOON_LVL} (você está no ${lv}) e depois de ${MOON_MIS} viagens do foguete à Lua (${Math.min(misM,MOON_MIS)} de ${MOON_MIS}).</small>`:!ms?`<small>Marte libera no nível ${MARS_LVL} (você está no ${lv}) e depois de ${MARS_MIS} viagens do foguete a Marte (${Math.min(misR,MARS_MIS)} de ${MARS_MIS}).</small>`:'');};
+const renderWorldX=renderWorld;renderWorld=function(){renderWorldX();if(!inMars())return;$('#sc-world').classList.add('mars');
+  $('#w-title').textContent=`Colônia marciana de ${P.name.split(' ')[0]}`;const eb=$('#sc-world .world-top .eyebrow');if(eb)eb.textContent='Marte · cada quadradinho = 1 m²';
+  const c=$('#w-city');if(c)c.innerHTML=c.innerHTML.replace(/🪨 \d+ pedras lunares/,`💎 ${inv('marte')} cristais de Marte`).replace('Construir na Lua custa moedas e pedras lunares. O foguete traz as pedras da Lua (missão de 10 min).','Construir em Marte custa moedas e cristais de Marte. O foguete traz os cristais (missão de 30 min).').replace('Na Lua não há ar.','Em Marte o ar não dá para respirar.');
+  const sm=$('#w-citysum');if(sm)sm.innerHTML=sm.innerHTML.replace(/🪨 \d+/,`💎 ${inv('marte')}`);
+  document.querySelectorAll('#w-build .mat').forEach(e=>e.textContent=e.textContent.replace('pedras lunares','cristais de Marte'));
+  const sg=$('#w-stage');if(sg)sg.innerHTML=sg.innerHTML.replace(/Base lunar/g,'Base marciana').replace(/Vila lunar/g,'Vila marciana').replace(/Cidade lunar/g,'Cidade marciana').replace(/na cratera/g,'no vale');};
+const showX=show;show=function(n){if(n!=='world')$('#sc-world').classList.remove('mars');return showX(n);};
+const worldSVGX=worldSVG;worldSVG=function(p){let s=worldSVGX(p);if(!(p.world&&p.world.marte))return s;
+  return s.replace('fill="#2A2E3D"','fill="#5A2A1E"').replace('fill="#8E939E"','fill="#A9553A"').replace(/fill="#C4C8D0"/g,'fill="#D07A4E"').replace(/fill="#B6BAC4"/g,'fill="#C56E44"').replace(/stroke="#A3A7B0"/g,'stroke="#B5603E"').replace(/stroke="#9A9EA8"/g,'stroke="#A65838"');};
+const MARSC={0x6E727C:0x8A3B22,0x7D818B:0x9C4A2A,0x9A9EA8:0xB8613A,0xC4C8D0:0xD07A4E,0xB6BAC4:0xC56E44,0x8E939E:0xA9553A,0x8E929C:0xA14A30,0x5E626C:0x6E2A18};
+const w3BuildX=W3.build;W3.build=function(p){if(!(p.world&&p.world.marte))return w3BuildX.call(this,p);const M0=this.M;this.M=function(c,o){return M0.call(this,MARSC[c]!=null?MARSC[c]:c,o)};
+  try{w3BuildX.call(this,p);}finally{this.M=M0;}const sky=new THREE.Color(this.night?0x2A1A2E:0xE0A982);this.scene.background=sky;if(this.scene.fog)this.scene.fog.color=sky;};
+Object.assign(W3.models,{
+  gelo(g,fw,fd,lv){this.box(fw-.1,.06,fd-.1,0xDCE2EC,0,0,0,g);const ice=this.M(0xBFE6FF,{transparent:true,opacity:.85,roughness:.15});
+    for(let k=0;k<(lv>=2?2:1);k++){const x=lv>=2?(k?.45:-.45):0;const t=this.mesh(new THREE.CylinderGeometry(.42,.48,1.1,14),this.M(0xE6E9EF,{metalness:.4,roughness:.35}),x,.6,0,g);this.mesh(new THREE.SphereGeometry(.42,14,10,0,Math.PI*2,0,Math.PI/2),ice,x,1.15,0,g);}
+    this.box(.18,1.6,.18,this.M(0x8E99AD),fw/2-.3,0,-fd/2+.3,g);this.mesh(new THREE.SphereGeometry(.12,8,6),this.M(0x4FB3E8,{emissive:0x4FB3E8,emissiveIntensity:.6}),fw/2-.3,1.7,-fd/2+.3,g);},
+  rover(g,fw,fd,lv){this.box(fw-.1,.06,fd-.1,0xC56E44,0,0,0,g);this.box(fw*.45,.9,fd-.5,this.M(0xE6E9EF),-fw*.22,0,0,g);this.box(fw*.45-.2,.6,.06,this.M(0x3A3F4B),-fw*.22,0,fd/2-.27,g);
+    const r=new THREE.Group();r.position.set(fw*.22,0,0);g.add(r);this.box(.9,.25,.6,this.M(0xF2F4F8),0,.25,0,r);this.box(.3,.25,.4,this.M(0xBFE6FF),.2,.5,0,r);
+    [[-.32,-.3],[.32,-.3],[-.32,.3],[.32,.3]].forEach(([x,z])=>{const w=this.mesh(new THREE.CylinderGeometry(.14,.14,.1,10),this.M(0x3A3F4B),x,.14,z,r);w.rotation.x=Math.PI/2;});
+    this.box(.04,.5,.04,this.M(0x8E99AD),-.3,.5,0,r);}});
+
+/* ---------- arena: desafiar o recorde de um colega, apostando moedas ---------- */
+const ARN_T=60,ARN_BETS=[10,20,50,100],ARN_DAY=5;
+const ARN={on:false,mode:'treino',alvo:null,bet:0,pts:0,ok:0,err:0,t0:0,timer:0};
+function arenaDay(p){const d=dayKey();if(!p.arena)p.arena={rec:0};if(p.arena.d!==d){p.arena.d=d;p.arena.n=0;p.arena.vs=[];}return p.arena;}
+function arenaQ(){const q=makeQ(pick(['quadrado','retangulo','triangulo']),P.ano||S.ano,false);q.opts=buildOpts(q);return q;}
+function arenaIntro(mode,alvo){if(!P)return;const a=arenaDay(P);ARN.mode=mode;ARN.alvo=alvo||null;ARN.bet=0;
+  let h;if(mode==='treino')h=`<p class="prod-info">Responda o máximo de áreas em <b>${ARN_T} segundos</b>. Cada acerto vale <b>+10</b> e cada erro <b>${MN}5</b>. Seu recorde é o placar que os colegas tentam bater quando visitam sua cidade.</p><p class="ar-rec">Seu recorde: <b>${a.rec||0} pontos</b></p><p class="note">Na sua arena você nunca perde moedas: se alguém tentar e perder, você só recebe um aviso.</p>`;
+  else{const left=ARN_DAY-a.n,done=a.vs.includes(alvo.key);h=`<p class="prod-info">Faça <b>mais de ${alvo.rec} pontos</b> em ${ARN_T} segundos (acerto +10, erro ${MN}5) para bater o recorde de ${esc(alvo.publico)}.</p>
+    <p class="prod-info">Aposte suas moedas: <b>ganhando, recebe o dobro</b>. Perdendo, as moedas vão para o pote da arena. Empate devolve a aposta. ${esc(alvo.publico.split(' ')[0])} não perde nada.</p>
+    ${done?`<p class="note warn">Você já desafiou essa arena hoje. Volte amanhã!</p>`:left<=0?`<p class="note warn">Você já fez ${ARN_DAY} desafios hoje. Volte amanhã!</p>`:`<div class="ar-bets" role="group" aria-label="Aposta">${ARN_BETS.map(b=>`<button type="button" class="chip" data-bet="${b}" aria-pressed="false" ${P.coins>=b?'':'disabled'}>${COIN} ${b}</button>`).join('')}</div><p class="note">Desafios hoje: ${a.n} de ${ARN_DAY}.</p>`}`;}
+  $('#ar-title').textContent=mode==='treino'?'Arena: treinar meu recorde':`Arena de ${alvo.publico}`;$('#ar-body').innerHTML=h;
+  const go=$('#ar-go');go.textContent=mode==='treino'?'Começar':'Escolha a aposta';go.disabled=mode!=='treino';go.hidden=false;$('#ar-modal').hidden=false;}
+$('#ar-body').addEventListener('click',e=>{const b=e.target.closest('[data-bet]');if(!b||b.disabled)return;ARN.bet=+b.dataset.bet;document.querySelectorAll('[data-bet]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('#ar-go').disabled=false;$('#ar-go').textContent=`Apostar ${ARN.bet} e começar`;});
+$('#ar-close').onclick=()=>{$('#ar-modal').hidden=true;};
+$('#ar-go').onclick=()=>{if(ARN.mode==='desafio'){const a=arenaDay(P);if(!ARN.bet||P.coins<ARN.bet||a.n>=ARN_DAY||a.vs.includes(ARN.alvo.key))return;P.coins-=ARN.bet;a.n++;a.vs.push(ARN.alvo.key);saveProfile();}
+  $('#ar-modal').hidden=true;Object.assign(ARN,{on:true,pts:0,ok:0,err:0,t0:Date.now()});clearInterval(ARN.timer);ARN.timer=setInterval(arenaTick,200);arenaNext();};
+function arenaNext(){if(!ARN.on)return;const left=Math.max(0,Math.ceil(ARN_T-(Date.now()-ARN.t0)/1000));
+  quizOpen({ic:'⚔️',eye:ARN.mode==='treino'?'Arena · treino':`Arena · aposta de ${ARN.bet}`,title:`${ARN.pts} pontos${ARN.mode==='desafio'?` · meta: mais de ${ARN.alvo.rec}`:''}`,q:arenaQ(),time:left+' s',bar:true,auto:true,noClose:false,
+    cb:(ok)=>{if(ok){ARN.pts+=10;ARN.ok++;}else{ARN.pts=Math.max(0,ARN.pts-5);ARN.err++;}$('#qz-title').textContent=`${ARN.pts} pontos${ARN.mode==='desafio'?` · meta: mais de ${ARN.alvo.rec}`:''}`;setTimeout(()=>{if(ARN.on)arenaNext();},ok?350:900);}});}
+function arenaTick(){if(!ARN.on){clearInterval(ARN.timer);return}const left=ARN_T-(Date.now()-ARN.t0)/1000;$('#qz-bar i').style.width=Math.max(0,left/ARN_T*100)+'%';$('#qz-time').textContent=Math.max(0,Math.ceil(left))+' s';
+  $('#qz-bar').classList.toggle('low',left<10);if(left<=0)arenaEnd(false);}
+function arenaEnd(quit){if(!ARN.on)return;ARN.on=false;clearInterval(ARN.timer);QZ.done=true;$('#qz-modal').hidden=true;const a=arenaDay(P),pts=ARN.pts;let h='',tit='';
+  if(ARN.mode==='treino'){const old=a.rec||0;if(!quit&&pts>old){a.rec=pts;a.recT=Date.now();tit='Novo recorde!';sfx('level');if(!REDUCED)confetti(100);}else tit=quit?'Treino interrompido':'Fim do treino';
+    h=`<p class="ar-big">${pts} pontos</p><p class="prod-info">${ARN.ok} acerto${ARN.ok===1?'':'s'} × 10 ${MN} ${ARN.err} erro${ARN.err===1?'':'s'} × 5 = ${ARN.ok*10-ARN.err*5<0?0:ARN.ok*10-ARN.err*5}</p><p class="prod-info">${pts>old&&!quit?`Antes era ${old}. Agora seus colegas precisam fazer mais de ${pts} para bater sua arena.`:`Seu recorde continua ${a.rec||0}.`}</p>`;}
+  else{const al=ARN.alvo,win=!quit&&pts>al.rec,tie=!quit&&pts===al.rec;
+    if(win){P.coins+=ARN.bet*2;P.xp+=ARN.bet;P.arenaWins=(P.arenaWins||0)+1;tit='Você bateu o recorde!';sfx('cash');if(!REDUCED)confetti(140);}
+    else if(tie){P.coins+=ARN.bet;tit='Empate!';}else{P.pote=(P.pote||0)+ARN.bet;tit=quit?'Desafio abandonado':'Não foi dessa vez';sfx('no');}
+    h=`<p class="ar-big">${pts} × ${al.rec}</p><p class="prod-info">${ARN.ok} acerto${ARN.ok===1?'':'s'} × 10 ${MN} ${ARN.err} erro${ARN.err===1?'':'s'} × 5. ${win?`Você ganhou o dobro da aposta: ${ARN.bet} × 2 = ${ARN.bet*2} moedas.`:tie?'A aposta voltou para você.':`As ${ARN.bet} moedas apostadas foram para o pote da arena.`}</p><p class="note">${esc(al.publico.split(' ')[0])} vai receber um aviso do seu desafio.</p>`;
+    arenaNotify(al,{quem:pubName(P.name),venceu:win,pts,rec:al.rec,t:Date.now()});}
+  const got=checkAch();saveProfile();$('#ar-title').textContent=tit;$('#ar-body').innerHTML=h;const go=$('#ar-go');go.hidden=true;$('#ar-modal').hidden=false;announceAch(got,1500);
+  if(cur==='visit')renderVisit();}
+async function arenaNotify(al,av){if(al.lid){const t=db.profiles[al.lid];if(t){t.avisos=(t.avisos||[]).concat(av).slice(-10);saveDB();}return}
+  if(al.vid&&API&&SESSION.pw&&SESSION.id===P.id){try{await api('desafio',{nome:P.name,ano:P.ano,senha:SESSION.pw,vid:al.vid,venceu:av.venceu,pts:av.pts});}catch(e){}}}
+function showAvisos(list){if(!list||!list.length)return;const txt=list.slice(-3).map(a=>`${a.quem} desafiou sua arena e ${a.venceu?'venceu':'perdeu'} (${a.pts} × ${a.rec})`).join('. ');
+  setTimeout(()=>toast(`${txt}. Na sua arena você nunca perde moedas!`),1200);}
+const openWorldA=openWorld;openWorld=function(){const r=openWorldA();if(P&&P.avisos&&P.avisos.length){const l=P.avisos;P.avisos=[];saveProfile();showAvisos(l);}return r;};
+$('#rk-arena').onclick=()=>{if(!P){toast('Entre na sua conta para usar a arena.');return}arenaIntro('treino');};
+const renderVisitA=renderVisit;renderVisit=function(){renderVisitA();const b=$('#v-arena'),m=VIS.meta,base=VIS.p;if(!b)return;const rec=(base.arena&&base.arena.rec)||0;
+  if(!P||!m){b.hidden=true;return}b.hidden=false;if(m.me){b.textContent=`⚔️ Minha arena: ${(arenaDay(P).rec)||0} pontos`;b.disabled=false;return}
+  b.textContent=rec?`⚔️ Arena: bater ${rec} pontos`:'⚔️ Arena ainda sem recorde';b.disabled=!rec;};
+$('#v-arena').onclick=()=>{const m=VIS.meta,base=VIS.p;if(!P||!m)return;if(m.me){arenaIntro('treino');return}const rec=(base.arena&&base.arena.rec)||0;if(!rec)return;
+  arenaIntro('desafio',{rec,publico:m.publico,key:m.key,lid:m.lid||null,vid:m.vid||null});};
+const showA=show;show=function(n){if(ARN.on)arenaEnd(true);return showA(n);};
+ACH.push({id:'garimpo',nome:'Garimpeiro',desc:'Ache ouro na mina',r:30,ok:p=>((p.prod||{}).ouro||0)>=1},
+  {id:'diamante',nome:'Diamante!',desc:'Ache um diamante no fundo da mina',r:80,ok:p=>((p.prod||{}).diamante||0)>=1},
+  {id:'marte1',nome:'Colono de Marte',desc:'Construa sua primeira cúpula em Marte',r:100,ok:p=>!!(p.marte&&p.marte.items&&p.marte.items.length)},
+  {id:'arena1',nome:'Gladiador',desc:'Bata o recorde da arena de um colega',r:40,ok:p=>(p.arenaWins||0)>=1},
+  {id:'arena100',nome:'Campeão da arena',desc:'Faça 100 pontos na arena',r:40,ok:p=>((p.arena||{}).rec||0)>=100});
 
 /* ---------- conserto: toda ajuda à cidade é uma conta de área ---------- */
 const FX={k:null,idx:null,q:null,st0:0};

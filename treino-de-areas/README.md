@@ -114,6 +114,11 @@ Tela **Coleção** na página inicial, tudo com moedas do jogo (sem dinheiro de 
 - **Skins** de construções em 4 raridades (Pastel, Noturno, Oceano, Floresta, Doce, Neon, Dourado, Cristal e Galáxia, a exclusiva do passe). No Meu mundo: toque na construção → **Skin**. Funciona na planta e no 3D.
 - **Passe do mês**: 20 níveis, 1 nível a cada 80 pontos de experiência ganhos no mês, com prêmios grátis para pegar. Recomeça todo mês.
 
+## Mina, Marte e arena
+- **Mina** (nível 4, botão ⛏️ no Meu mundo): uma mina nova todo dia debaixo da cidade, com 6 camadas de −5 m a −80 m (profundidade como número negativo). Cada escavação é uma conta de área; errando, a broca trava. Achados: carvão, ferro, prata, ouro, rubi, esmeralda, diamante (vendidos no mercado), baús de moedas e fósseis (viram pacotinho). O número em cada túnel mostra quantos tesouros há nos 8 quadradinhos em volta. 10 escavações, +1 a cada 12 min. Veículos: Pá, Furadeira (300), Escavadeira (800) e Tuneladora (1800) para cavar mais fundo.
+- **Marte** (nível 22 e 3 viagens do foguete a Marte): segunda colônia, com solo vermelho na planta e no 3D. Usa as construções da Lua e mais o Extrator de gelo (oxigênio) e a Garagem de rovers; o material é cristal de Marte.
+- **Arena**: 60 segundos de áreas (acerto +10, erro −5). No Quadro de honra, "Arena: treinar meu recorde". Visitando um colega, dá para apostar 10, 20, 50 ou 100 moedas para bater o recorde dele: ganhando recebe o dobro, empate devolve, perdendo as moedas vão para o pote da arena. O dono da cidade nunca perde nada, só recebe um aviso. Limite: 5 desafios por dia e 1 por colega.
+
 ## Avatar e níveis
 
 - **Loja** com 49 itens em raridades (comum, raro, épico, lendário), oferta do dia com 40% de desconto, provador antes de comprar, efeitos animados (brilho, estrelas, fogo), asas e 5 conjuntos com prêmio. Itens: roupas, chapéus, acessórios, veículos (do skate ao foguete), bichinhos e cenários. Tom de pele, cabelo e penteado são grátis.
